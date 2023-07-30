@@ -122,12 +122,12 @@ async function submit(form: Form) {
   try {
     //const response = await axios.post('/api/form-submit', form);
     //console.log(response.data);
-    success = true;
-
-     // QR-Code erstellen und anzeigen
-     const qrCodeData = JSON.stringify(form);
+    
+    // QR-Code erstellen und anzeigen
+    const qrCodeData = JSON.stringify(form);
     const qrCodeImageUrl = await generateQRCode(qrCodeData);
     showQRCode(qrCodeImageUrl);
+    success = true;
   } catch (error) {
     console.error(error);
     errors = true;
@@ -163,7 +163,7 @@ function showQRCode(qrCodeImageUrl: string) {
 }
 </script>
 
-<style>
+<style scoped>
 
 form{
   width: 30rem;
