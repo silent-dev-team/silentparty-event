@@ -57,8 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import axios from 'axios';
+//import axios from 'axios';
 import QRCode from 'qrcode';
 
 interface Form {
@@ -121,8 +120,8 @@ async function submit(form: Form) {
 
 
   try {
-    const response = await axios.post('/api/form-submit', form);
-    console.log(response.data);
+    //const response = await axios.post('/api/form-submit', form);
+    //console.log(response.data);
     success = true;
 
      // QR-Code erstellen und anzeigen
