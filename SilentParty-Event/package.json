@@ -11,12 +11,15 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@types/node": "^18",
-    "nuxt": "^3.6.1"
+    "nuxt": "^3.6.5"
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
+    "@types/qrcode": "^1.5.1",
+    "axios": "^1.4.0",
     "pinia": "^2.1.4",
+    "qrcode": "^1.5.3",
     "sass": "^1.63.6",
     "vuetify": "^3.3.6"
   }
