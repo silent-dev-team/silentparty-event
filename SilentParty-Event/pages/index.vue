@@ -71,7 +71,7 @@ interface Form {
   email: string;
 }
 
-const form = ref<Form>({
+let form = $ref<Form>({
   firstName: '',
   lastName: '',
   street: '',
@@ -81,9 +81,9 @@ const form = ref<Form>({
   email: ''
 });
 
-const waiting = ref(false);
-const errors = ref(false);
-const success = ref(false);
+let waiting = $ref(false);
+let errors = $ref(false);
+let success = $ref(false);
 
 // Regex-Patterns 
 const zipCodePattern = /^\d{5}$/; 
@@ -91,31 +91,31 @@ const namePattern = /^[A-Za-zäöüÄÖÜß\-~']+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //passt noch nicht
 
 async function submit(form: Form) {
-  waiting.value = true;
-  errors.value = false;
-  success.value = false;
+  waiting = true;
+  errors = false;
+  success = false;
 
   // Validierung der Postleitzahl
   if (!zipCodePattern.test(form.zipCode)) {
-    errors.value = true;
+    errors = true;
     return;
   }
 
   // Validierung des Vornamens
   if (!namePattern.test(form.firstName)) {
-    errors.value = true;
+    errors = true;
     return;
   }
 
   // Validierung des Nachnamens
   if (!namePattern.test(form.lastName)) {
-    errors.value = true;
+    errors = true;
     return;
   }
 
   // Validierung des Ortes
   if (!namePattern.test(form.place)) {
-    errors.value = true;
+    errors = true;
     return;
   }
 
@@ -123,7 +123,7 @@ async function submit(form: Form) {
   try {
     const response = await axios.post('/api/form-submit', form);
     console.log(response.data);
-    success.value = true;
+    success = true;
 
      // QR-Code erstellen und anzeigen
      const qrCodeData = JSON.stringify(form);
@@ -131,9 +131,9 @@ async function submit(form: Form) {
     showQRCode(qrCodeImageUrl);
   } catch (error) {
     console.error(error);
-    errors.value = true;
+    errors = true;
   } finally {
-    waiting.value = false;
+    waiting = false;
   }
 }
 
