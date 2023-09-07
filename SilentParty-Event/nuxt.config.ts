@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@pinia/nuxt',
+    '@vue-macros/nuxt'
   ],
   pinia: {
     autoImports: [
