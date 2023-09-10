@@ -1,1 +1,0 @@
-import{_ as s,l as t,k as c,m as e}from"./entry.f3936651.js";const n={},o={class:"flex flex-col items-center justify-center h-screen"},a=e("h1",{class:"text-4xl font-bold"},"Kasse",-1),_=e("p",{class:"text-xl"},"Hier kannst du deine Tickets kaufen.",-1),r=[a,_];function l(i,d){return c(),t("div",o,r)}const x=s(n,[["render",l]]);export{x as default};

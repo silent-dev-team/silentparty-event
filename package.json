@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "yarn generate && concurrently 'yarn:dev:*'",
-    "generate": "nuxt generate ./app && cp -R ./app/.output/public ./pocketbase",
+    "generate": "cd app && nuxt generate && cp -R .output/public ../pocketbase",
     "dev:nuxt": "nuxt dev ./app",
     "dev:pocketbase": "fresh",
     "preview": "nuxt preview ./app",

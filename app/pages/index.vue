@@ -7,7 +7,7 @@ const buttons = [
     onClick: () => router.push({path:'/kasse'})
   },
   {
-    text: 'Ticket',
+    text: 'Tickets',
     onClick: () => router.push({path:'/ticket'})
   }
 ]
