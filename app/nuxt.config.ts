@@ -30,6 +30,6 @@ export default defineNuxtConfig({
     autoImport: true,
     addons: {
       vueTemplate: true
-    }
+    },
   },
 })
