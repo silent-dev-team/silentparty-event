@@ -1,6 +1,6 @@
 services:
   pocketbase:
-    build: ./pocketbase
+    build: ./
     volumes:
       - db:/app/pb_data/
     ports:
