@@ -4,6 +4,8 @@ import (
 	"embed"
 	"log"
 
+	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
+
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
