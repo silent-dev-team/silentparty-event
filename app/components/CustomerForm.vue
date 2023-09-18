@@ -136,10 +136,10 @@ async function submit(form: CustomerData) {
             ></v-text-field>
           </v-col>
         </v-row>
+        <div class="w-100 d-flex justify-content-center">
+            <v-btn :disabled="disabled" class="mx-auto my-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
+        </div>
+        <p v-if="errors">Etwas ist schiefgelaufen.</p>
+        <p v-if="success">Abgeschickt.</p>     
       </form>
-      <div class="w-100 d-flex justify-content-center">
-          <v-btn :disabled="disabled" class="mx-auto my-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
-      </div>
-      <p v-if="errors">Etwas ist schiefgelaufen.</p>
-      <p v-if="success">Abgeschickt.</p>     
 </template>
