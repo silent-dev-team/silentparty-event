@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "yarn generate && concurrently 'yarn:dev:*'",
     "generate": "cd app && nuxt generate && cp -R .output/public ../pocketbase",
-    "dev:nuxt": "nuxt dev ./app",
+    "dev:nuxt": "nuxt dev ./app --host",
     "dev:pocketbase": "fresh",
     "preview": "nuxt preview ./app",
     "postinstall": "nuxt prepare ./app",

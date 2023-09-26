@@ -13,3 +13,13 @@ Kann mit ```yarn dev:pocketbase``` gestartet werden.
 Das Frontend ist eine Nuxt-Multipage-Application.
 
 Kann mit ```yarn dev:nuxt``` gestartet werden.
+
+
+
+# Features
+
+Falls Nutzer ihre Tickets bearbeiten können sollen, fügen wir wieder diese Zeile in PocketBase ein
+```
+@request.data.sold:isset = false && @request.data.used:isset = false && 
+@request.data.validated:isset = false
+```

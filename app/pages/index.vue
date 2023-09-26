@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const router = useRouter()
 
+definePageMeta({
+  layout: 'admin',
+});
+
 const buttons = [
   {
     text: 'Kasse',
@@ -8,17 +12,15 @@ const buttons = [
   },
   {
     text: 'Tickets',
-    onClick: () => router.push({path:'/ticket'})
+    onClick: () => router.push({path:'/admin/tickets'})
   }
 ]
+
+let showLogin = $ref(false)
 
 </script>
 
 <template>
-  <div class="frame">
-    <header class="header">
-      <h1 class="title">Silent Party Hannover</h1>
-    </header>
     <div class="buttons">
       <v-btn 
         v-for="btn in buttons" :key="btn.text"
@@ -29,24 +31,10 @@ const buttons = [
       >{{ btn.text }}
       </v-btn>
     </div>
-  </div>
+
 </template>
 
 <style scoped>
-.frame {
-  width: 100%;
-  height: 100vh;
-  background: linear-gradient(to bottom, #0054bb, #00c6ff);
-}
-
-.header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  height: 60px;
-  padding: 0 20px;
-}
-
 .title {
   margin: 0;
   font-size: 24px;

@@ -12,7 +12,12 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  readonly: {
+    type: Boolean,
+    default: false
+  }
 })
+
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 let form = $ref<CustomerData>(props.modelValue);
@@ -74,6 +79,7 @@ async function submit(form: CustomerData) {
               v-model="form.firstName"
               label="Vorname"
               required
+              :readonly="readonly"
               :rules="[namePattern.test(form.firstName) || 'Bitte gib einen gültigen Vornamen ein.']"
             ></v-text-field>
           </v-col>
@@ -83,6 +89,7 @@ async function submit(form: CustomerData) {
               v-model="form.lastName"
               label="Nachname"
               required
+              :readonly="readonly"
               :rules="[namePattern.test(form.lastName) || 'Bitte gib einen gültigen Nachnamen ein.']"
             ></v-text-field>
           </v-col>
@@ -94,6 +101,7 @@ async function submit(form: CustomerData) {
             v-model="form.street"
             label="Straße"
             required
+            :readonly="readonly"
           ></v-text-field>
           </v-col>
 
@@ -102,6 +110,7 @@ async function submit(form: CustomerData) {
             v-model="form.housenumber"
             label="Hausnummer"
             required
+            :readonly="readonly"
           ></v-text-field>
           </v-col>
         </v-row>
@@ -112,6 +121,7 @@ async function submit(form: CustomerData) {
               v-model="form.zipCode"
               label="Postleitzahl"
               required
+              :readonly="readonly"
               :rules="[zipCodePattern.test(form.zipCode) || 'Bitte gib eine gültige Postleitzahl ein.']"
             ></v-text-field>
           </v-col>
@@ -121,6 +131,7 @@ async function submit(form: CustomerData) {
               v-model="form.place"
               label="Ort"
               required
+              :readonly="readonly"
               :rules="[namePattern.test(form.place) || 'Bitte gib einen gültigen Ort ein.']"
             ></v-text-field>
           </v-col>
@@ -132,12 +143,13 @@ async function submit(form: CustomerData) {
               v-model="form.email"
               label="E-Mail"
               required
+              :readonly="readonly"
               :rules="[emailPattern.test(form.email) || 'Bitte gib eine gültige E-Mail ein.']"
             ></v-text-field>
           </v-col>
         </v-row>
-        <div class="w-100 d-flex justify-content-center">
-            <v-btn :disabled="disabled" class="mx-auto my-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
+        <div v-if="!readonly" class="w-100 d-flex justify-content-center">
+            <v-btn :disabled="disabled || form.firstName == '' || form.lastName == ''" class="mx-auto my-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
         </div>
         <p v-if="errors">Etwas ist schiefgelaufen.</p>
         <p v-if="success">Abgeschickt.</p>     

@@ -103,6 +103,7 @@ frame {
   position: relative;
 }
 .video {
+  max-height: 90vh;
   width: 100%;
   position: relative;
   transition: all 0.15s ease-in-out; 

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { RecordModel } from 'pocketbase';
 
+definePageMeta({
+  layout: 'admin',
+});
+
 const pb = usePocketbase()
 
 let showScanner = $ref(false)
@@ -37,22 +41,22 @@ async function createTicket(){
 
 <template>
   <v-dialog width="90%" v-model="showScanner">
-    <v-card class="pa-2">
+    <v-card class="pa-3">
       <scanner v-if="showScanner" @onScan="loadDataFromQRString($event)"></scanner>
     </v-card>
   </v-dialog>
-  <v-card class="ma-5 pa-5">
-    <v-card-title>
-      <h1>Ticket erstellen</h1>
-    </v-card-title>
-    <v-divider></v-divider>
-    <v-card-text>
-      Hier kannst du dein Ticket erstellen.
-    </v-card-text>
-    <customer-form v-model="form" @submit="createTicket" submitText="Ticket erstelen"/>
-  </v-card>
+    <v-card class="pa-5 mx-auto" maxWidth="800px">
+      <v-card-title>
+        Ticket erstellen
+      </v-card-title>
+      <v-divider></v-divider>
+      <v-card-text>
+        Hier kannst du dein Ticket erstellen.
+      </v-card-text>
+      <customer-form v-model="form" @submit="createTicket" submitText="Ticket erstelen"/>
+    </v-card>
   <v-btn 
-    style="position: fixed; right: 1rem; bottom: 1rem;"
+    style="position: fixed; right: 1rem; bottom: 4rem;"
     color="primary"
     icon="mdi-qrcode-scan"
     size="large"

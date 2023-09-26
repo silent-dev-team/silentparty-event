@@ -1,13 +1,17 @@
 
 <template>
-  <v-container class="bg-blue-grey-lighten-5">
-  <v-card class="pa-5 mx-auto my-3" rounded="8px" max-width="600px">
+<div class="bg-blue-grey-lighten-5" style="min-height: 100vh; width: 100%; padding: 3rem;">
+  <v-card class="pa-5 mx-auto" rounded="8px" max-width="800px">
     <v-card-title><h1>Anmeldung</h1></v-card-title>
-    <v-card-text>Bitte gib alle Daten so an wie auf deinem Personalausweis. Ansonsten ist dein Ticket ungültig.</v-card-text>
+    <v-card-text>
+      Dieses Formular dient dazu deine Daten zu erfassen und einen QR-Code zu erstellen. Dieser QR-Code wird an der Kasse gescannt und du erhälst dein Ticket.
+      <br>
+      Bitte gib alle Daten so an wie auf deinem Personalausweis. Ansonsten ist dein Ticket ungültig.
+    </v-card-text>
     <br>
     <customer-form v-model="form" @submit="submit(form)" submitText="QR-Code erstellen"/>
   </v-card>
-</v-container>
+</div>
 <v-dialog
       v-model="success"
       width="auto"
@@ -30,7 +34,6 @@
 <script setup lang="ts">
 //import axios from 'axios';
 import QRCode from 'qrcode';
-import { CustomerData } from '@/types/general';
 
 let form = $ref<CustomerData>({
   firstName: '',
@@ -67,4 +70,4 @@ async function generateQRCode(data: string): Promise<string> {
     return '';
   }
 }
-</script>~/types
+</script>
