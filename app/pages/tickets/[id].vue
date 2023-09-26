@@ -48,7 +48,29 @@ await refreshTicket();
     <v-divider></v-divider>
     <v-card-text>
       Hier kannst du dein Ticket bearbeiten.
+      <div v-if="ticket.used">
+        <v-list lines="one">
+          <div class="d-flex">
+            <v-list-item
+              title="Vorname"
+              :subtitle="ticket.firstName"
+            ></v-list-item>
+            <v-list-item
+              title="Nachname"
+              :subtitle="ticket.lastName"
+            ></v-list-item>
+          </div>
+          <div class="d-flex">
+            <v-list-item
+              title="Straße"
+              :subtitle="ticket.street"
+            ></v-list-item>
+          </div>
+        </v-list>
+      </div>
     </v-card-text>
-    <customer-form v-model="form" :disabled="form == ticket" @submit="updateTicket()" submitText="Ticket ändern"/>
+    <div v-if="!ticket.used">
+      <customer-form v-model="form" :disabled="form == ticket" @submit="updateTicket()" submitText="Ticket ändern"/>
+    </div>
   </v-card>
 </template>
