@@ -1,6 +1,4 @@
 <script setup lang="ts">
-//import axios from 'axios';
-import { RefType } from '@vue-macros/reactivity-transform/macros';
 import QRCode from 'qrcode';
 
 let form = $ref<CustomerData>({
