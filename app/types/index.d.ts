@@ -14,5 +14,6 @@ declare global {
     sold: boolean;
     validated:  boolean;
     used: boolean;
+    filled: boolean;
   }
 }
