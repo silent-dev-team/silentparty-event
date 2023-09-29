@@ -30,7 +30,7 @@ func main() {
 
 	app.OnRecordViewRequest().Add(LowdashFilterRecordViewEvent)
 	app.OnRecordBeforeCreateRequest("tickets").Add(func(e *core.RecordCreateEvent) error {
-		e.Record.Set("_salt", utils.GenerateRandomString(15))
+		e.Record.Set("_pin", utils.GeneratePin())
 		return nil
 	})
 
