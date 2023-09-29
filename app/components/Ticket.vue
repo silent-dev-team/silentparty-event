@@ -55,14 +55,14 @@ await refreshTicket();
       <h1>Ticket {{ id }}</h1>
     </v-card-title>
     <v-divider></v-divider>
-    <div class="mb-3">
+    <!-- <div class="mb-3">
       <v-card-text class="">
         <h3><v-icon>mdi-check</v-icon>Bezahlt</h3>
         <h3><v-icon>mdi-check</v-icon>Kontolliert</h3>
         <h3><v-icon>mdi-check</v-icon>Mit Kopfhörer verknüpft</h3>
       </v-card-text>
       <v-btn color="primary" @click="ticket.used = true">Ticket entwerten</v-btn>
-    </div>
+    </div> -->
     <v-divider></v-divider>
     <v-card-text>
       <customer-form v-model="form" :readonly="readonly" :disabled="form == ticket" @submit="updateTicket()" submitText="Daten speichern"/>

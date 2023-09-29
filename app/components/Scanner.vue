@@ -98,16 +98,19 @@ localStorage.setItem('cam', JSON.stringify(results));
 </template>
 
 <style scoped>
-frame {
-  height: 100vh;
-  position: relative;
+
+.frame{
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height:100vh;
 }
 .video {
-  max-height: 90vh;
-  width: 100%;
-  position: relative;
+  height:100vh;
   transition: all 0.15s ease-in-out; 
   filter:brightness(1);
+
 }
 
 .flip {

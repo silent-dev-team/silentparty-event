@@ -13,7 +13,7 @@
     </v-app-bar>
 
     <v-main>
-      <div class="bg-blue-grey-lighten-5" style="min-height: 100vh; width: 100%; padding: 3rem;">
+      <div class="bg-blue-grey-lighten-5" style="height: 100vh; width: 100%; position: fixed;">
         <slot v-if="pb.authStore.isAdmin" />
       </div>
     </v-main>
@@ -25,13 +25,19 @@
         <span>KH</span>
       </v-btn>
 
-      <v-btn value="Tickets" @click="toTickets()">
+      <v-btn value="tickets" @click="toTickets()">
         <v-icon>mdi-ticket-confirmation</v-icon>
 
         <span>Tickets</span>
       </v-btn>
 
-      <v-btn value="Kasse">
+      <v-btn value="vvk" @click="toVVK()">
+        <v-icon>mdi-ticket</v-icon>
+
+        <span>VVK</span>
+      </v-btn>
+
+      <v-btn value="kasse">
         <v-icon>mdi-cash-register</v-icon>
 
         <span>Kasse</span>
@@ -59,6 +65,10 @@ function logout() {
 
 function toTickets() {
   router.push({ path: '/admin/tickets' })
+}
+
+function toVVK() {
+  router.push({ path: '/admin/tickets/vvk' })
 }
 
 </script>

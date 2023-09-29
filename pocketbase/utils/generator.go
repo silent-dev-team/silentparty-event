@@ -10,3 +10,12 @@ func GenerateRandomString(n int) string {
 	}
 	return string(b)
 }
+
+func GeneratePin() string {
+	var letters = []rune("0123456789")
+	b := make([]rune, 4)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
