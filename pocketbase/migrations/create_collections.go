@@ -164,7 +164,7 @@ func init() {
 							},
 							{
 									"system": false,
-									"id": "miodo3vo",
+									"id": "f4hqk1fk",
 									"name": "email",
 									"type": "email",
 									"required": false,
@@ -233,9 +233,9 @@ func init() {
 					"indexes": [],
 					"listRule": null,
 					"viewRule": "((filled = true && @request.query.pin = _pin) || filled = false) && sold = true",
-					"createRule": "",
-					"updateRule": "",
-					"deleteRule": "",
+					"createRule": null,
+					"updateRule": "used = false",
+					"deleteRule": null,
 					"options": {}
 			}
 	]`

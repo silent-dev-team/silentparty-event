@@ -30,11 +30,13 @@ func main() {
 
 	app.OnRecordViewRequest().Add(LowdashFilterRecordViewEvent)
 	app.OnRecordBeforeCreateRequest("tickets").Add(func(e *core.RecordCreateEvent) error {
-		e.Record.Set("_pin", utils.GeneratePin())
+		pin := utils.GeneratePin()
+		fmt.Println(pin)
+		e.Record.Set("_pin", pin)
 		return nil
 	})
 
-	app.OnRecordBeforeCreateRequest("tickets").Add(func(e *core.RecordCreateEvent) error {
+	app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
 		message := &mailer.Message{
 			From: mail.Address{
 				Address: app.Settings().Meta.SenderAddress,
