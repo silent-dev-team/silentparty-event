@@ -1,4 +1,5 @@
 import { declare } from '../.nuxt/types/imports';
+import { RecordModel } from 'pocketbase';
 declare global {
   interface CustomerData {
     firstName: string;
@@ -16,4 +17,6 @@ declare global {
     used: boolean;
     filled: boolean;
   }
+
+  type TicketRecord = RecordModel & Ticket;
 }

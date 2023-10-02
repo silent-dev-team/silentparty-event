@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { RecordModel } from 'pocketbase';
-
 definePageMeta({
   layout: 'admin',
 });
@@ -33,7 +31,7 @@ function loadDataFromQRString(s:string){
 }
 
 async function createTicket(){
-  const rec = await pb.collection('tickets').create<RecordModel & Ticket>(form)
+  const rec = await pb.collection('tickets').create<TicketRecord>(form)
   console.log(rec)
 }
 
