@@ -82,6 +82,8 @@ func main() {
 		return nil
 	})
 
+	/* CUSTOM HOOKS */
+
 	// filter fields that start with _
 	app.OnRecordViewRequest().Add(func(e *core.RecordViewEvent) error {
 		resp := make(map[string]interface{})
@@ -150,6 +152,8 @@ func main() {
 		}
 		return err
 	})
+
+	/* SERVE */
 
 	// serve app
 	if err := app.Start(); err != nil {
