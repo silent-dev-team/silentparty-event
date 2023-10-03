@@ -21,23 +21,18 @@ import (
 //go:embed all:public
 var public embed.FS
 
-type Transaction struct {
-	Positions []Position `json:"positions"`
-}
-
-type Position struct {
-	ItemId string `json:"itemId"`
-	Amount int    `json:"amount"`
-}
-
 func main() {
 	app := pocketbase.New()
 
+	/* CUSTOM ENDPOINTS */
+
+	// serve frontend
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/*", apis.StaticDirectoryHandler(echo.MustSubFS(public, "public"), true))
 		return nil
 	})
 
+	// create new transaction
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.POST("/api/v1/new-transaction", func(c echo.Context) error {
 			positionsCollection, err1 := app.Dao().FindCollectionByNameOrId("positions")
@@ -87,7 +82,25 @@ func main() {
 		return nil
 	})
 
-	app.OnRecordViewRequest().Add(LowdashFilterRecordViewEvent)
+	// filter fields that start with _
+	app.OnRecordViewRequest().Add(func(e *core.RecordViewEvent) error {
+		resp := make(map[string]interface{})
+
+		for k, v := range e.Record.ColumnValueMap() {
+			if !strings.HasPrefix(k, "_") {
+				resp[k] = v
+			}
+		}
+
+		err := e.HttpContext.JSON(200, resp)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	// generate pin
 	app.OnRecordBeforeCreateRequest("tickets").Add(func(e *core.RecordCreateEvent) error {
 		pin := utils.GeneratePin()
 		fmt.Println(pin)
@@ -95,6 +108,7 @@ func main() {
 		return nil
 	})
 
+	// get position price from item
 	app.OnRecordBeforeCreateRequest("positions").Add(func(e *core.RecordCreateEvent) error {
 		app.Dao().ExpandRecord(e.Record, []string{"item"}, nil)
 		item := e.Record.ExpandedOne("item")
@@ -102,6 +116,7 @@ func main() {
 		return nil
 	})
 
+	// calculate total price of transaction
 	app.OnRecordBeforeCreateRequest("transactions").Add(func(e *core.RecordCreateEvent) error {
 		app.Dao().ExpandRecord(e.Record, []string{"positions"}, nil)
 		positions := e.Record.ExpandedAll("positions")
@@ -109,6 +124,7 @@ func main() {
 		return nil
 	})
 
+	// send mail after ticket is sold
 	app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
 		sold := e.Record.GetBool("sold")
 		filled := e.Record.GetBool("filled")
@@ -127,6 +143,7 @@ func main() {
 			// bcc, cc, attachments and custom headers are also supported...
 		}
 
+		// send message
 		err := app.NewMailClient().Send(message)
 		if err != nil {
 			fmt.Println(err)
@@ -134,27 +151,11 @@ func main() {
 		return err
 	})
 
+	// serve app
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
 
-}
-
-func LowdashFilterRecordViewEvent(e *core.RecordViewEvent) error {
-	resp := make(map[string]interface{})
-
-	for k, v := range e.Record.ColumnValueMap() {
-		if !strings.HasPrefix(k, "_") {
-			resp[k] = v
-		}
-	}
-
-	err := e.HttpContext.JSON(200, resp)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func calculateTotal(positions []*models.Record) float64 {
