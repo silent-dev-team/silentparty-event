@@ -26,12 +26,6 @@ func main() {
 
 	/* CUSTOM ENDPOINTS */
 
-	// serve frontend
-	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		e.Router.GET("/*", apis.StaticDirectoryHandler(echo.MustSubFS(public, "public"), true))
-		return nil
-	})
-
 	// create new transaction
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.POST("/api/v1/new-transaction", func(c echo.Context) error {
@@ -77,6 +71,7 @@ func main() {
 			if err != nil {
 				return err
 			}
+			c.JSON(200, tr)
 			return nil
 		})
 		return nil
@@ -154,6 +149,12 @@ func main() {
 	})
 
 	/* SERVE */
+
+	// serve frontend
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		e.Router.GET("/*", apis.StaticDirectoryHandler(echo.MustSubFS(public, "public"), true))
+		return nil
+	})
 
 	// serve app
 	if err := app.Start(); err != nil {
