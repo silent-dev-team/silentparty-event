@@ -237,6 +237,181 @@ func init() {
 					"updateRule": "used = false",
 					"deleteRule": null,
 					"options": {}
+			},
+			{
+					"id": "nhw1dv5dnt6yxeh",
+					"name": "shop_items",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "vibp24pt",
+									"name": "title",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "hszg1dyl",
+									"name": "description",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "fwqvx2jo",
+									"name": "price",
+									"type": "number",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"noDecimal": false
+									}
+							}
+					],
+					"indexes": [
+							"CREATE UNIQUE INDEX 'idx_xdWr4LF' ON 'shop_items' ('title')"
+					],
+					"listRule": null,
+					"viewRule": null,
+					"createRule": null,
+					"updateRule": null,
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "o5kg9huo5umgqun",
+					"name": "transactions",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "vizjb3yv",
+									"name": "positions",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "3ocopq5t68o1565",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": null,
+											"displayFields": null
+									}
+							},
+							{
+									"system": false,
+									"id": "3bit5x8c",
+									"name": "total",
+									"type": "number",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"noDecimal": false
+									}
+							},
+							{
+									"system": false,
+									"id": "hoy7nwkt",
+									"name": "storno",
+									"type": "bool",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {}
+							}
+					],
+					"indexes": [],
+					"listRule": null,
+					"viewRule": null,
+					"createRule": null,
+					"updateRule": null,
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "3ocopq5t68o1565",
+					"name": "positions",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "0yvanlyc",
+									"name": "item",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "nhw1dv5dnt6yxeh",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": 1,
+											"displayFields": null
+									}
+							},
+							{
+									"system": false,
+									"id": "qolqrrs6",
+									"name": "price",
+									"type": "number",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"noDecimal": false
+									}
+							},
+							{
+									"system": false,
+									"id": "gpb1aycd",
+									"name": "amount",
+									"type": "number",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"noDecimal": false
+									}
+							}
+					],
+					"indexes": [
+							"CREATE INDEX 'idx_86HZizz' ON 'positions' ('item')"
+					],
+					"listRule": null,
+					"viewRule": null,
+					"createRule": null,
+					"updateRule": null,
+					"deleteRule": null,
+					"options": {}
 			}
 	]`
 
