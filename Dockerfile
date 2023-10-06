@@ -27,9 +27,10 @@ COPY --from=nuxt-builder ./builder/app/.output/public ./pocketbase
 RUN go build -o pocketnuxt ./pocketbase/.
 
 # SERVE PROJECT
-FROM debian:latest as live-system
+FROM debian:latest
 WORKDIR /
 COPY --from=go-builder /builder/pocketnuxt /pocketnuxt
+RUN chmod +x /pocketnuxt
 EXPOSE 8090
 #USER nonroot:nonroot
 CMD ["/pocketnuxt","serve","--http","127.0.0.1:8090"]

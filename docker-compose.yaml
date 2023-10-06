@@ -4,7 +4,7 @@ services:
     #volumes:
     #  - db:/pb_data/
     ports:
-      - 8090:8090
+      - 80:8090
     environment:
       - ADMIN_EMAIL=dev@mail.com
       - ADMIN_PASSWORD=HalloTest123!
