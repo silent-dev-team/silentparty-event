@@ -1,10 +1,13 @@
 services:
   pocketbase:
     build: ./
-    volumes:
-      - db:/app/pb_data/
+    #volumes:
+    #  - db:/pb_data/
     ports:
-      - "${PORTBASE}51:8090"
+      - 8090:8090
+    environment:
+      - ADMIN_EMAIL=dev@mail.com
+      - ADMIN_PASSWORD=HalloTest123!
 
-volumes:
-  db:
+#volumes:
+#  db:

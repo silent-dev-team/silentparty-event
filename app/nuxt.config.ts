@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   ssr: false,
   modules: [
     '@pinia/nuxt',
-    '@vue-macros/nuxt'
+    '@vue-macros/nuxt',
+    '@vite-pwa/nuxt'
   ],
   pinia: {
     autoImports: [

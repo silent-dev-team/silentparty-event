@@ -4,14 +4,17 @@
   "scripts": {
     "dev": "yarn generate && concurrently 'yarn:dev:*'",
     "generate": "cd app && nuxt generate && cp -R .output/public ../pocketbase",
-    "dev:nuxt": "nuxt dev ./app --host", 
+    "dev:nuxt": "nuxt dev ./app --host",
     "dev:pocketbase": "fresh",
     "preview": "nuxt preview ./app",
     "postinstall": "nuxt prepare ./app",
-    "build": "nuxt generate ./app && cp -R ./app/.output/public ./pocketbase && go build -o pocketnuxt ./pocketbase/."
+    "build:nuxt": "nuxt generate ./app",
+    "build:pocketbase": "go build -o pocketnuxt ./pocketbase/.",
+    "build": "yarn build:nuxt && cp -R ./app/.output/public ./pocketbase && yarn build:pocketbase"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@vite-pwa/nuxt": "^0.1.1",
     "nuxt": "^3.7.3"
   },
   "dependencies": {
