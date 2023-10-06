@@ -18,23 +18,20 @@ try {
 
 let dialog = $ref(false)
 let id = $ref('')
+let ticket:TicketRecord
 
-function onScan(url: string) {
+async function onScan(url: string) {
   console.log(url)
   const ticketId = url.split('/').pop()
   if (!ticketId) return;
   id = ticketId
+  ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
   dialog = true
 }
 
 async function sell() {
-  const oldRecord = await pb.collection('tickets').getOne<TicketRecord>(id);
-  if (oldRecord.sold) {
-    alert('Ticket bereits verkauft')
-    return
-  }
-  const newRecord = await pb.collection('tickets').update<TicketRecord>(id, {sold: true});
-  if (!newRecord.sold) {
+  const updatedTicket = await pb.collection('tickets').update<TicketRecord>(id, {sold: true});
+  if (!updatedTicket.sold) {
     alert('Verkauf fehlgeschlagen')
     return
   }
@@ -63,10 +60,12 @@ async function sell() {
   <v-btn @click="onScan('.../oe1q37fqumvu7n4')">TEST</v-btn>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
-      <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false"> 
-      </v-btn>
+      <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false" /> 
       <v-card-title class="mx-auto">{{ id }}</v-card-title>
-      <v-btn class="mx-auto" width="128px" color="success" @click="sell()">Verkaufen</v-btn>
+      <v-card-text v-if="ticket.sold" class="mx-auto">
+        Ticket bereits verkauft!
+      </v-card-text>
+      <v-btn class="mx-auto" width="128px" color="success" :disabled="ticket.sold" @click="sell()">Verkaufen</v-btn>
     </v-card>
   </v-dialog>
 </template>

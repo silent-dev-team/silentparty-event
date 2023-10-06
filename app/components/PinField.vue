@@ -1,6 +1,10 @@
 <script setup lang="ts">
 
+const props = defineProps({
+  reset: Boolean
+});
 const emit = defineEmits(['update']);
+
 
 let pins = $ref(['', '', '', '']);
 let inputRefs = $ref<any[]>([]);
@@ -19,6 +23,19 @@ function handleInput(index:number) {
     emit('update', pins.join(''));
   }
 }
+
+function resetPins() {
+  pins = ['', '', '', ''];
+  inputRefs[0]?.focus();
+}
+
+onMounted(() => {
+  inputRefs[0]?.focus();
+});
+
+watch(() => props.reset, () => {
+  resetPins();
+});
 
 </script>
 
