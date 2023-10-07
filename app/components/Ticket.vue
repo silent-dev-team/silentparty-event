@@ -8,7 +8,8 @@ const props = defineProps({
   }
 });
 
-const appConfig = useAppConfig();
+const runtimeConfig = useRuntimeConfig();
+const pb_url = runtimeConfig.public.pocketbase;
 
 const pb = usePocketbase();
 
@@ -47,7 +48,7 @@ async function refreshTicket() {
   if (pb.authStore.isAdmin) {
     ticket = await pb.collection('tickets').getOne<RecordModel & Ticket>(props.id);
   } else {
-    ticket = await fetch(`${appConfig.pocketbase.url}/api/collections/tickets/records/${props.id}?pin=${ticketPin}`)
+    ticket = await fetch(`${pb_url}/api/collections/tickets/records/${props.id}?pin=${ticketPin}`)
       .then(res => {
         if (res.status === 401) {
           showPinDialog = true;

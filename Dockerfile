@@ -4,6 +4,7 @@ FROM node:20 as nuxt-builder
 
 WORKDIR /builder
 
+
 COPY ./package*.json ./
 COPY ./yarn.lock yarn.lock
 
@@ -12,6 +13,7 @@ RUN yarn
 
 ADD ./app ./app
 
+ENV NUXT_POCKETBASE_URL ""
 RUN yarn build:nuxt
 
 # BUILD POCKTBASE WITH SERVABLE TO BINARY
@@ -28,9 +30,11 @@ RUN go build -o pocketnuxt ./pocketbase/.
 
 # SERVE PROJECT
 FROM debian:latest
+RUN apt update && apt upgrade -y && apt install -y ca-certificates iptables && rm -rf /var/lib/apt/lists/*
+# RUN iptables -A INPUT -p tcp --dport 80 -j ACCEPT
 WORKDIR /
 COPY --from=go-builder /builder/pocketnuxt /pocketnuxt
 RUN chmod +x /pocketnuxt
-EXPOSE 8090
-#USER nonroot:nonroot
-CMD ["/pocketnuxt","serve","--http","127.0.0.1:8090"]
+EXPOSE 80
+# USER nonroot:nonroot
+CMD ["/pocketnuxt","serve","--http","0.0.0.0:80"]

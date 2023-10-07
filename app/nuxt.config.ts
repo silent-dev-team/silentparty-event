@@ -3,6 +3,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   //srcDir: 'app/',
   ssr: false,
+  runtimeConfig: {
+    public: {
+      pocketbase: process.env.NUXT_POCKETBASE_URL || '',
+    }
+  },
   modules: [
     '@pinia/nuxt',
     '@vue-macros/nuxt',

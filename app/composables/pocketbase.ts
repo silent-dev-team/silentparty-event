@@ -1,7 +1,8 @@
 import PocketBase from 'pocketbase'
 
-const appConfig = useAppConfig()
-const pb = new PocketBase(appConfig.pocketbase.url)
+const runtimeConfig = useRuntimeConfig();
+const url = runtimeConfig.public.pocketbase as string
+const pb = new PocketBase(url)
 
 export const usePocketbase = () => {
     return pb

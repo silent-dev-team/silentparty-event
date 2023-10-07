@@ -1,10 +1,12 @@
+version: '3'
+
 services:
   pocketbase:
-    build: ./
+    build: .
     #volumes:
     #  - db:/pb_data/
     ports:
-      - 80:8090
+      - "8080:80"
     environment:
       - ADMIN_EMAIL=dev@mail.com
       - ADMIN_PASSWORD=HalloTest123!
