@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   ssr: false,
   runtimeConfig: {
     public: {
-      pocketbase: process.env.NUXT_POCKETBASE_URL || '',
+      pocketbase: process.env.NUXT_POCKETBASE_URL,
     }
   },
   modules: [
