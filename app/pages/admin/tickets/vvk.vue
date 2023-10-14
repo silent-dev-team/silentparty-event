@@ -6,7 +6,8 @@ definePageMeta({
 
 //TODO: load pocketbase backend route
 
-const pb = usePocketbase()
+const pb = usePocketbase();
+const runtimeConfig = useRuntimeConfig();
 
 let vvkItem: RecordModel
 try {
@@ -43,7 +44,7 @@ async function sell() {
     }]
   }
   console.log(payload)
-  fetch('/api/v1/new-transactions', {
+  fetch(runtimeConfig.public.pocketbase+'/api/v1/new-transactions', {
     method: 'POST',
     body: JSON.stringify(payload),
     headers: {

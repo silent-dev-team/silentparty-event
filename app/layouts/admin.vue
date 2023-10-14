@@ -47,7 +47,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 const pb = usePocketbase()
 const router = useRouter()
 
@@ -70,7 +69,6 @@ function toTickets() {
 function toVVK() {
   router.push({ path: '/admin/tickets/vvk' })
 }
-
 </script>
 
 <script>
