@@ -11,7 +11,7 @@ const probs = defineProps({
   }
 });
 
-const emit = defineEmits(['paied', 'cancled']);
+const emit = defineEmits(['paied', 'cancled', 'update:shown']);
 
 let requested = $computed(() => `${ probs.requested }`)
 let show = $toRef(probs, 'shown');
