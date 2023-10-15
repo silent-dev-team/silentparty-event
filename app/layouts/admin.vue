@@ -28,7 +28,7 @@
       <v-btn value="tickets" @click="toTickets()">
         <v-icon>mdi-ticket-confirmation</v-icon>
 
-        <span>Tickets</span>
+        <span>AK</span>
       </v-btn>
 
       <v-btn value="vvk" @click="toVVK()">
@@ -40,7 +40,7 @@
       <v-btn value="kasse">
         <v-icon>mdi-cash-register</v-icon>
 
-        <span>Kasse</span>
+        <span>Bar</span>
       </v-btn>
     </v-bottom-navigation>
   </v-app>
