@@ -73,172 +73,6 @@ func init() {
 					}
 			},
 			{
-					"id": "fnt1n74ihcaofvy",
-					"name": "tickets",
-					"type": "base",
-					"system": false,
-					"schema": [
-							{
-									"system": false,
-									"id": "s333zfqz",
-									"name": "firstName",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "lplzdwo6",
-									"name": "lastName",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "xyeebfdq",
-									"name": "street",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "ngmkp7br",
-									"name": "housenumber",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "khwbqnbd",
-									"name": "zipCode",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "so4dikq2",
-									"name": "place",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "f4hqk1fk",
-									"name": "email",
-									"type": "email",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"exceptDomains": null,
-											"onlyDomains": null
-									}
-							},
-							{
-									"system": false,
-									"id": "9rlcgjaz",
-									"name": "sold",
-									"type": "bool",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {}
-							},
-							{
-									"system": false,
-									"id": "s5qooewb",
-									"name": "filled",
-									"type": "bool",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {}
-							},
-							{
-									"system": false,
-									"id": "dkfgw3lf",
-									"name": "validated",
-									"type": "bool",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {}
-							},
-							{
-									"system": false,
-									"id": "opytsfoy",
-									"name": "used",
-									"type": "bool",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {}
-							},
-							{
-									"system": false,
-									"id": "qoicngue",
-									"name": "_pin",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": 4,
-											"max": 4,
-											"pattern": "^[0-9]{4}$"
-									}
-							}
-					],
-					"indexes": [],
-					"listRule": null,
-					"viewRule": "((filled = true && @request.query.pin = _pin) || filled = false) && sold = true",
-					"createRule": null,
-					"updateRule": "used = false",
-					"deleteRule": null,
-					"options": {}
-			},
-			{
 					"id": "nhw1dv5dnt6yxeh",
 					"name": "shop_items",
 					"type": "base",
@@ -406,6 +240,274 @@ func init() {
 					"indexes": [
 							"CREATE INDEX 'idx_86HZizz' ON 'positions' ('item')"
 					],
+					"listRule": null,
+					"viewRule": null,
+					"createRule": null,
+					"updateRule": null,
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "fnt1n74ihcaofvy",
+					"name": "tickets",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "s333zfqz",
+									"name": "firstName",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "lplzdwo6",
+									"name": "lastName",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "xyeebfdq",
+									"name": "street",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "ngmkp7br",
+									"name": "housenumber",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "khwbqnbd",
+									"name": "zipCode",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "so4dikq2",
+									"name": "place",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "f4hqk1fk",
+									"name": "email",
+									"type": "email",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"exceptDomains": null,
+											"onlyDomains": null
+									}
+							},
+							{
+									"system": false,
+									"id": "9rlcgjaz",
+									"name": "sold",
+									"type": "bool",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {}
+							},
+							{
+									"system": false,
+									"id": "s5qooewb",
+									"name": "filled",
+									"type": "bool",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {}
+							},
+							{
+									"system": false,
+									"id": "opytsfoy",
+									"name": "used",
+									"type": "bool",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {}
+							},
+							{
+									"system": false,
+									"id": "qoicngue",
+									"name": "_pin",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": 4,
+											"max": 4,
+											"pattern": "^[0-9]{4}$"
+									}
+							}
+					],
+					"indexes": [],
+					"listRule": null,
+					"viewRule": "((filled = true && @request.query.pin = _pin) || filled = false) && sold = true",
+					"createRule": null,
+					"updateRule": "used = false",
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "v0g7wdtfwzuwub4",
+					"name": "hp",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "8xg0splo",
+									"name": "qr",
+									"type": "number",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": 0,
+											"max": 500,
+											"noDecimal": false
+									}
+							},
+							{
+									"system": false,
+									"id": "yvyqami2",
+									"name": "defect",
+									"type": "bool",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {}
+							}
+					],
+					"indexes": [],
+					"listRule": null,
+					"viewRule": null,
+					"createRule": null,
+					"updateRule": null,
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "j0f467sad986x4i",
+					"name": "ticket_hp",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "y6xivbd0",
+									"name": "hp",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "v0g7wdtfwzuwub4",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": 1,
+											"displayFields": null
+									}
+							},
+							{
+									"system": false,
+									"id": "2f5dcizj",
+									"name": "ticket",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "fnt1n74ihcaofvy",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": 1,
+											"displayFields": null
+									}
+							},
+							{
+									"system": false,
+									"id": "4b8qpmez",
+									"name": "start",
+									"type": "date",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": "",
+											"max": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "iyyioazs",
+									"name": "end",
+									"type": "date",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": "",
+											"max": ""
+									}
+							}
+					],
+					"indexes": [],
 					"listRule": null,
 					"viewRule": null,
 					"createRule": null,
