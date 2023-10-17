@@ -158,8 +158,8 @@ func main() {
 				Name:    app.Settings().Meta.SenderName,
 			},
 			To:      []mail.Address{{Address: e.Record.GetString("email")}},
-			Subject: "Dein Ticket für die Silent Party",
-			HTML:    "<h1>Dein Ticket für die Silent Party</h1><p>Hallo " + e.Record.GetString("firstName") + ",</p><p>hier ist dein Ticket für die Silent Party.</p><p>Bitte bringe es ausgedruckt oder auf deinem Smartphone mit.</p><p>Wir freuen uns auf dich!</p><p>Dein Silent Party Team</p><p><img src=\"https://www.silentparty-hannover.de/images/logo.png\" alt=\"Silent Party Logo\" width=\"200\" height=\"200\"></p><p><a href=\"https://www.silentparty-hannover.de\">www.silentparty-hannover.de</a></p>",
+			Subject: "Dein personalisiertes Ticket für die Silent Party",
+			HTML:    "<h1>Herzlichen Glückwunsch zur Personalisierung</h1><p>Hallo " + e.Record.GetString("firstName") + ",</p><p>du hast dein Ticket für die Silentparty am 18.11.23 erfolgreich personalisiert.</p><p>Wir freuen uns auf dich!</p><p>Dein Silent Party Team</p><p><img src=\"https://www.silentparty-hannover.de/images/logo.png\" alt=\"Silent Party Logo\" width=\"200\" height=\"200\"></p><p><a href=\"https://www.silentparty-hannover.de\">www.silentparty-hannover.de</a></p>",
 			// bcc, cc, attachments and custom headers are also supported...
 		}
 
