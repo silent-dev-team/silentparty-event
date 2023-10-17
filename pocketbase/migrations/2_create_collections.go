@@ -338,7 +338,7 @@ func init() {
 					],
 					"indexes": [],
 					"listRule": null,
-					"viewRule": "((filled = true && @request.query.pin = _pin) || filled = false) && sold = true",
+					"viewRule": "@request.query.pin = _pin && sold = true",
 					"createRule": null,
 					"updateRule": "used = false",
 					"deleteRule": null,
