@@ -11,7 +11,7 @@ let inputRefs = $ref<any[]>([]);
 
 function handleInput(index:number) {
   const value = pins[index];
-  if (value && /^[0-9]$/.test(value)) {
+  if (value && /^[0-9]{1}$/.test(value)) {
     const nextIndex = index + 1;
     if (inputRefs[nextIndex]) {
       inputRefs[nextIndex]?.focus();
@@ -48,7 +48,7 @@ watch(() => props.reset, () => {
       v-model="pins[index]"
       @input="() => handleInput(index)"
       type="number"
-      pattern="\d*"
+      pattern="\d"
       :ref="el => (inputRefs[index] = el)"
       variant="outlined"
     ></v-text-field>
