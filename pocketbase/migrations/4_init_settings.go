@@ -28,7 +28,7 @@ func init() {
 		settings.Backups.CronMaxKeep = 30
 
 		settings.Backups.S3.Enabled = true
-		settings.Backups.S3.Endpoint = "s3.eu-central-1.amazonaws.com"
+		settings.Backups.S3.Endpoint = "http://s3.eu-central-1.amazonaws.com"
 		settings.Backups.S3.Bucket = "silentpartybackup"
 		settings.Backups.S3.Region = "eu-central-1"
 		settings.Backups.S3.AccessKey = utils.Getenv("S3_ACCESS_KEY")
