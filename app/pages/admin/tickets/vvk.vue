@@ -4,8 +4,6 @@ definePageMeta({
   layout: 'admin',
 });
 
-//TODO: load pocketbase backend route
-
 const pb = usePocketbase();
 const runtimeConfig = useRuntimeConfig();
 
@@ -34,7 +32,7 @@ async function onScan(url: string) {
 async function sell() {
   const updatedTicket = await pb.collection('tickets').update<TicketRecord>(id, {sold: true});
   if (!updatedTicket.sold) {
-    alert('Verkauf fehlgeschlagen')
+    alert('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden')
     return
   }
 
@@ -45,13 +43,17 @@ async function sell() {
     }]
   }
   console.log(payload)
-  fetch(runtimeConfig.public.pocketbase+'/api/v1/new-transactions', {
+  const res = await fetch(runtimeConfig.public.pocketbase+'/api/v1/new-transaction', {
     method: 'POST',
     body: JSON.stringify(payload),
     headers: {
       'Content-Type': 'application/json',
     },
   })
+  if (!res.ok) {
+    alert('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden')
+    return
+  }
   dialog = false
   reset()
 }
