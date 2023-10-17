@@ -47,7 +47,8 @@ watch(() => props.reset, () => {
       :key="index"
       v-model="pins[index]"
       @input="() => handleInput(index)"
-      type="numeric"
+      type="number"
+      pattern="\d*"
       :ref="el => (inputRefs[index] = el)"
       variant="outlined"
     ></v-text-field>
