@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"log"
-	"net/mail"
 	"strings"
 
 	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
@@ -15,7 +14,6 @@ import (
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
-	"github.com/pocketbase/pocketbase/tools/mailer"
 )
 
 //go:embed all:public
@@ -145,31 +143,31 @@ func main() {
 	})
 
 	// send mail after ticket is sold
-	app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
-		sold := e.Record.GetBool("sold")
-		filled := e.Record.GetBool("filled")
-		used := e.Record.GetBool("used")
-		if used || !sold || (sold && !filled) {
-			return nil
-		}
-		message := &mailer.Message{
-			From: mail.Address{
-				Address: app.Settings().Meta.SenderAddress,
-				Name:    app.Settings().Meta.SenderName,
-			},
-			To:      []mail.Address{{Address: e.Record.GetString("email")}},
-			Subject: "Dein personalisiertes Ticket für die Silent Party",
-			HTML:    "<h1>Herzlichen Glückwunsch zur Personalisierung</h1><p>Hallo " + e.Record.GetString("firstName") + ",</p><p>du hast dein Ticket für die Silentparty am 18.11.23 erfolgreich personalisiert.</p><p>Wir freuen uns auf dich!</p><p>Dein Silent Party Team</p><p><img src=\"https://www.silentparty-hannover.de/images/logo.png\" alt=\"Silent Party Logo\" width=\"200\" height=\"200\"></p><p><a href=\"https://www.silentparty-hannover.de\">www.silentparty-hannover.de</a></p>",
-			// bcc, cc, attachments and custom headers are also supported...
-		}
+	// app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
+	// 	sold := e.Record.GetBool("sold")
+	// 	filled := e.Record.GetBool("filled")
+	// 	used := e.Record.GetBool("used")
+	// 	if used || !sold || (sold && !filled) {
+	// 		return nil
+	// 	}
+	// 	message := &mailer.Message{
+	// 		From: mail.Address{
+	// 			Address: app.Settings().Meta.SenderAddress,
+	// 			Name:    app.Settings().Meta.SenderName,
+	// 		},
+	// 		To:      []mail.Address{{Address: e.Record.GetString("email")}},
+	// 		Subject: "Dein personalisiertes Ticket für die Silent Party",
+	// 		HTML:    "<h1>Herzlichen Glückwunsch zur Personalisierung</h1><p>Hallo " + e.Record.GetString("firstName") + ",</p><p>du hast dein Ticket für die Silentparty am 18.11.23 erfolgreich personalisiert.</p><p>Wir freuen uns auf dich!</p><p>Dein Silent Party Team</p><p><img src=\"https://www.silentparty-hannover.de/images/logo.png\" alt=\"Silent Party Logo\" width=\"200\" height=\"200\"></p><p><a href=\"https://www.silentparty-hannover.de\">www.silentparty-hannover.de</a></p>",
+	// 		// bcc, cc, attachments and custom headers are also supported...
+	// 	}
 
-		// send message
-		err := app.NewMailClient().Send(message)
-		if err != nil {
-			fmt.Println(err)
-		}
-		return err
-	})
+	// 	// send message
+	// 	err := app.NewMailClient().Send(message)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// 	return err
+	// })
 
 	/* SERVE */
 
