@@ -58,7 +58,6 @@ async function sell() {
 
 <template>
   <Scanner class="full-screen" @on-scan="onScan($event)"/>
-  <v-btn @click="onScan('.../oe1q37fqumvu7n4')">TEST</v-btn>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
       <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false" /> 

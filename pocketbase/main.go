@@ -26,6 +26,25 @@ func main() {
 
 	/* CUSTOM ENDPOINTS */
 
+	// check if ticket exists
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		e.Router.GET("/api/collections/tickets/exists/:id", func(c echo.Context) error {
+			id := c.PathParam("id")
+			ticket, err := app.Dao().FindRecordById("tickets", id)
+			if err != nil {
+				return err
+			}
+			sold := ticket.Get("sold")
+			if sold == nil || !sold.(bool) {
+				c.JSON(404, map[string]string{"error": "ticket not sold"})
+				return err
+			}
+			c.JSON(204, nil)
+			return nil
+		})
+		return nil
+	})
+
 	// create new transaction
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.POST("/api/v1/new-transaction", func(c echo.Context) error {
@@ -99,8 +118,12 @@ func main() {
 
 	// generate pin
 	app.OnRecordBeforeCreateRequest("tickets").Add(func(e *core.RecordCreateEvent) error {
+		oldPin := e.Record.Get("_pin")
+		fmt.Println("old pin: ", oldPin)
+		if oldPin != "" {
+			return nil
+		}
 		pin := utils.GeneratePin()
-		fmt.Println(pin)
 		e.Record.Set("_pin", pin)
 		return nil
 	})

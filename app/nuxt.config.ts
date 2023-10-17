@@ -24,6 +24,13 @@ export default defineNuxtConfig({
     'vuetify/lib/styles/main.sass',
     '@mdi/font/css/materialdesignicons.min.css',
   ],
+  pwa: {
+    manifest: {
+      name: 'Silent App',
+      lang: 'de',
+      start_url: 'https://app.silentparty-hannover.de',
+    }
+  },
   build: {
     transpile: ['vuetify'],
   },

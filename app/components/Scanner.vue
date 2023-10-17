@@ -22,8 +22,7 @@ function setCamera(label: string) {
   localStorage.setItem('cam', label);
 }
 
-onMounted(() => {
-  
+onMounted(() => { 
   if (process.client) {
     QrScanner.listCameras(true).then(devices => {
       cams = devices;
@@ -60,20 +59,20 @@ localStorage.setItem('cam', JSON.stringify(results));
       </div>
       <v-btn 
           style="position: absolute; right: 1rem; top: 1rem;z-index: 100;"
-          color="primary"
+          color="transparent-white"
           icon="mdi-cog"
           size="large"
           @click="showSettings = true"
           >
         </v-btn>
     </div>
-    <div class="history">
+    <!-- <div class="history">
       <div v-for="item, i in results">
         <v-card :class="`mx-auto my-1 text-center toast ${i==0?'big':'0'}`" :style="`background-color: rgba(255,255,255,${1 - i*0.2}); color: rgba(1,1,1,${1 - i*0.15});`">
           <p>{{ item }}</p>
         </v-card>
       </div>
-    </div>
+    </div> -->
     <v-dialog
         v-model="showSettings"
         width="auto"

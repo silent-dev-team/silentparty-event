@@ -63,7 +63,7 @@ function logout() {
 }
 
 function toTickets() {
-  router.push({ path: '/admin/tickets' })
+  router.push({ path: '/admin/tickets/ak' })
 }
 
 function toVVK() {

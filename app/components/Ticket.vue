@@ -16,6 +16,7 @@ const pb = usePocketbase();
 let wrongPinError = $ref(false);
 let dataChanged = $ref(false);
 
+let hideAll = $ref(false);
 let renderComponent = $ref(true);
 
 let form = $ref<CustomerData>({
@@ -91,22 +92,36 @@ async function updateTicket() {
   dataChanged = true;
 }
 
+const resp = await fetch(`${pb_url}/api/collections/tickets/exists/${props.id}`)
+if (resp.status === 404) {
+  hideAll = true;
+} 
+
 if (pb.authStore.isAdmin) await refreshTicket();
+
 </script>
 
 <template>
+  <v-card v-if="hideAll" color="grey" class="mx-auto text-center">
+    <v-card-title >
+      Kein Ticket gefunden.
+    </v-card-title>
+    <v-card-text>
+      Versuche deine Ticket erneut zu scannen oder wende dich an das Team unter <br> info@silentparty-hannover.de
+    </v-card-text>
+  </v-card>
   <v-snackbar v-model="wrongPinError" color="error" location="top">
     <span>Pin falsch</span>
   </v-snackbar>
   <v-snackbar v-model="dataChanged" color="success" location="top">
     <span>Daten gespeichert</span>
   </v-snackbar>
-  <v-dialog v-model="showPinDialog" :persistent="true">
+  <v-dialog v-if="!hideAll" v-model="showPinDialog" :persistent="true">
     <v-card class="mx-auto pa-10">
       <PinField @update="handlePin($event)" :reset="ticketPin === ''"/>
     </v-card>
   </v-dialog>
-  <v-card class="ma-5 pa-5 mx-auto" maxWidth="800px">
+  <v-card v-if="!hideAll" class="ma-5 pa-5 mx-auto" maxWidth="800px">
     <v-card-title>
       <h1>Ticket {{ id }}</h1>
     </v-card-title>
