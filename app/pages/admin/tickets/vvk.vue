@@ -20,6 +20,7 @@ try {
 let dialog = $ref(false)
 let id = $ref('')
 let ticket:TicketRecord
+let resetScanner = $ref(false)
 
 async function onScan(url: string) {
   console.log(url)
@@ -52,15 +53,21 @@ async function sell() {
     },
   })
   dialog = false
+  reset()
+}
+
+function reset() {
+  resetScanner = true
+  setTimeout(() => resetScanner = false, 100)
 }
 
 </script>
 
 <template>
-  <Scanner class="full-screen" @on-scan="onScan($event)"/>
+  <Scanner class="full-screen" :reset="resetScanner" @on-scan="onScan($event)"/>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
-      <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false" /> 
+      <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false; reset()" /> 
       <v-card-title class="mx-auto">{{ id }}</v-card-title>
       <v-card-text v-if="ticket.sold" class="mx-auto">
         Ticket bereits verkauft!
