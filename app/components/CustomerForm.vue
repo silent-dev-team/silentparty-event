@@ -29,7 +29,7 @@ let form = $ref<CustomerData>(props.modelValue);
 
 // Regex-Patterns 
 const zipCodePattern = /^\d{5}$/; 
-const namePattern = /^[A-Za-zäöüÄÖÜß\-~']+$/;
+const namePattern = /^[A-Za-zäöüÄÖÜß\-~'_ !?]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //passt noch nicht
 
 let errors = $ref(false);
@@ -38,6 +38,14 @@ let success = $ref(false);
 async function submit(form: CustomerData) {
   errors = false;
   success = false;
+
+  // trimmen
+  form.email = form.email.toLowerCase().trim();
+  form.firstName = form.firstName.trim();
+  form.lastName = form.lastName.trim();
+  form.place = form.place.trim();
+  form.street = form.street.trim();
+  form.housenumber = form.housenumber.trim();
 
   // Validierung der Postleitzahl
   if (!zipCodePattern.test(form.zipCode)) {
