@@ -2,6 +2,10 @@
 import QrScanner from 'qr-scanner';
 import { VideoHTMLAttributes } from 'nuxt/dist/app/compat/capi';
 
+const props = defineProps({
+  reset: Boolean
+});
+
 const emit = defineEmits<{
   onScan: [value: string]
   results: [value: string[]]
@@ -44,8 +48,16 @@ onMounted(() => {
   }
 });
 
+function clearHistory() {
+  results = [];
+}
+
 onUnmounted(() => {
   qrScanner?.stop();
+});
+
+watch(() => props.reset, () => {
+  if (props.reset) clearHistory();
 });
 
 localStorage.setItem('cam', JSON.stringify(results));
