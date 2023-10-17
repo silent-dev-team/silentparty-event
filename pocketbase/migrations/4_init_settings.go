@@ -18,7 +18,7 @@ func init() {
 
 		settings.Meta.SenderName = "Silent Party Hannover"
 		settings.Meta.SenderAddress = "info@silentparty-hannover.de"
-		settings.Smtp.Enabled = true
+		settings.Smtp.Enabled = false // true
 		settings.Smtp.Host = "smtp.goneo.de"
 		settings.Smtp.Port = 587
 		settings.Smtp.Username = "info@silentparty-hannover.de"
