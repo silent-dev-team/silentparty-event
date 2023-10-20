@@ -25,19 +25,19 @@
         <span>KH</span>
       </v-btn>
 
-      <v-btn value="tickets" @click="toTickets()">
+      <v-btn value="tickets" @click="router.push({ path: '/admin/tickets/ak' })">
         <v-icon>mdi-ticket-confirmation</v-icon>
 
         <span>AK</span>
       </v-btn>
 
-      <v-btn value="vvk" @click="toVVK()">
+      <v-btn value="vvk" @click="router.push({ path: '/admin/tickets/vvk' })">
         <v-icon>mdi-ticket</v-icon>
 
         <span>VVK</span>
       </v-btn>
 
-      <v-btn value="kasse">
+      <v-btn value="bar" @click="router.push({ path: '/admin/bar' })">
         <v-icon>mdi-cash-register</v-icon>
 
         <span>Bar</span>
@@ -60,14 +60,6 @@ if (!pb.authStore.token) {
 function logout() {
   pb.authStore.clear()
   window.location.reload()
-}
-
-function toTickets() {
-  router.push({ path: '/admin/tickets/ak' })
-}
-
-function toVVK() {
-  router.push({ path: '/admin/tickets/vvk' })
 }
 </script>
 
