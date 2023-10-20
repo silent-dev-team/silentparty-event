@@ -17,8 +17,10 @@ export default defineNuxtConfig({
     autoImports: [
       // automatically imports `defineStore`
       'defineStore', // import { defineStore } from 'pinia'
-      ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
+      ['defineStore', 'definePiniaStore', ], // import { defineStore as definePiniaStore } from 'pinia'
+      'storeToRefs'
     ],
+
   },
   css: [
     'vuetify/lib/styles/main.sass',
@@ -57,5 +59,6 @@ export default defineNuxtConfig({
     addons: {
       vueTemplate: true
     },
+    dirs: ["stores"],
   },
 })
