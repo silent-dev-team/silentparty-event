@@ -3,10 +3,14 @@ const store1 = useKasseStore1();
 const store2 = useKasseStore2();
 
 let { count } = $(storeToRefs(store2));
+// das $() macht aus ref() ein $ref() für die Konsistenz
 
 function increment() {
   count++;
 }
+
+// ich finde store1 eigentlich ganz cool, weil er etwas übersichtlicher ist
+// würde den state dann privat lassen und nur über getter und actions zugreifen
 </script>
 
 <template>
