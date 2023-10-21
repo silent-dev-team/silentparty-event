@@ -9,7 +9,7 @@ definePageMeta({
 <template>
   <div>
     <h1>Bar</h1>
+    <Kasse />
     <KassePiniaEnxample />
-    <!-- <Kasse /> -->
   </div>
 </template>
