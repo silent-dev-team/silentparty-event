@@ -7,6 +7,6 @@ let val = $ref(true)
 <template>
   <div>
     <h1>Kasse</h1>
-    <KasseOrderDrawer/>
+    <KassePiniaExample />
   </div>
 </template>

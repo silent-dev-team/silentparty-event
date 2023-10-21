@@ -30,6 +30,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.17.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.22.0 // indirect
 	github.com/aws/smithy-go v1.14.2 // indirect
+	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/domodwyer/mailyak/v3 v3.6.2 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -43,6 +44,7 @@ require (
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/google/wire v0.5.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
+	github.com/howeyc/fsnotify v0.9.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
@@ -58,6 +60,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
+	github.com/zzwx/fresh v1.3.4 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	gocloud.dev v0.34.0 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
@@ -77,6 +80,7 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
 	google.golang.org/grpc v1.58.2 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/uint128 v1.3.0 // indirect
 	modernc.org/cc/v3 v3.41.0 // indirect
 	modernc.org/ccgo/v3 v3.16.15 // indirect

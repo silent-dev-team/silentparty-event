@@ -10,6 +10,5 @@ definePageMeta({
   <div>
     <h1>Bar</h1>
     <Kasse />
-    <KassePiniaEnxample />
   </div>
 </template>

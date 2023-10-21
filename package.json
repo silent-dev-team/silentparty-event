@@ -7,7 +7,7 @@
     "dev:nuxt": "nuxt dev ./app --host --dotenv .env.local",
     "dev:pocketbase": "fresh",
     "preview": "nuxt preview ./app",
-    "postinstall": "nuxt prepare ./app",
+    "postinstall": "nuxt prepare ./app && go install github.com/zzwx/fresh@latest",
     "build:nuxt": "nuxt generate ./app",
     "build:pocketbase": "go build -o pocketnuxt ./pocketbase/.",
     "build": "yarn build:nuxt && cp -R ./app/.output/public ./pocketbase && yarn build:pocketbase"
