@@ -26,6 +26,8 @@ RUN go mod download
 ADD ./pocketbase ./pocketbase
 
 COPY --from=nuxt-builder ./builder/app/.output/public ./pocketbase/public
+# COPY --from=nuxt-builder ./builder/app/.output/public/assets ./pocketbase/assets
+
 RUN go build -o pocketnuxt ./pocketbase/.
 
 # SERVE PROJECT

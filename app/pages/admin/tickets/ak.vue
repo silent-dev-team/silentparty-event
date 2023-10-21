@@ -7,7 +7,6 @@ definePageMeta({
 });
 
 const pb = usePocketbase();
-// const checkout = useCheckout();
 
 let akItem: RecordModel
 try {
@@ -16,6 +15,16 @@ try {
   alert('AK Ticket nicht in Datenbank gefunden')
   throw e
 }
+
+let pfandItem: RecordModel
+try {
+  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand"')
+} catch (e) {
+  alert('Pfand nicht in Datenbank gefunden')
+  throw e
+}
+
+let realPfandPrice = $computed(() => -pfandItem.price)
 
 let scannerReset = $ref(false);
 
@@ -50,6 +59,8 @@ async function onScan(s:string) {
     loadCustomerDataFromForm(s);
   }
 
+  //TODO: dialog abbrechen können
+
   if (re.hp.test(s) && !hp) {
     if (!ticket) {
       alert('Bitte zuerst Ticket scannen')
@@ -70,7 +81,8 @@ async function onScan(s:string) {
       return
     }
     alert(`Kopfhörer erfolgreich gescannt ${(hp as HeadPhoneRecord).qr}`)
-    linkTicketToHP();
+    await linkTicketToHP();
+    reset();
   }
 }
 
@@ -95,7 +107,16 @@ function loadCustomerDataFromForm(s:string){
 async function loadCustomerDataFromTicket(s:string){
   const id = s.split('/').pop()!;
   ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
-  //customerData = transformTicketToCustomerData(ticket);
+  if (!ticket) {
+    alert('Ticket nicht in Datenbank gefunden')
+    resetScanner();
+    return
+  }
+  if (ticket.used) {
+    alert('Ticket wurde bereits benutzt')
+    reset()
+    return
+  }
   dialog = true;
 }
 
@@ -184,5 +205,5 @@ function reset(){
       text="Der Code ist nicht Valide" 
     />
   </v-dialog>
-  <CashCalculator :requested="akItem.price" :shown="cashCalc" @paied="sell" @cancled="reset()"/>
+  <CashCalculator :requested="akItem.price + realPfandPrice" :shown="cashCalc" @paied="sell" @cancled="reset()"/>
 </template>

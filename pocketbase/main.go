@@ -288,8 +288,14 @@ func main() {
 	/* SERVE */
 
 	// serve frontend
+
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/*", apis.StaticDirectoryHandler(echo.MustSubFS(public, "public"), true))
+		return nil
+	})
+
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		e.Router.GET("/assets/*", apis.StaticDirectoryHandler(echo.MustSubFS(public, "public/assets"), true))
 		return nil
 	})
 
@@ -297,7 +303,6 @@ func main() {
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 func calculateTotal(positions []*models.Record) float64 {

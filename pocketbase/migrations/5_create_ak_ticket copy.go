@@ -29,5 +29,6 @@ func init() {
 			record.Set("tags", []string{"ak", "ticket"})
 
 			return dao.SaveRecord(record)
+
 		}, nil)
 }

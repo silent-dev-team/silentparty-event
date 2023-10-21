@@ -3,4 +3,4 @@
 **/dist
 **/.output
 **/.nuxt
-**/public
+**/pocketbase/public

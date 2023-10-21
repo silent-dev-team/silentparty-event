@@ -1,5 +1,5 @@
 
 export enum Overlay {
-  Ticket = "/overlays/frame-ticket.svg",
-  HP = "/overlays/frame-hp.svg",
+  Ticket = "/assets/overlays/frame-ticket.svg",
+  HP = "/assets/overlays/frame-hp.svg",
 }

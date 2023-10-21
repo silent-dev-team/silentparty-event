@@ -44,6 +44,7 @@ async function onScan(s:string) {
     resetScanner();
   }
   dialog = true;
+  resetScanner();
 }
 
 let status = $computed(() => {
