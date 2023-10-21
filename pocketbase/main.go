@@ -10,10 +10,12 @@ import (
 	"github.com/silent-dev-team/silentparty-event/pocketbase/utils"
 
 	"github.com/labstack/echo/v5"
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/tools/types"
 )
 
 //go:embed all:public
@@ -94,6 +96,47 @@ func main() {
 		return nil
 	})
 
+	// unlink hp from ticket
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		e.Router.POST("/api/collections/ticket_hp/unlink", func(c echo.Context) error {
+			unlink := new(Unlink)
+			err := c.Bind(&unlink)
+			if err != nil {
+				c.JSON(400, map[string]string{"error": "bad request"})
+				return err
+			}
+			hp, err := app.Dao().FindFirstRecordByFilter("hp", "qr={:qr}", dbx.Params{"qr": unlink.QR})
+			if err != nil {
+				c.JSON(404, map[string]string{"error": "headphone not found"})
+				return err
+			}
+			ticketHp, err := app.Dao().FindFirstRecordByFilter("ticket_hp", "hp={:hp} && end = null", dbx.Params{"hp": hp.Id})
+			if err != nil {
+				c.JSON(404, map[string]string{"error": "relation not found"})
+				return err
+			}
+			ticketHp.Set("end", types.NowDateTime())
+			err = app.Dao().SaveRecord(ticketHp)
+
+			if err != nil {
+				c.JSON(500, map[string]string{"error": "internal server error - could not save end time"})
+				return err
+			}
+
+			hp.Set("lent", false)
+			err = app.Dao().SaveRecord(hp)
+
+			if err != nil {
+				c.JSON(500, map[string]string{"error": "internal server error - could not undlent hp"})
+				return err
+			}
+
+			c.JSON(200, ticketHp)
+			return nil
+		})
+		return nil
+	})
+
 	/* CUSTOM HOOKS */
 
 	// filter fields that start with _
@@ -139,6 +182,79 @@ func main() {
 		app.Dao().ExpandRecord(e.Record, []string{"positions"}, nil)
 		positions := e.Record.ExpandedAll("positions")
 		e.Record.Set("total", calculateTotal(positions))
+		return nil
+	})
+
+	app.OnRecordBeforeCreateRequest("ticket_hp").Add(func(e *core.RecordCreateEvent) error {
+		app.Dao().ExpandRecord(e.Record, []string{"hp", "ticket"}, nil)
+		hp := e.Record.ExpandedOne("hp")
+		ticket := e.Record.ExpandedOne("ticket")
+		if hp.GetBool("lent") {
+			return fmt.Errorf("headphone is already lent")
+		}
+		if !ticket.GetBool("sold") {
+			return fmt.Errorf("ticket is not sold")
+		}
+		if ticket.GetBool("used") {
+			return fmt.Errorf("ticket is already used")
+		}
+		//TODO: if any link is open, dont allow a new one
+		return nil
+	})
+
+	// set hp to lent if it is linked to a ticket
+	app.OnRecordAfterCreateRequest("ticket_hp").Add(func(e *core.RecordCreateEvent) error {
+		hpId := e.Record.GetString("hp")
+		ticketId := e.Record.GetString("ticket")
+		if hpId == "" || ticketId == "" {
+			return nil
+		}
+		e.Record.Set("start", types.NowDateTime())
+		app.Dao().SaveRecord(e.Record)
+
+		hp, err := app.Dao().FindRecordById("hp", hpId)
+		if err != nil {
+			return err
+		}
+		hp.Set("lent", true)
+		err = app.Dao().SaveRecord(hp)
+		if err != nil {
+			return err
+		}
+
+		ticket, err := app.Dao().FindRecordById("tickets", ticketId)
+		if err != nil {
+			return err
+		}
+		ticket.Set("used", true)
+		err = app.Dao().SaveRecord(ticket)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	// set hp to not lent if it is unlinked from a ticket
+	app.OnRecordAfterUpdateRequest("ticket_hp").Add(func(e *core.RecordUpdateEvent) error {
+		endTime := e.Record.GetDateTime("end")
+		if endTime.IsZero() {
+			return nil
+		}
+		hpId := e.Record.GetString("hp")
+		ticketId := e.Record.GetString("ticket")
+		if hpId == "" || ticketId == "" {
+			return nil
+		}
+		hp, err := app.Dao().FindRecordById("hp", hpId)
+		if err != nil {
+			return err
+		}
+		hp.Set("lent", false)
+		err = app.Dao().SaveRecord(hp)
+		if err != nil {
+			return err
+		}
 		return nil
 	})
 

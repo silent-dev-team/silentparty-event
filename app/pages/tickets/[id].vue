@@ -23,6 +23,8 @@ function logout() {
     <v-btn @click="logout()">Logout</v-btn>
   </div>
   <div class="bg-blue-grey-lighten-5" style="min-height: 100vh; width: 100%; padding: 3rem;">
-    <Ticket :id="id" />
+    <div class="ma-2 pa-2 mx-auto">
+      <Ticket :id="id" />
+    </div>
   </div>
 </template>

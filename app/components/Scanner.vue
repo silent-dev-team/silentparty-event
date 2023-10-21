@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import QrScanner from 'qr-scanner';
-import { VideoHTMLAttributes } from 'nuxt/dist/app/compat/capi';
 
 const props = defineProps({
-  reset: Boolean
+  reset: {
+    type: Boolean,
+    default: false
+  },
+  overlaypath: {
+    type: String,
+    default: ''
+  }
 });
 
 const emit = defineEmits<{
@@ -66,8 +72,13 @@ localStorage.setItem('cam', JSON.stringify(results));
 <template>
   <div>
     <div class="frame">
-      <div :class="`frame ${flip?'flip':''}`">
-        <video id="qr-video" :class="`video ${blink?'blink':''}`"></video>
+      <div style="position: relative;">
+        <div :class="`frame ${flip?'flip':''}`">
+          <video id="qr-video" :class="`video ${blink?'blink':''}`"></video>
+        </div>
+        <div style="width: 100%; height: 80%; position: absolute; top:0;left:0;" class="d-flex justify-center align-center">
+          <img :src="`${props.overlaypath}`" style="width:60vw; max-width: 50%; aspect-ratio: 1/1; max-height: min(50%,50vh);">
+        </div>
       </div>
       <v-btn 
           style="position: absolute; right: 1rem; top: 1rem;z-index: 100;"

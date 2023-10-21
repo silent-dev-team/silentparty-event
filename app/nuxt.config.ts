@@ -59,6 +59,6 @@ export default defineNuxtConfig({
     addons: {
       vueTemplate: true
     },
-    dirs: ["stores"],
+    dirs: ["stores", "types"],
   },
 })

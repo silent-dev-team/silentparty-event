@@ -1,7 +1,8 @@
 import { declare } from '../.nuxt/types/imports';
 import { RecordModel } from 'pocketbase';
+import { Ticket } from '../.nuxt/components';
 declare global {
-  interface CustomerData {
+  interface ICustomerData {
     firstName: string;
     lastName: string;
     street: string;
@@ -11,12 +12,37 @@ declare global {
     email: string;
   }
 
-  interface Ticket extends CustomerData {
+  interface ITicket extends ICustomerData {
     sold: boolean;
     validated:  boolean;
     used: boolean;
     filled: boolean;
   }
 
-  type TicketRecord = RecordModel & Ticket;
+  type TicketRecord = RecordModel & ITicket;
+
+  interface IShopItem {
+    title: string;
+    price: number;
+    description: string;
+    image?: string;
+    tags?: string[];
+  }
+
+  type ShopItemRecord = RecordModel & IShopItem;
+
+  interface IHeadPhone {
+    qr: string;
+    defect: boolean;
+    lent: boolean;
+  }
+
+  type HeadPhoneRecord = RecordModel & IHeadPhone;
+
+  interface ITicketHeadPhone {
+    hp: string;
+    ticket: string;
+  }
+
+  type TicketHeadPhoneRecord = RecordModel & ITicketHeadPhoneTicket;
 }

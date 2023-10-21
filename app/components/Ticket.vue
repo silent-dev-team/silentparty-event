@@ -5,8 +5,16 @@ const props = defineProps({
   id: {
     type: String,
     required: true
+  },
+  submitText: {
+    type: String,
+    default: 'Speichern'
   }
 });
+
+const emit = defineEmits<{
+  update: [value: void]
+}>()
 
 const runtimeConfig = useRuntimeConfig();
 const pb_url = runtimeConfig.public.pocketbase;
@@ -19,15 +27,7 @@ let dataChanged = $ref(false);
 let hideAll = $ref(false);
 let renderComponent = $ref(true);
 
-let form = $ref<CustomerData>({
-  firstName: '',
-  lastName: '',
-  street: '',
-  housenumber: '',
-  zipCode: '',
-  place: '',
-  email: '',
-});
+let form = $ref<ICustomerData>(initCustomerData());
 
 let ticketPin = $ref('');
 
@@ -45,9 +45,9 @@ function wrongPin() {
 }
 
 async function refreshTicket() {
-  let ticket:RecordModel & Ticket;
+  let ticket:RecordModel & ITicket;
   if (pb.authStore.isAdmin) {
-    ticket = await pb.collection('tickets').getOne<RecordModel & Ticket>(props.id);
+    ticket = await pb.collection('tickets').getOne<RecordModel & ITicket>(props.id);
   } else {
     ticket = await fetch(`${pb_url}/api/collections/tickets/records/${props.id}?pin=${ticketPin}`)
       .then(res => {
@@ -68,15 +68,7 @@ async function refreshTicket() {
         ticketPin = '';
       });
   }
-  form = {
-    firstName: ticket.firstName,
-    lastName: ticket.lastName,
-    street: ticket.street,
-    housenumber: ticket.housenumber,
-    zipCode: ticket.zipCode,
-    place: ticket.place,
-    email: ticket.email,
-  };
+  form = transformTicketToCustomerData(ticket);
   renderComponent = false;
   nextTick(() => {
     renderComponent = true;
@@ -84,12 +76,13 @@ async function refreshTicket() {
 }
 
 async function updateTicket() {
-  let payload = form as Partial<Ticket>;
+  let payload = form as Partial<ITicket>;
   payload.filled = true;
-  const rec = await pb.collection('tickets').update<RecordModel & Ticket>(props.id, payload);
+  const rec = await pb.collection('tickets').update<RecordModel & ITicket>(props.id, payload);
   console.log(rec);
   await refreshTicket();
   dataChanged = true;
+  emit('update');
 }
 
 const resp = await fetch(`${pb_url}/api/collections/tickets/exists/${props.id}`)
@@ -121,13 +114,13 @@ if (pb.authStore.isAdmin) await refreshTicket();
       <PinField @update="handlePin($event)" :reset="ticketPin === ''"/>
     </v-card>
   </v-dialog>
-  <v-card v-if="!hideAll" class="ma-5 pa-5 mx-auto" maxWidth="800px">
+  <v-card v-if="!hideAll" maxWidth="800px">
     <v-card-title>
       <h1>Ticket {{ id }}</h1>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text v-if="renderComponent">
-      <CustomerForm v-model="form" @submit="updateTicket()" submitText="Daten speichern"/>
+      <CustomerForm v-model="form" @submit="updateTicket()" :submitText="submitText"/>
     </v-card-text>
   </v-card>
 </template>

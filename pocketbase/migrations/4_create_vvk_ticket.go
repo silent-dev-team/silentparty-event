@@ -17,6 +17,11 @@ func init() {
 				return err
 			}
 
+			rec, _ := dao.FindFirstRecordByFilter("shop_items", "title = 'VVK Ticket'")
+			if rec != nil {
+				return nil
+			}
+
 			record := models.NewRecord(collection)
 			record.Set("title", "VVK Ticket")
 			record.Set("description", "Ticket für den Vorverkauf")

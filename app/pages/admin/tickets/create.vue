@@ -7,15 +7,7 @@ const pb = usePocketbase()
 
 let showScanner = $ref(false)
 
-let form = $ref<CustomerData>({
-  firstName: '',
-  lastName: '',
-  street: '',
-  housenumber: '',
-  zipCode: '',
-  place: '',
-  email: '',
-});
+let form = $ref<ICustomerData>(initCustomerData());
 
 function loadDataFromQRString(s:string){
   const content = JSON.parse(s)

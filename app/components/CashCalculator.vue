@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const probs = defineProps({
+const props = defineProps({
   requested: {
     type: Number,
     required: true
@@ -13,15 +13,14 @@ const probs = defineProps({
 
 const emit = defineEmits(['paied', 'cancled', 'update:shown']);
 
-let requested = $computed(() => `${ probs.requested }`)
-let show = $toRef(probs, 'shown');
+let requested = $computed(() => `${ props.requested }`)
+let show = $toRef(props, 'shown');
 
-let sum = $ref("");
+let sum = $ref("0");
 let page = $ref(0);
-sum = "0";
 
 function add(val: string) {
-  sum += val;
+  sum += val+"";
 }
 function reset() {
   sum = "0";
@@ -30,14 +29,33 @@ function reset() {
 
 <template>
   <v-dialog fullscreen transition="dialog-bottom-transition" v-model="show">
-    <transition name="fade" mode="out-in">
-
-      <v-card class="wrapper" height="100vh" v-if="page == 0" :key="1">
+    <transition name="fade">
+      <v-card class="wrapper" height="100vh"  :key="1">
         <div class="display">
-          <h2>Zurück</h2>
-          <h1 style="font-size: 50px; align-self: flex-end">
-            {{ (parseInt(sum) / 100).toFixed(2) }} €
-          </h1>
+          <div class="w-100 d-flex justify-space-between text-green-darken-3 overflow-hidden text-no-wrap">
+            <h2>
+              Preis
+            </h2>
+            <h2 >
+              {{ (parseFloat(requested)).toFixed(2) }} €
+            </h2>
+          </div>
+          <div class="w-100 d-flex justify-space-between overflow-hidden text-no-wrap">
+            <h1>
+              Gegeben
+            </h1>
+            <h1 style=" align-self: flex-end">
+              {{ (parseInt(sum) / 100).toFixed(2) }} €
+            </h1>
+          </div>
+          <div class="w-100 d-flex justify-space-between overflow-hidden text-red-darken-3 text-no-wrap">
+            <h2>
+              Rückgeld
+            </h2>
+            <h2 style=" align-self: flex-end">
+              {{ (( Math.min(parseFloat(requested) - parseInt(sum)/ 100,0)) ).toFixed(2) }} €
+            </h2>
+          </div>
         </div>
         <div class="keypad_wrapper">
           <div class="row" v-for="row in [
@@ -56,41 +74,19 @@ function reset() {
             <div class="key" @click="add('00')">00</div>
           </div>
         </div>
-        <v-btn @click="page = 1" flat color="green" :disabled="parseInt(sum) / 100 < parseInt(requested)">Checkout
+        <div class="d-flex justify-space-between w-100 mt-3 px-2" style="max-width: 340px;">
+        <v-btn @click="reset();emit('cancled')" flat color="red" variant="outlined">cancle
+          <v-icon style="margin-left: 5px" icon="mdi-close-circle-outline">
+          </v-icon>
+        </v-btn>
+        <v-btn @click="reset();emit('paied')" flat color="green" :disabled="(parseInt(sum) / 100) < parseFloat(requested)">Checkout
           <v-icon style="margin-left: 5px" icon="mdi-arrow-right-bold-circle-outline">
-          </v-icon></v-btn>
+          </v-icon>
+        </v-btn>
+      </div>
       </v-card>
 
 
-      <v-card v-else height="100vh" class="wrapper" :key="2">
-        <div class="display">
-          <div class="table-row">
-            <div class="name">Kosten</div>
-            <div class="value"> {{ parseInt(requested).toFixed(2) }} €</div>
-
-
-          </div>
-          <div class="table-row">
-            <div class="name">gegeben</div>
-            <div class="value"> {{ (parseInt(sum) / 100).toFixed(2) }} €</div>
-
-          </div>
-          <div class="table-row">
-            <div class="name">rückgabe </div>
-            <div class="value"> {{ (parseInt(requested) - parseInt(sum) / 100).toFixed(2) }} € </div>
-
-
-          </div>
-
-        </div>
-        <v-btn @click="page = 0" flat color="orange">ändern
-          <v-icon style="margin-left: 5px" icon="mdi-alpha-x-circle-outline ">
-          </v-icon></v-btn>
-        <v-btn @click="page = 0; emit('paied')" flat color="green">Speichern
-          <v-icon style="margin-left: 5px" icon="mdi-alpha-x-circle-outline ">
-          </v-icon></v-btn>
-        wohoo
-      </v-card>
     </transition>
   </v-dialog>
 </template>
@@ -113,8 +109,9 @@ function reset() {
 }
 
 .display {
-  min-height: 80px;
+  min-height: 120px;
   width: 40%;
+  min-width: 300px;
   background-color: #ffffff;
   margin: 16px;
   border-radius: 5px;
@@ -135,21 +132,23 @@ function reset() {
 }
 
 .key {
-  margin: 20px;
-  width: 100px;
-  height: 100px;
+  margin: 15px;
+  width: 90px;
+  height: 90px;
   border-radius: 100px;
   background-color: #fff;
   align-items: center;
   font-size: 30px;
+  line-height: 10px;
   font-weight: bold;
   justify-content: center;
-  padding: 10px;
   display: flex;
   box-shadow: rgb(255, 254, 254) -10px -10px 40px -12px,
     rgba(0, 0, 0, 0.048) 5px 5px 20px 5px;
   transition: background 0.6s ease-out, color 0.6s ease-out;
 }
+
+
 
 .key:hover {
   cursor: pointer;
@@ -170,4 +169,38 @@ function reset() {
 }
 
 .keypad_wrapper {}
+
+h1{
+  font-size: 35px;
+}
+
+@media only screen and (max-width: 470px) {
+  h1{
+    font-size: min(9vw, 35px);
+  }
+
+  .key{
+    margin: 2%;
+    flex-grow:1;
+    width: 25vw;
+    height: auto;
+    padding: 0;
+    aspect-ratio: 1 / 1;
+    font-size: 20px;
+
+  }
+}
+@media only screen and (max-height: 722px) {
+
+  .key{
+    margin: 2%;
+    flex-grow:1;
+    width: 15vh;
+    height: auto;
+    padding: 0;
+    aspect-ratio: 1 / 1;
+    font-size: 20px;
+
+  }
+}
 </style>

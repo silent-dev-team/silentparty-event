@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { RecordModel } from 'pocketbase';
+
 definePageMeta({
   layout: 'admin',
 });
 
 const pb = usePocketbase();
-const runtimeConfig = useRuntimeConfig();
+// const checkout = useCheckout();
 
 let vvkItem: RecordModel
 try {
-  vvkItem = await pb.collection('shop_items').getFirstListItem('title = "VVK Ticket"')
+  vvkItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "VVK Ticket"')
 } catch (e) {
   alert('VVK Ticket nicht in Datenbank gefunden')
   throw e
@@ -35,27 +36,15 @@ async function sell() {
     alert('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden')
     return
   }
-
-  const payload = {
-    positions: [{
-      amount: 1,
-      itemId: vvkItem.id,
-    }]
-  }
-  console.log(payload)
-  const res = await fetch(runtimeConfig.public.pocketbase+'/api/v1/new-transaction', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-  if (!res.ok) {
+  pb.checkout([{
+    amount: 1,
+    itemId: vvkItem.id,
+  }]).then(() => {
+    dialog = false
+    reset()
+  }).catch(() => {
     alert('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden')
-    return
-  }
-  dialog = false
-  reset()
+  })
 }
 
 function reset() {
@@ -66,7 +55,7 @@ function reset() {
 </script>
 
 <template>
-  <Scanner class="full-screen" :reset="resetScanner" @on-scan="onScan($event)"/>
+  <Scanner class="full-screen" overlaypath="/overlays/frame-ticket.svg" :reset="resetScanner" @on-scan="onScan($event)"/>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
       <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false; reset()" /> 

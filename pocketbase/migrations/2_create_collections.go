@@ -189,79 +189,6 @@ func init() {
 					"options": {}
 			},
 			{
-					"id": "j0f467sad986x4i",
-					"name": "ticket_hp",
-					"type": "base",
-					"system": false,
-					"schema": [
-							{
-									"system": false,
-									"id": "y6xivbd0",
-									"name": "hp",
-									"type": "relation",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"collectionId": "v0g7wdtfwzuwub4",
-											"cascadeDelete": false,
-											"minSelect": null,
-											"maxSelect": 1,
-											"displayFields": null
-									}
-							},
-							{
-									"system": false,
-									"id": "2f5dcizj",
-									"name": "ticket",
-									"type": "relation",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"collectionId": "fnt1n74ihcaofvy",
-											"cascadeDelete": false,
-											"minSelect": null,
-											"maxSelect": 1,
-											"displayFields": null
-									}
-							},
-							{
-									"system": false,
-									"id": "4b8qpmez",
-									"name": "start",
-									"type": "date",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": "",
-											"max": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "iyyioazs",
-									"name": "end",
-									"type": "date",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": "",
-											"max": ""
-									}
-							}
-					],
-					"indexes": [],
-					"listRule": null,
-					"viewRule": null,
-					"createRule": null,
-					"updateRule": null,
-					"deleteRule": null,
-					"options": {}
-			},
-			{
 					"id": "nhw1dv5dnt6yxeh",
 					"name": "shop_items",
 					"type": "base",
@@ -363,17 +290,27 @@ func init() {
 					"schema": [
 							{
 									"system": false,
-									"id": "8xg0splo",
+									"id": "wjf3935k",
 									"name": "qr",
-									"type": "number",
+									"type": "text",
 									"required": false,
 									"presentable": false,
 									"unique": false,
 									"options": {
-											"min": 0,
-											"max": 500,
-											"noDecimal": false
+											"min": 4,
+											"max": 4,
+											"pattern": "^(\\d{4})$"
 									}
+							},
+							{
+									"system": false,
+									"id": "c5r0jmxk",
+									"name": "lent",
+									"type": "bool",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {}
 							},
 							{
 									"system": false,
@@ -501,7 +438,7 @@ func init() {
 							},
 							{
 									"system": false,
-									"id": "beyfvm99",
+									"id": "snxpb2px",
 									"name": "vvk",
 									"type": "bool",
 									"required": false,
@@ -554,11 +491,86 @@ func init() {
 									}
 							}
 					],
-					"indexes": [],
+					"indexes": [
+							"CREATE INDEX 'idx_0XeUPDf' ON 'tickets' (\n  'firstName',\n  'lastName'\n)"
+					],
 					"listRule": null,
 					"viewRule": "@request.query.pin = _pin && sold = true",
 					"createRule": null,
 					"updateRule": "used = false",
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "j0f467sad986x4i",
+					"name": "ticket_hp",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "y6xivbd0",
+									"name": "hp",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "v0g7wdtfwzuwub4",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": 1,
+											"displayFields": null
+									}
+							},
+							{
+									"system": false,
+									"id": "2f5dcizj",
+									"name": "ticket",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "fnt1n74ihcaofvy",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": 1,
+											"displayFields": null
+									}
+							},
+							{
+									"system": false,
+									"id": "4b8qpmez",
+									"name": "start",
+									"type": "date",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": "",
+											"max": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "iyyioazs",
+									"name": "end",
+									"type": "date",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": "",
+											"max": ""
+									}
+							}
+					],
+					"indexes": [],
+					"listRule": null,
+					"viewRule": "",
+					"createRule": null,
+					"updateRule": null,
 					"deleteRule": null,
 					"options": {}
 			}

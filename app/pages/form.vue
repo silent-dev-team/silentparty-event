@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import QRCode from 'qrcode';
 
-let form = $ref<CustomerData>({
-  firstName: '',
-  lastName: '',
-  street: '',
-  housenumber: '',
-  zipCode: '',
-  place: '',
-  email: '',
-});
+let form = $ref<ICustomerData>(initCustomerData());
 
 localStorage.getItem('customerData') && (form = JSON.parse(localStorage.getItem('customerData') as string));
 
@@ -17,7 +9,7 @@ let success = $ref(false);
 
 let qrCodeImageUrl = $ref("");
 
-async function submit(form: CustomerData) {
+async function submit(form: ICustomerData) {
   try {
     const qrCodeData = JSON.stringify(form);
     qrCodeImageUrl = await generateQRCode(qrCodeData);
