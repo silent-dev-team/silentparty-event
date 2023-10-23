@@ -35,8 +35,8 @@ async function generateQRCode(data: string): Promise<string> {
 
 
 <template>
-  <div class="bg-blue-grey-lighten-5" style="min-height: 100vh; width: 100%; padding: 3rem;">
-    <v-card class="pa-5 mx-auto" rounded="8px" max-width="800px">
+  <div class="bg-blue-grey-lighten-5 pa-3 pa-sm-8" style="min-height: 100vh; width: 100%;">
+    <v-card class=" mx-auto pa-5" rounded="8px" max-width="800px">
       <v-card-title>
         <h1>Anmeldung</h1>
       </v-card-title>

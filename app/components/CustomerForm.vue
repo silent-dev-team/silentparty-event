@@ -1,12 +1,17 @@
 <script setup lang="ts">
+type CancleButtonType = null | String;
 const props = defineProps({
   modelValue: {
-    type: Object as PropType<CustomerData>,
+    type: Object as PropType<ICustomerData>,
     required: true
   },
   submitText: {
     type: String,
     default: 'Abschicken'
+  },
+  cancelText: {
+    type: [null, String] as PropType<CancleButtonType>,
+    default: null
   },
   disabled: {
     type: Boolean,
@@ -20,7 +25,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'submit'])
 
-let form = $ref<CustomerData>(props.modelValue);
+let form = $ref<ICustomerData>(props.modelValue);
 
 // watch(() => form, (value) => {
 //   form = value;
@@ -35,7 +40,7 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //passt noch nicht
 let errors = $ref(false);
 let success = $ref(false);
 
-async function submit(form: CustomerData) {
+async function submit(form: ICustomerData) {
   errors = false;
   success = false;
 
@@ -81,8 +86,9 @@ async function submit(form: CustomerData) {
 
 <template>
   <form @submit.prevent="submit(form)">
-        <v-row no-gutters class="mb-3">
-          <v-col cols="12" sm="6">
+    <v-container class="ma-0 pa-0">
+        <v-row no-gutters >
+          <v-col cols="12" sm="6" class="my-0 py-0">
             <v-text-field
               v-model="form.firstName"
               label="Vorname"
@@ -92,7 +98,7 @@ async function submit(form: CustomerData) {
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="6">
+          <v-col cols="12" sm="6" class="my-0 py-0">
             <v-text-field
               v-model="form.lastName"
               label="Nachname"
@@ -103,8 +109,8 @@ async function submit(form: CustomerData) {
           </v-col>
         </v-row>
 
-        <v-row no-gutters class="mb-3">
-          <v-col cols="12" sm="8">
+        <v-row no-gutters >
+          <v-col cols="12" sm="8" class="my-0 py-0">
           <v-text-field
             v-model="form.street"
             label="Straße"
@@ -113,7 +119,7 @@ async function submit(form: CustomerData) {
           ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="4">
+          <v-col cols="12" sm="4" class="my-0 py-0">
           <v-text-field
             v-model="form.housenumber"
             label="Hausnummer"
@@ -123,8 +129,8 @@ async function submit(form: CustomerData) {
           </v-col>
         </v-row>
 
-        <v-row no-gutters class="mb-3">
-          <v-col cols="12" sm="4">
+        <v-row no-gutters >
+          <v-col cols="12" sm="4" class="my-0 py-0">
             <v-text-field
               v-model="form.zipCode"
               label="Postleitzahl"
@@ -134,7 +140,7 @@ async function submit(form: CustomerData) {
             ></v-text-field>
           </v-col>
 
-          <v-col cols="12" sm="8">
+          <v-col cols="12" sm="8" class="my-0 py-0">
             <v-text-field
               v-model="form.place"
               label="Ort"
@@ -145,8 +151,8 @@ async function submit(form: CustomerData) {
           </v-col>
         </v-row>
 
-        <v-row no-gutters class="mb-3">
-          <v-col cols="12" sm="12">
+        <v-row no-gutters >
+          <v-col cols="12" sm="12" class="my-0 py-0">
             <v-text-field
               v-model="form.email"
               label="E-Mail"
@@ -156,10 +162,15 @@ async function submit(form: CustomerData) {
             ></v-text-field>
           </v-col>
         </v-row>
-        <div v-if="!readonly" class="w-100 d-flex justify-content-center">
-            <v-btn :disabled="disabled || form.firstName == '' || form.lastName == ''" class="mx-auto my-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
+        <div v-if="!readonly" class="w-100 d-flex justify-center">
+            <v-btn v-if="cancelText" class="ma-3 h-100 pa-3" color="red">{{ props.cancelText }}</v-btn>
+            <v-btn :disabled="disabled || form.firstName == '' || form.lastName == ''" class="ma-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
         </div>
         <p v-if="errors">Etwas ist schiefgelaufen.</p>
         <p v-if="success">Abgeschickt.</p>     
+        </v-container>
       </form>
 </template>
+
+<style scoped>
+</style>

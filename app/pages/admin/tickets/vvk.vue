@@ -7,19 +7,20 @@ definePageMeta({
 
 const pb = usePocketbase();
 // const checkout = useCheckout();
+const notifyer = useNotifyer();
 
 let vvkItem: RecordModel
 try {
   vvkItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "VVK Ticket"')
 } catch (e) {
-  alert('VVK Ticket nicht in Datenbank gefunden')
+  notifyer.notify('VVK Ticket nicht in Datenbank gefunden', 'error')
   throw e
 }
 
 let dialog = $ref(false)
 let id = $ref('')
 let ticket:TicketRecord
-let resetScanner = $ref(false)
+let scannerReset = $ref(false)
 
 async function onScan(url: string) {
   console.log(url)
@@ -33,7 +34,7 @@ async function onScan(url: string) {
 async function sell() {
   const updatedTicket = await pb.collection('tickets').update<TicketRecord>(id, {sold: true});
   if (!updatedTicket.sold) {
-    alert('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden')
+    notifyer.notify('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
     return
   }
   pb.checkout([{
@@ -43,22 +44,22 @@ async function sell() {
     dialog = false
     reset()
   }).catch(() => {
-    alert('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden')
+    notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
   })
 }
 
 function reset() {
-  resetScanner = true
-  setTimeout(() => resetScanner = false, 100)
+  if (!scannerReset) return;
+  setTimeout(() => scannerReset = true, 800)
 }
 
 </script>
 
 <template>
-  <Scanner class="full-screen" :overlaypath="Overlay.Ticket" :reset="resetScanner" @on-scan="onScan($event)"/>
+  <Scanner class="full-screen" :overlaypath="Overlay.Ticket" :reset="scannerReset" @update:reset="scannerReset = $event" @on-scan="onScan($event)"/>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
-      <v-btn style="position: absolute;" variant="icon" icon="mdi-close" size="sm" @click="dialog = false; reset()" /> 
+      <v-btn style="position: absolute;" icon="mdi-close" size="sm" @click="dialog = false; reset()" /> 
       <v-card-title class="mx-auto">{{ id }}</v-card-title>
       <v-card-text v-if="ticket.sold" class="mx-auto">
         Ticket bereits verkauft!

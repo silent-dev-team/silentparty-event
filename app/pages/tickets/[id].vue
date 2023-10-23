@@ -22,8 +22,9 @@ function logout() {
   <div v-if="pb.authStore.isAdmin" style="position: absolute; right: 1rem; top: 1rem;">
     <v-btn @click="logout()">Logout</v-btn>
   </div>
-  <div class="bg-blue-grey-lighten-5" style="min-height: 100vh; width: 100%; padding: 3rem;">
-    <div class="ma-2 pa-2 mx-auto">
+  <div class="bg-blue-grey-lighten-5 pa-3 pa-sm-8" style="min-height: 100vh; width: 100%;">
+    <div v-if="pb.authStore.isAdmin" class="mt-10"></div>
+    <div class="pa-5 mx-auto">
       <Ticket :id="id" />
     </div>
   </div>

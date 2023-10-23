@@ -15,6 +15,7 @@ const props = defineProps({
 const emit = defineEmits<{
   onScan: [value: string]
   results: [value: string[]]
+  "update:reset": [value: boolean]
 }>()
 
 let cams = $ref<QrScanner.Camera[]>([]);
@@ -63,7 +64,9 @@ onUnmounted(() => {
 });
 
 watch(() => props.reset, () => {
-  if (props.reset) clearHistory();
+  if (!props.reset) return;
+  clearHistory();
+  emit('update:reset', false);
 });
 
 localStorage.setItem('cam', JSON.stringify(results));

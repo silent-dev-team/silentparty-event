@@ -110,17 +110,20 @@ if (pb.authStore.isAdmin) await refreshTicket();
     <span>Daten gespeichert</span>
   </v-snackbar>
   <v-dialog v-if="!hideAll" v-model="showPinDialog" :persistent="true">
-    <v-card class="mx-auto pa-10">
+    <v-card class="mx-auto pa-10" max-width="380px">
       <PinField @update="handlePin($event)" :reset="ticketPin === ''"/>
     </v-card>
   </v-dialog>
-  <v-card v-if="!hideAll" maxWidth="800px">
-    <v-card-title>
-      <h1>Ticket {{ id }}</h1>
+  <v-card class="pa-2" v-if="!hideAll" maxWidth="800px">
+    <v-card-title class="pb-0">
+      <h1 class="text-h4 pb-0">Dein Ticket </h1>
     </v-card-title>
+    <v-card-subtitle>
+      <h2 class="mb-1 text-h6">{{ id }}</h2>
+    </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-text v-if="renderComponent">
-      <CustomerForm v-model="form" @submit="updateTicket()" :submitText="submitText"/>
+      <CustomerForm class="mt-5" v-model="form" @submit="updateTicket()" :submitText="submitText"/>
     </v-card-text>
   </v-card>
 </template>

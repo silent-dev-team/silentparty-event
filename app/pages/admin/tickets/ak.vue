@@ -7,12 +7,13 @@ definePageMeta({
 });
 
 const pb = usePocketbase();
+const notifyer = useNotifyer();
 
 let akItem: RecordModel
 try {
   akItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "AK Ticket"')
 } catch (e) {
-  alert('AK Ticket nicht in Datenbank gefunden')
+  notifyer.notify('AK Ticket nicht in Datenbank gefunden', 'error')
   throw e
 }
 
@@ -20,11 +21,9 @@ let pfandItem: RecordModel
 try {
   pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand"')
 } catch (e) {
-  alert('Pfand nicht in Datenbank gefunden')
+  notifyer.notify('Pfand nicht in Datenbank gefunden' , 'error')
   throw e
 }
-
-let realPfandPrice = $computed(() => -pfandItem.price)
 
 let scannerReset = $ref(false);
 
@@ -34,7 +33,11 @@ let showError = $ref(false);
 
 let ticket = $ref<TicketRecord>();
 let hp = $ref<HeadPhoneRecord>()
-let price = $ref(0.0);
+let mode = $ref<'ak'|'vvk'|undefined>();
+let price = $computed(() => {
+  if (!mode) return 0;
+  return (mode === 'ak' ? akItem.price : 0) + pfandItem.price;
+});
 
 let overlay = $computed<Overlay>(() => 
   ticket ? Overlay.HP : Overlay.Ticket
@@ -50,39 +53,42 @@ async function registerCustomer(){
 
 async function onScan(s:string) {
   if (dialog || cashCalc || showError) return;
-
   if (re.url.test(s) && !ticket) {
+    mode = 'vvk'
     loadCustomerDataFromTicket(s);
+    notifyer.notify('Ticket akzeptiert' , 'success')
   }
 
   if (s.startsWith('{') && s.endsWith('}') && !ticket) {
+    mode = 'ak'
     loadCustomerDataFromForm(s);
+    notifyer.notify('Gast registriert' , 'success')
   }
 
   //TODO: dialog abbrechen können
 
   if (re.hp.test(s) && !hp) {
     if (!ticket) {
-      alert('Bitte zuerst Ticket scannen')
+      notifyer.notify('Bitte zuerst Ticket scannen' , 'error')
       reset()
       return
     }
 
     hp = await getHeadPhoneFromQRString(s);
     if(!hp){
-      alert('Kopfhörer nicht in Datenbank gefunden')
+      notifyer.notify('Kopfhörer nicht in Datenbank gefunden', 'error')
       resetScanner();
       return
     }
     if (hp.lent) {
-      alert('Kopfhörer ist bereits verliehen')
-      hp = undefined;
+      notifyer.notify('Kopfhörer ist bereits verliehen', 'error')
       resetScanner();
+      hp = undefined;
       return
     }
-    alert(`Kopfhörer erfolgreich gescannt ${(hp as HeadPhoneRecord).qr}`)
+    notifyer.notify(`Kopfhörer erfolgreich gescannt ${(hp as HeadPhoneRecord).qr}`, 'success')
     await linkTicketToHP();
-    reset();
+    setTimeout(() => reset(), 1000);
   }
 }
 
@@ -108,13 +114,13 @@ async function loadCustomerDataFromTicket(s:string){
   const id = s.split('/').pop()!;
   ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
   if (!ticket) {
-    alert('Ticket nicht in Datenbank gefunden')
+    notifyer.notify('Ticket nicht in Datenbank gefunden', 'error')
     resetScanner();
     return
   }
   if (ticket.used) {
-    alert('Ticket wurde bereits benutzt')
-    reset()
+    notifyer.notify('Ticket wurde bereits benutzt', 'error')
+    reset();
     return
   }
   dialog = true;
@@ -136,23 +142,31 @@ async function createTicket(){
 async function sell(){
   if (!ticket) {
     reset();
-    alert('Verkauf fehlgeschlagen: Kein Ticket ausgewählt')
+    notifyer.notify('Verkauf fehlgeschlagen: Kein Ticket ausgewählt', 'error')
     return
   };
   ticket = await pb.collection('tickets').update<TicketRecord>(ticket!.id, {sold: true});
   if (!ticket.sold) {
     reset();
-    alert('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden')
+    notifyer.notify('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
     return
   }
-  pb.checkout([{
+  const payload = [{
     amount: 1,
-    itemId: akItem.id,
-  }]).then(() => {
+    itemId: pfandItem.id,
+  }]
+  if (mode === 'ak') {
+    payload.push({
+      amount: 1,
+      itemId: akItem.id,
+    })
+  }
+  pb.checkout(payload)
+  .then(() => {
     cashCalc = false
   }).catch(() => {
     reset();
-    alert('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden')
+    notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
   })
 }
 
@@ -163,19 +177,22 @@ async function linkTicketToHP() {
   });
   console.log(link)
   if (link.ticket !== ticket!.id || link.hp !== hp!.id) {
-    alert('Kopfhörer konnte nicht mit Ticket verknüpft werden')
+    notifyer.notify('Kopfhörer konnte nicht mit Ticket verknüpft werden', 'error')
     resetScanner();
     return
   }
-  reset()
 }
 
 function resetScanner(){
-  // ...
   if (scannerReset) return;
-  scannerReset = true;
-  setTimeout(() => scannerReset = false, 100);
+  setTimeout(() => {
+    scannerReset = true;
+  }, 800);
 }
+
+watch(() => scannerReset, () => {
+  console.log('scanner reset', scannerReset)
+});
 
 function reset(){
   ticket = undefined;
@@ -184,19 +201,24 @@ function reset(){
   dialog = false;
   cashCalc = false;
   showError = false;
-  price = 0.0;
   resetScanner();
 }
 
 </script>
 
 <template>
-  <Scanner class="full-screen" :overlaypath="overlay" @onScan="onScan($event)" :reset="scannerReset"/>
+  <Scanner class="full-screen" :overlaypath="overlay" @onScan="onScan($event)" :reset="scannerReset" @update:reset="scannerReset = $event"/>
   <v-dialog v-model="dialog" :persistent="true">
     <v-card v-if="!ticket" class="pa-4">
-      <CustomerForm v-model="customerData" @submit="registerCustomer" submitText="Bestätigen"></CustomerForm>
+      <CustomerForm 
+        class="pt-4" 
+        v-model="customerData" 
+        @submit="registerCustomer" 
+        submitText="Bestätigen" 
+        cancelText="Abbrechen" 
+      />
     </v-card>
-    <Ticket v-if="ticket" :id="ticket?.id" submitText="Bestätigen" @update="dialog = false"></Ticket>
+    <Ticket v-if="ticket" :id="ticket?.id" submitText="Bestätigen" @update="cashCalc =  true; dialog = false;"></Ticket>
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">
     <v-card 
@@ -205,5 +227,5 @@ function reset(){
       text="Der Code ist nicht Valide" 
     />
   </v-dialog>
-  <CashCalculator :requested="akItem.price + realPfandPrice" :shown="cashCalc" @paied="sell" @cancled="reset()"/>
+  <CashCalculator :requested="price" :shown="cashCalc" @paied="sell" @cancled="reset()"/>
 </template>

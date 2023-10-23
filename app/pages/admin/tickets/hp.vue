@@ -4,6 +4,7 @@ definePageMeta({
 });
 
 const pb = usePocketbase();
+const notifyer = useNotifyer();
 
 let scannerReset = $ref(false);
 
@@ -16,17 +17,17 @@ function unlink() {
   if (!hp) return;
   pb.unlink(hp.qr)
     .then(() => {
-      alert('Unlink successful')
-      window.location.reload()
+      notifyer.notify('Unlinked', 'success')
+      resetScanner();
     })
-    .catch(() => alert('Unlink failed'))
+    .catch(() => notifyer.notify('Unlink failed', 'error'))
 }
 
 async function onScan(s:string) {
   if (!re.hp.test(s)) return;
   hp = await pb.collection('hp').getFirstListItem<HeadPhoneRecord>(`qr = "${s}"`);
   if (!hp) {
-    alert('Headphone not found')
+    notifyer.notify('HP nicht gefunden', 'error')
     return
   }
   console.log(hp)
@@ -57,14 +58,13 @@ let status = $computed(() => {
 
 function resetScanner() {
   if (!scannerReset) return;
-  scannerReset = true;
-  setTimeout(() => scannerReset = false, 100)
+  setTimeout(() => scannerReset = true, 800)
 }
 
 </script>
 
 <template>
-    <Scanner class="full-screen" :overlaypath="Overlay.HP" @onScan="onScan($event)" :reset="scannerReset"/>
+    <Scanner class="full-screen" :overlaypath="Overlay.HP" @onScan="onScan($event)" :reset="scannerReset" @update:reset="scannerReset = $event"/>
     <v-dialog fullscreen v-model="dialog">
         <v-card minWidth="250px" maxWidth="420px" class="mx-auto">
           <v-card-title>
