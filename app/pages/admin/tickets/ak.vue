@@ -9,73 +9,89 @@ definePageMeta({
 const pb = usePocketbase();
 const notifyer = useNotifyer();
 
-let akItem: RecordModel
-try {
-  akItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "AK Ticket"')
-} catch (e) {
-  notifyer.notify('AK Ticket nicht in Datenbank gefunden', 'error')
-  throw e
-}
-
-let pfandItem: RecordModel
-try {
-  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand"')
-} catch (e) {
-  notifyer.notify('Pfand nicht in Datenbank gefunden' , 'error')
-  throw e
-}
-
+// ---- Reactive Variables ----
 let scannerReset = $ref(false);
-
 let dialog = $ref(false);
 let cashCalc = $ref(false);
 let showError = $ref(false);
 
 let ticket = $ref<TicketRecord>();
 let hp = $ref<HeadPhoneRecord>()
-let mode = $ref<'ak'|'vvk'|undefined>();
+let mode = $ref<'ak' | 'vvk' | undefined>();
 let price = $computed(() => {
   if (!mode) return 0;
   return (mode === 'ak' ? akItem.price : 0) + pfandItem.price;
 });
+let overlay = $computed<Overlay>(() => ticket ? Overlay.HP : Overlay.Ticket);
+let customerData = $ref<ICustomerData>(initCustomerData());
 
-let overlay = $computed<Overlay>(() => 
-  ticket ? Overlay.HP : Overlay.Ticket
-);
 
-let customerData =$ref<ICustomerData>(initCustomerData());
+// ---- Data Fetching ----
+let akItem: RecordModel
+let pfandItem: RecordModel
 
-async function registerCustomer(){
-  createTicket();
-  dialog = false;
-  cashCalc = true;
+try {
+  akItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "AK Ticket"')
+} catch (e) {
+  notifyer.notify('AK Ticket nicht in Datenbank gefunden', 'error')
+  throw e
+}
+try {
+  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand"')
+} catch (e) {
+  notifyer.notify('Pfand nicht in Datenbank gefunden', 'error')
+  throw e
 }
 
-async function onScan(s:string) {
+
+// ---- Utility Functions ----
+function resetScanner() {
+  if (scannerReset) return;
+  setTimeout(() => {
+    scannerReset = true;
+  }, 800);
+}
+
+watch(() => scannerReset, () => {
+  console.log('scanner reset', scannerReset)
+});
+
+function reset() {
+  ticket = undefined;
+  hp = undefined;
+  customerData = initCustomerData();
+  dialog = false;
+  cashCalc = false;
+  showError = false;
+  resetScanner();
+}
+
+// ---- Main Functions ----
+
+//side effects: ticket, customerData, dialog, showError
+async function onScan(s: string) {
   if (dialog || cashCalc || showError) return;
   if (re.url.test(s) && !ticket) {
     mode = 'vvk'
     loadCustomerDataFromTicket(s);
-    notifyer.notify('Ticket akzeptiert' , 'success')
+    notifyer.notify('Ticket akzeptiert', 'success')
   }
 
   if (s.startsWith('{') && s.endsWith('}') && !ticket) {
     mode = 'ak'
     loadCustomerDataFromForm(s);
-    notifyer.notify('Gast registriert' , 'success')
+    notifyer.notify('Gast registriert', 'success')
   }
-
-  //TODO: dialog abbrechen können
 
   if (re.hp.test(s) && !hp) {
     if (!ticket) {
-      notifyer.notify('Bitte zuerst Ticket scannen' , 'error')
+      notifyer.notify('Bitte zuerst Ticket scannen', 'error')
       reset()
       return
     }
 
     hp = await getHeadPhoneFromQRString(s);
-    if(!hp){
+    if (!hp) {
       notifyer.notify('Kopfhörer nicht in Datenbank gefunden', 'error')
       resetScanner();
       return
@@ -92,14 +108,20 @@ async function onScan(s:string) {
   }
 }
 
+async function registerCustomer() {
+  createTicket();
+  dialog = false;
+  cashCalc = true;
+}
+
 //side effects: customerData, dialog, showError
-function loadCustomerDataFromForm(s:string){
-  try{
+function loadCustomerDataFromForm(s: string) {
+  try {
     customerData = JSON.parse(s);
     dialog = true;
     console.log(customerData)
-  }catch(e){
-    if(!showError){
+  } catch (e) {
+    if (!showError) {
       showError = true;
       setTimeout(() => {
         showError = false;
@@ -110,7 +132,7 @@ function loadCustomerDataFromForm(s:string){
 }
 
 //side effects: ticket, customerData, dialog, showError
-async function loadCustomerDataFromTicket(s:string){
+async function loadCustomerDataFromTicket(s: string) {
   const id = s.split('/').pop()!;
   ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
   if (!ticket) {
@@ -127,11 +149,11 @@ async function loadCustomerDataFromTicket(s:string){
 }
 
 //side effects: hp
-async function getHeadPhoneFromQRString(s:string){
+async function getHeadPhoneFromQRString(s: string) {
   return pb.collection('hp').getFirstListItem<HeadPhoneRecord>(`qr = "${s}"`);
 }
 
-async function createTicket(){
+async function createTicket() {
   let data = $$(customerData).value as any;
   data.filled = true;
   const record = await pb.collection('tickets').create<TicketRecord>(data);
@@ -139,13 +161,13 @@ async function createTicket(){
   ticket = record;
 }
 
-async function sell(){
+async function sell() {
   if (!ticket) {
     reset();
     notifyer.notify('Verkauf fehlgeschlagen: Kein Ticket ausgewählt', 'error')
     return
   };
-  ticket = await pb.collection('tickets').update<TicketRecord>(ticket!.id, {sold: true});
+  ticket = await pb.collection('tickets').update<TicketRecord>(ticket!.id, { sold: true });
   if (!ticket.sold) {
     reset();
     notifyer.notify('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
@@ -162,12 +184,12 @@ async function sell(){
     })
   }
   pb.checkout(payload)
-  .then(() => {
-    cashCalc = false
-  }).catch(() => {
-    reset();
-    notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
-  })
+    .then(() => {
+      cashCalc = false
+    }).catch(() => {
+      reset();
+      notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
+    })
 }
 
 async function linkTicketToHP() {
@@ -183,42 +205,34 @@ async function linkTicketToHP() {
   }
 }
 
-function resetScanner(){
-  if (scannerReset) return;
-  setTimeout(() => {
-    scannerReset = true;
-  }, 800);
-}
 
-watch(() => scannerReset, () => {
-  console.log('scanner reset', scannerReset)
-});
-
-function reset(){
-  ticket = undefined;
-  hp  = undefined;
-  customerData = initCustomerData();
-  dialog = false;
-  cashCalc = false;
-  showError = false;
-  resetScanner();
-}
 
 </script>
 
 <template>
-  <Scanner class="full-screen" :overlaypath="overlay" @onScan="onScan($event)" :reset="scannerReset" @update:reset="scannerReset = $event"/>
-  <v-dialog v-model="dialog" :persistent="true">
+  <Scanner 
+    class="full-screen" 
+    :overlaypath="overlay" 
+    @onScan="onScan($event)" 
+    :reset="scannerReset"
+    @update:reset="scannerReset = $event" 
+  />
+    <v-dialog v-model="dialog" :persistent="true">
     <v-card v-if="!ticket" class="pa-4">
       <CustomerForm 
         class="pt-4" 
         v-model="customerData" 
         @submit="registerCustomer" 
-        submitText="Bestätigen" 
+        submitText="Bestätigen"
         cancelText="Abbrechen" 
       />
     </v-card>
-    <Ticket v-if="ticket" :id="ticket?.id" submitText="Bestätigen" @update="cashCalc =  true; dialog = false;"></Ticket>
+    <Ticket 
+      v-if="ticket" 
+      :id="ticket?.id" 
+      submitText="Bestätigen" 
+      @update="cashCalc = true; dialog = false;"
+    />
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">
     <v-card 
@@ -227,5 +241,10 @@ function reset(){
       text="Der Code ist nicht Valide" 
     />
   </v-dialog>
-  <CashCalculator :requested="price" :shown="cashCalc" @paied="sell" @cancled="reset()"/>
+  <CashCalculator 
+    :requested="price" 
+    :shown="cashCalc" 
+    @paied="sell" 
+    @cancled="reset()" 
+  />
 </template>
