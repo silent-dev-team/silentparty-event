@@ -58,8 +58,8 @@ export default defineNuxtConfig({
       name: 'Silent App',
       lang: 'de',
       start_url: 'https://app.silentparty-hannover.de',
-      theme_color: '#000000',
-      background_color: '#ffffff',
+      theme_color: '#0054bb',
+      background_color: '#eceff1',
       icons: [
         {
           src: 'assets/icons/android/android-launchericon-192-192.png',
