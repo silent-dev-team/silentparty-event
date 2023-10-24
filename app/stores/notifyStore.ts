@@ -1,10 +1,12 @@
 
+type Color = 'info'|'success'|'error'
+
 export const useNotifyer = defineStore('notifyer', {
   state: () => ({
     show: false,
-    message: '',
-    color: 'info',
-    duration: 5000,
+    message: '' as string,
+    color: 'info' as Color,
+    duration: 5000 as number,
   }),
   getters: {
     notification: (state) => {
@@ -16,7 +18,7 @@ export const useNotifyer = defineStore('notifyer', {
     },
   },
   actions: {
-    notify(message: string, color: 'info'|'success'|'error' = 'info', duration: number = 5000) {
+    notify(message: string, color: Color = 'info', duration: number = 5000) {
       this.message = message
       this.color = color
       this.duration = duration
