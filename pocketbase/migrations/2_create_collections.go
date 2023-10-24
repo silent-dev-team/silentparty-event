@@ -395,6 +395,20 @@ func init() {
 											"max": 4,
 											"pattern": "^[0-9]{4}$"
 									}
+							},
+							{
+								"system": false,
+								"id": "lx11merc",
+								"name": "_seller",
+								"type": "text",
+								"required": false,
+								"presentable": false,
+								"unique": false,
+								"options": {
+									"min": null,
+									"max": null,
+									"pattern": ""
+								}
 							}
 					],
 					"indexes": [
