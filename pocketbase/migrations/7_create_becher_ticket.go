@@ -9,11 +9,11 @@ import (
 
 func init() {
 	col := "shop_items"
-	title := "HP Pfand"
+	title := "Becher"
 	price := 5
 	plusTitle := title + " +"
 	minusTitle := title + " -"
-	tags := []string{"ak"}
+	tags := []string{"bar"}
 
 	m.Register(
 		func(db dbx.Builder) error {

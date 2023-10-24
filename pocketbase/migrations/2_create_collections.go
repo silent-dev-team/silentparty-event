@@ -189,100 +189,6 @@ func init() {
 					"options": {}
 			},
 			{
-					"id": "nhw1dv5dnt6yxeh",
-					"name": "shop_items",
-					"type": "base",
-					"system": false,
-					"schema": [
-							{
-									"system": false,
-									"id": "vibp24pt",
-									"name": "title",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "hszg1dyl",
-									"name": "description",
-									"type": "text",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"pattern": ""
-									}
-							},
-							{
-									"system": false,
-									"id": "fwqvx2jo",
-									"name": "price",
-									"type": "number",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"min": null,
-											"max": null,
-											"noDecimal": false
-									}
-							},
-							{
-									"system": false,
-									"id": "bddlskye",
-									"name": "img",
-									"type": "file",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"maxSelect": 1,
-											"maxSize": 5242880,
-											"mimeTypes": [],
-											"thumbs": [],
-											"protected": false
-									}
-							},
-							{
-									"system": false,
-									"id": "wai4albm",
-									"name": "tags",
-									"type": "select",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"maxSelect": 5,
-											"values": [
-													"bar",
-													"ticket",
-													"ak",
-													"vvk",
-													"garderobe"
-											]
-									}
-							}
-					],
-					"indexes": [
-							"CREATE UNIQUE INDEX 'idx_xdWr4LF' ON 'shop_items' ('title')"
-					],
-					"listRule": null,
-					"viewRule": null,
-					"createRule": null,
-					"updateRule": null,
-					"deleteRule": null,
-					"options": {}
-			},
-			{
 					"id": "v0g7wdtfwzuwub4",
 					"name": "hp",
 					"type": "base",
@@ -569,6 +475,116 @@ func init() {
 					"indexes": [],
 					"listRule": null,
 					"viewRule": "",
+					"createRule": null,
+					"updateRule": null,
+					"deleteRule": null,
+					"options": {}
+			},
+			{
+					"id": "nhw1dv5dnt6yxeh",
+					"name": "shop_items",
+					"type": "base",
+					"system": false,
+					"schema": [
+							{
+									"system": false,
+									"id": "vibp24pt",
+									"name": "title",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "hszg1dyl",
+									"name": "description",
+									"type": "text",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"pattern": ""
+									}
+							},
+							{
+									"system": false,
+									"id": "fwqvx2jo",
+									"name": "price",
+									"type": "number",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"min": null,
+											"max": null,
+											"noDecimal": false
+									}
+							},
+							{
+									"system": false,
+									"id": "bddlskye",
+									"name": "img",
+									"type": "file",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"maxSelect": 1,
+											"maxSize": 5242880,
+											"mimeTypes": [],
+											"thumbs": [],
+											"protected": false
+									}
+							},
+							{
+									"system": false,
+									"id": "wai4albm",
+									"name": "tags",
+									"type": "select",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"maxSelect": 5,
+											"values": [
+													"bar",
+													"ticket",
+													"ak",
+													"vvk",
+													"garderobe"
+											]
+									}
+							},
+							{
+									"system": false,
+									"id": "zn0zacbv",
+									"name": "pfand",
+									"type": "relation",
+									"required": false,
+									"presentable": false,
+									"unique": false,
+									"options": {
+											"collectionId": "nhw1dv5dnt6yxeh",
+											"cascadeDelete": false,
+											"minSelect": null,
+											"maxSelect": 1,
+											"displayFields": null
+									}
+							}
+					],
+					"indexes": [
+							"CREATE UNIQUE INDEX 'idx_xdWr4LF' ON 'shop_items' ('title')"
+					],
+					"listRule": null,
+					"viewRule": null,
 					"createRule": null,
 					"updateRule": null,
 					"deleteRule": null,
