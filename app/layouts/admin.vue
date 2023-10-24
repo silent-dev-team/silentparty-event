@@ -19,7 +19,7 @@
     </v-main>
 
     <v-bottom-navigation>
-      <v-btn value="KH" @click="router.push({ path: '/admin/tickets/hp' })">
+      <v-btn value="KH" @click="router.push({ path: '/admin/hp' })">
         <v-icon>mdi-headphones</v-icon>
 
         <span>KH</span>
