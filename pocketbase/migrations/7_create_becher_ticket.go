@@ -9,7 +9,7 @@ import (
 
 func init() {
 	col := "shop_items"
-	title := "Becher"
+	title := "Becherpfand"
 	price := 5
 	plusTitle := title + " +"
 	minusTitle := title + " -"

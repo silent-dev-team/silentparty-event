@@ -37,7 +37,7 @@ try {
   throw e
 }
 try {
-  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand"')
+  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand +"')
 } catch (e) {
   notifyer.notify('Pfand nicht in Datenbank gefunden', 'error')
   throw e
