@@ -36,7 +36,9 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.webmanifest' },
       ],
     },
-    //pageTransition: { name: 'page', mode: 'out-in' },
+    meta: [
+      
+    ]
   },
   build: {
     transpile: ['vuetify'],
