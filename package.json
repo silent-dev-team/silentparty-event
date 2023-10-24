@@ -1,5 +1,5 @@
 {
-  "name": "Silent App",
+  "name": "silentapp",
   "private": true,
   "scripts": {
     "dev": "yarn generate && concurrently 'yarn:dev:*'",
