@@ -6,15 +6,15 @@ definePageMeta({
 const pb = usePocketbase();
 const notifyer = useNotifyer();
 
-let seller = $ref('');
+let label = $ref('');
 let startScanner = $ref(false);
 let scannerReset = $ref(false);
 
 async function onScan(s:string) {
   const id = s.split('/').pop();
   if (!id) return;
-  const resp = await pb.collection('tickets').update<TicketRecord>(id, {_seller: $$(seller).value});
-  notifyer.notify(`${id} ${seller}`, 'success');
+  const resp = await pb.collection('tickets').update<TicketRecord>(id, {_label: $$(label).value});
+  notifyer.notify(`${id} ${label}`, 'success');
 }
 
 </script>
@@ -22,12 +22,14 @@ async function onScan(s:string) {
 <template>
   <Scanner v-if="startScanner" class="full-screen" :overlaypath="Overlay.Ticket" @onScan="onScan($event)" :reset="scannerReset" @update:reset="scannerReset = $event"/>
   <div v-if="startScanner" class="overlay">
-    <p>{{ seller }}</p>
+    <p>{{ label }}</p>
   </div>
   <v-card v-if="!startScanner" class="mx-auto my-5" maxWidth="400px">
     <v-card-title>
-      <v-text-field v-model="seller" label="Verkäufer" outlined></v-text-field>
-      <v-btn @click="startScanner = true">Scan</v-btn>
+      <v-form @submit.prevent="startScanner = true">
+        <v-text-field v-model="label" label="Label" outlined></v-text-field>
+        <v-btn type="submit">Scan</v-btn>
+      </v-form>
     </v-card-title>
   </v-card>
 </template>

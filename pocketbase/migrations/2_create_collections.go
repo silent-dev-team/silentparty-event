@@ -399,7 +399,7 @@ func init() {
 							{
 								"system": false,
 								"id": "lx11merc",
-								"name": "_seller",
+								"name": "_label",
 								"type": "text",
 								"required": false,
 								"presentable": false,
