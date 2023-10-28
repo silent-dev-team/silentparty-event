@@ -85,7 +85,7 @@ async function submit(form: ICustomerData) {
 </script>
 
 <template>
-  <form @submit.prevent="submit(form)">
+  <v-form @submit.prevent="submit(form)" autocomplete="on">
     <v-container class="ma-0 pa-0">
         <v-row no-gutters >
           <v-col cols="12" sm="6" class="my-0 py-0">
@@ -93,6 +93,7 @@ async function submit(form: ICustomerData) {
               v-model="form.firstName"
               label="Vorname"
               required
+              autocomplete="given-name"
               :readonly="readonly"
               :rules="[namePattern.test(form.firstName) || 'Bitte gib einen gültigen Vornamen ein.']"
             ></v-text-field>
@@ -103,6 +104,7 @@ async function submit(form: ICustomerData) {
               v-model="form.lastName"
               label="Nachname"
               required
+              autocomplete="family-name"
               :readonly="readonly"
               :rules="[namePattern.test(form.lastName) || 'Bitte gib einen gültigen Nachnamen ein.']"
             ></v-text-field>
@@ -115,6 +117,7 @@ async function submit(form: ICustomerData) {
             v-model="form.street"
             label="Straße"
             required
+            autocomplete="street-address"
             :readonly="readonly"
           ></v-text-field>
           </v-col>
@@ -124,6 +127,7 @@ async function submit(form: ICustomerData) {
             v-model="form.housenumber"
             label="Hausnummer"
             required
+            autocomplete="house-number"
             :readonly="readonly"
           ></v-text-field>
           </v-col>
@@ -135,6 +139,7 @@ async function submit(form: ICustomerData) {
               v-model="form.zipCode"
               label="Postleitzahl"
               required
+              autocomplete="postal-code"
               :readonly="readonly"
               :rules="[zipCodePattern.test(form.zipCode) || 'Bitte gib eine gültige Postleitzahl ein.']"
             ></v-text-field>
@@ -145,6 +150,7 @@ async function submit(form: ICustomerData) {
               v-model="form.place"
               label="Ort"
               required
+              autocomplete="address-level2"
               :readonly="readonly"
               :rules="[namePattern.test(form.place) || 'Bitte gib einen gültigen Ort ein.']"
             ></v-text-field>
@@ -157,6 +163,7 @@ async function submit(form: ICustomerData) {
               v-model="form.email"
               label="E-Mail"
               required
+              autocomplete="email"
               :readonly="readonly"
               :rules="[emailPattern.test(form.email) || 'Bitte gib eine gültige E-Mail ein.']"
             ></v-text-field>
@@ -168,8 +175,8 @@ async function submit(form: ICustomerData) {
         </div>
         <p v-if="errors">Etwas ist schiefgelaufen.</p>
         <p v-if="success">Abgeschickt.</p>     
-        </v-container>
-      </form>
+    </v-container>
+  </v-form>
 </template>
 
 <style scoped>
