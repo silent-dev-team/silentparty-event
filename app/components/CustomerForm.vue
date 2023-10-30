@@ -117,6 +117,7 @@ async function submit(form: ICustomerData) {
             v-model="form.street"
             label="Straße"
             required
+            name="street"
             autocomplete="street-address"
             :readonly="readonly"
           ></v-text-field>
@@ -127,7 +128,8 @@ async function submit(form: ICustomerData) {
             v-model="form.housenumber"
             label="Hausnummer"
             required
-            autocomplete="house-number"
+            name="streetnumber"
+            autocomplete="streetnumber"
             :readonly="readonly"
           ></v-text-field>
           </v-col>
