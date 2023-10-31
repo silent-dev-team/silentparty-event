@@ -578,20 +578,30 @@ func init() {
 									}
 							},
 							{
-									"system": false,
-									"id": "zn0zacbv",
-									"name": "pfand",
-									"type": "relation",
-									"required": false,
-									"presentable": false,
-									"unique": false,
-									"options": {
-											"collectionId": "nhw1dv5dnt6yxeh",
-											"cascadeDelete": false,
-											"minSelect": null,
-											"maxSelect": 1,
-											"displayFields": null
-									}
+								"system": false,
+								"id": "rntueisi",
+								"name": "pfand",
+								"type": "bool",
+								"required": false,
+								"presentable": false,
+								"unique": false,
+								"options": {}
+							},
+							{
+								"system": false,
+								"id": "zn0zacbv",
+								"name": "pfand_item",
+								"type": "relation",
+								"required": false,
+								"presentable": false,
+								"unique": false,
+								"options": {
+									"collectionId": "nhw1dv5dnt6yxeh",
+									"cascadeDelete": false,
+									"minSelect": null,
+									"maxSelect": 1,
+									"displayFields": null
+								}
 							}
 					],
 					"indexes": [

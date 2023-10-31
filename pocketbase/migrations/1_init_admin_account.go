@@ -22,7 +22,7 @@ func init() {
 
 		dao := daos.New(db)
 
-		admin, _ := dao.FindAdminByEmail("test@example.com")
+		admin, _ := dao.FindAdminByEmail(utils.Getenv("ADMIN_EMAIL"))
 		if admin != nil {
 			return dao.DeleteAdmin(admin)
 		}

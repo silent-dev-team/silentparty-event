@@ -26,7 +26,7 @@ func init() {
 			if rec == nil {
 				record := models.NewRecord(collection)
 				record.Set("title", title)
-				record.Set("description", "Pfand einnehmen")
+				record.Set("description", "Ausgabe eines Bechers gegen Pfand")
 				record.Set("price", price)
 				record.Set("tags", tags)
 				record.Set("pfand", true)
