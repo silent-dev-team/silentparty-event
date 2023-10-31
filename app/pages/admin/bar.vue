@@ -7,9 +7,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
-    <h1>Bar</h1>
-    <!-- <Kasse /> -->
-    hier folgt die Kasse
+  <div style="height: calc(100% - 146px);">
+    <Kasse storeId="bar" />
   </div>
 </template>

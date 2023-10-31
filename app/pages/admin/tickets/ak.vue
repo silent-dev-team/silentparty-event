@@ -12,7 +12,7 @@ const notifyer = useNotifyer();
 // ---- Reactive Variables ----
 let scannerReset = $ref(false);
 let dialog = $ref(false);
-let cashCalc = $ref(false);
+let checkoutDialog = $ref(false);
 let showError = $ref(false);
 
 let ticket = $ref<TicketRecord>();
@@ -37,7 +37,7 @@ try {
   throw e
 }
 try {
-  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "HP Pfand +"')
+  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "Kopfhoerer"')
 } catch (e) {
   notifyer.notify('Pfand nicht in Datenbank gefunden', 'error')
   throw e
@@ -61,7 +61,7 @@ function reset() {
   hp = undefined;
   customerData = initCustomerData();
   dialog = false;
-  cashCalc = false;
+  checkoutDialog = false;
   showError = false;
   resetScanner();
 }
@@ -70,7 +70,7 @@ function reset() {
 
 //side effects: ticket, customerData, dialog, showError
 async function onScan(s: string) {
-  if (dialog || cashCalc || showError) return;
+  if (dialog || checkoutDialog || showError) return;
   if (re.url.test(s) && !ticket) {
     mode = 'vvk'
     loadCustomerDataFromTicket(s);
@@ -111,7 +111,7 @@ async function onScan(s: string) {
 async function registerCustomer() {
   createTicket();
   dialog = false;
-  cashCalc = true;
+  checkoutDialog = true;
 }
 
 //side effects: customerData, dialog, showError
@@ -185,7 +185,7 @@ async function sell() {
   }
   pb.checkout(payload)
     .then(() => {
-      cashCalc = false
+      checkoutDialog = false
     }).catch(() => {
       reset();
       notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
@@ -231,7 +231,7 @@ async function linkTicketToHP() {
       v-if="ticket" 
       :id="ticket?.id" 
       submitText="Bestätigen" 
-      @update="cashCalc = true; dialog = false;"
+      @update="checkoutDialog = true; dialog = false;"
     />
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">
@@ -241,9 +241,9 @@ async function linkTicketToHP() {
       text="Der Code ist nicht Valide" 
     />
   </v-dialog>
-  <CashCalculator 
+  <Checkout
     :requested="price" 
-    :shown="cashCalc" 
+    :shown="checkoutDialog" 
     @paied="sell" 
     @cancled="reset()" 
   />

@@ -22,9 +22,12 @@ declare global {
   type TicketRecord = RecordModel & ITicket;
 
   interface IShopItem {
+    id: string;
     title: string;
     price: number;
     description: string;
+    pfand: boolean;
+    pfand_item?: string;
     image?: string;
     tags?: string[];
   }
