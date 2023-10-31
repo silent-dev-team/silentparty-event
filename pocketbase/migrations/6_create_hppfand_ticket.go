@@ -9,7 +9,7 @@ import (
 
 func init() {
 	col := "shop_items"
-	title := "Kopfhörer"
+	title := "Kopfhoerer"
 	price := 5
 	tags := []string{"ak"}
 

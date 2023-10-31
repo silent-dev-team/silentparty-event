@@ -9,7 +9,7 @@ import (
 
 func init() {
 	col := "shop_items"
-	title := "Becherpfand"
+	title := "Becher"
 	price := 5
 	tags := []string{"bar"}
 
