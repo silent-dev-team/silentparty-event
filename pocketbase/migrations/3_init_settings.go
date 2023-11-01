@@ -16,12 +16,12 @@ func init() {
 		settings.Meta.AppUrl = "https://app.silentparty-hannver.de"
 		settings.Logs.MaxDays = 30
 
-		settings.Meta.SenderName = "Silent Party Hannover"
-		settings.Meta.SenderAddress = "info@silentparty-hannover.de"
-		settings.Smtp.Enabled = false // true
-		settings.Smtp.Host = "smtp.goneo.de"
+		settings.Meta.SenderName = utils.Getenv("SMTP_SENDER_NAME")    //"Silent Party Hannover"
+		settings.Meta.SenderAddress = utils.Getenv("SMTP_SENDER_MAIL") //"info@silentparty-hannover.de"
+		settings.Smtp.Enabled = false                                  // true
+		settings.Smtp.Host = utils.Getenv("SMTP_HOST")                 //"smtp.goneo.de"
 		settings.Smtp.Port = 587
-		settings.Smtp.Username = "info@silentparty-hannover.de"
+		settings.Smtp.Username = utils.Getenv("SMTP_USERNAME") //"info@silentparty-hannover.de"
 		settings.Smtp.Password = utils.Getenv("SMTP_PW")
 
 		settings.Backups.Cron = "0 */6 * * *"
