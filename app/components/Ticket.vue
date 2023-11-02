@@ -107,7 +107,7 @@ if (pb.authStore.isAdmin) await refreshTicket();
     <span>Pin falsch</span>
   </v-snackbar>
   <v-snackbar v-model="dataChanged" color="success" location="top">
-    <span>Daten gespeichert</span>
+    <span>Daten gespeichert. <br> Wir sehen und auf der Party :)</span>
   </v-snackbar>
   <v-dialog v-if="!hideAll" v-model="showPinDialog" :persistent="true">
     <v-card class="mx-auto pa-10" max-width="380px">
