@@ -13,6 +13,10 @@ let hp = $ref<HeadPhoneRecord>();
 let ticket = $ref<TicketRecord>();
 let shure = $ref(false);
 
+watch(() => dialog, (v) => {
+  if (!v) resetScanner;
+})
+
 function unlink() {
   if (!hp) return;
   pb.unlink(hp.qr)
@@ -87,7 +91,7 @@ function resetScanner() {
             </div>
           </v-card-text>
           <v-card-actions class="justify-space-between">
-            <v-btn variant="flat" color="primary" class="mt-6" @click="dialog=false">schließen</v-btn>
+            <v-btn variant="flat" color="primary" class="mt-6" @click="dialog = false">schließen</v-btn>
             <v-btn variant="outlined" color="red" class="mt-6" v-if="hp?.lent" @click="shure = true">Zurückgeben</v-btn>
 
          </v-card-actions>
