@@ -66,6 +66,11 @@ function reset() {
   resetScanner();
 }
 
+async function delayedReset(t: number = 1000) {
+  await new Promise(resolve => setTimeout(resolve, t));
+  reset();
+}
+
 // ---- Main Functions ----
 
 //side effects: ticket, customerData, dialog, showError
@@ -104,7 +109,7 @@ async function onScan(s: string) {
     }
     notifyer.notify(`Kopfhörer erfolgreich gescannt ${(hp as HeadPhoneRecord).qr}`, 'success')
     await linkTicketToHP();
-    setTimeout(() => reset(), 1000);
+    delayedReset(1000)
   }
 }
 
@@ -232,6 +237,7 @@ async function linkTicketToHP() {
       :id="ticket?.id" 
       submitText="Bestätigen" 
       @update="checkoutDialog = true; dialog = false;"
+      @noticket="delayedReset(3000)"
     />
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">

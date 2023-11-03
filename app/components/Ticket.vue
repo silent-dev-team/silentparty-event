@@ -15,6 +15,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   update: [value: void]
+  noticket: [value: void]
 }>()
 
 const runtimeConfig = useRuntimeConfig();
@@ -87,6 +88,7 @@ async function updateTicket() {
 const resp = await fetch(`${pb_url}/api/collections/tickets/exists/${props.id}`)
 if (resp.status === 404) {
   hideAll = true;
+  emit('noticket');
 } 
 
 if (pb.authStore.isAdmin) await refreshTicket();
