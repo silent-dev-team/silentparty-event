@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RecordModel } from 'pocketbase';
+import { useNotifyer } from '../stores/notifyStore';
 
 const props = defineProps({
   id: {
@@ -20,9 +21,7 @@ const runtimeConfig = useRuntimeConfig();
 const pb_url = runtimeConfig.public.pocketbase;
 
 const pb = usePocketbase();
-
-let wrongPinError = $ref(false);
-let dataChanged = $ref(false);
+const notifyer = useNotifyer();
 
 let hideAll = $ref(false);
 let renderComponent = $ref(true);
@@ -39,7 +38,7 @@ function handlePin(pin: string) {
 }
 
 function wrongPin() {
-  wrongPinError = true;
+  notifyer.notify('Pin falsch', 'error');
   ticketPin = '';
   showPinDialog = true;
 }
@@ -81,7 +80,7 @@ async function updateTicket() {
   const rec = await pb.collection('tickets').update<RecordModel & ITicket>(props.id, payload);
   console.log(rec);
   await refreshTicket();
-  dataChanged = true;
+  notifyer.notify('Daten gespeichert. Wir sehen und auf der Party :)', 'success');
   emit('update');
 }
 
@@ -103,12 +102,6 @@ if (pb.authStore.isAdmin) await refreshTicket();
       Versuche deine Ticket erneut zu scannen oder wende dich an das Team unter <br> info@silentparty-hannover.de
     </v-card-text>
   </v-card>
-  <v-snackbar v-model="wrongPinError" color="error" location="top">
-    <span>Pin falsch</span>
-  </v-snackbar>
-  <v-snackbar v-model="dataChanged" color="success" location="top">
-    <span>Daten gespeichert. <br> Wir sehen und auf der Party :)</span>
-  </v-snackbar>
   <v-dialog v-if="!hideAll" v-model="showPinDialog" :persistent="true">
     <v-card class="mx-auto pa-10" max-width="380px">
       <PinField @update="handlePin($event)" :reset="ticketPin === ''"/>
