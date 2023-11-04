@@ -18,8 +18,6 @@ function onCardClick() {
 </script>
 
 <template>
-
-<div style="position: relative;">
   <v-card v-if="item" elevation="5" :color="item.pfand ? 'yellow' : ''">
       <v-card 
         class="pa-3 d-flex justify-space-between" 
@@ -66,7 +64,6 @@ function onCardClick() {
       </v-btn>
     </v-card-actions>
   </v-card>
-</div>
 </template>
 
 <style scoped>
