@@ -7,7 +7,7 @@ const { title,price,amount } = $defineProps<{
 </script>
 
 <template>
-    <div class="d-flex w-100 justify-space-between px-4 py-2 text-h5">
+    <div class="d-flex w-100 justify-space-between px-4 pb-1 item">
         <div class="self">
           {{amount}}x {{ title }}
         </div> 
@@ -16,3 +16,16 @@ const { title,price,amount } = $defineProps<{
         </div>
     </div>
 </template>
+
+<style scoped>
+.item {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 800px) {
+  .item {
+    font-size: 1rem;
+  }
+}
+</style>
+```

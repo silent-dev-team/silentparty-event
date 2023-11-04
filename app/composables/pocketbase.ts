@@ -1,6 +1,6 @@
-import PocketBase, { RecordModel } from 'pocketbase'
+import PocketBase, { type RecordModel } from 'pocketbase'
 
-type Position = {
+export type Position = {
     itemId: string;
     amount: number;
 };
@@ -8,6 +8,8 @@ type Position = {
 type PocketBaseExtended = PocketBase & {
     checkout: (positions:Position[]) => Promise<RecordModel>
     unlink: (qr:string) => Promise<RecordModel>
+    fileUrl: (collectionIdOrName:string, recordId: string, filename: string|null|undefined) => string  
+    fileUrlFromRecord: (record:RecordModel, filename: string) => string
 }
 
 const runtimeConfig = useRuntimeConfig();
@@ -29,6 +31,17 @@ pb.checkout = async (positions:Position[]):Promise<RecordModel> => {
     }
     const data = await res.json()
     return data
+}
+
+pb.fileUrl = (collectionIdOrName:string, recordId: string, filename: string|null|undefined) :string => {
+    if (!filename) {
+        return ""
+    }
+    return runtimeConfig.public.pocketbase+`/api/files/${collectionIdOrName}/${recordId}/${filename}`
+}
+
+pb.fileUrlFromRecord = (record:RecordModel, filename: string) :string => {
+    return runtimeConfig.public.pocketbase+`/api/files/${record.collectionId}/${record.collectionId}/${filename}`
 }
 
 pb.unlink = async (qr:string):Promise<RecordModel> => {

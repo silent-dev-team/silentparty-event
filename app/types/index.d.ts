@@ -28,7 +28,7 @@ declare global {
     description: string;
     pfand: boolean;
     pfand_item?: string;
-    image?: string;
+    img?: string;
     tags?: string[];
   }
 

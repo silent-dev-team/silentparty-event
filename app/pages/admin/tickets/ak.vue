@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Overlay } from '@/types/enums';
-import { RecordModel } from 'pocketbase';
+import type { RecordModel } from 'pocketbase';
 
 definePageMeta({
   layout: 'admin',

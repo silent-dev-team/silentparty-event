@@ -1,7 +1,7 @@
 <template>
   <Login v-model="showLogin" />
   <v-app id="inspire">
-    <v-app-bar scroll-behavior="elevate" class="header">
+    <v-app-bar height="50" scroll-behavior="elevate" class="header">
       <v-toolbar-title>Silent App</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-if="!pb.authStore.isAdmin" @click="showLogin = true">
@@ -18,39 +18,80 @@
       </div>
     </v-main>
 
-    <v-bottom-navigation>
-      <v-btn value="KH" @click="router.push({ path: '/admin/hp' })">
+    <v-bottom-navigation height="50" :active="navbar">
+      <v-btn 
+        position="absolute" 
+        fab
+        icon="mdi-menu-down" 
+        variant="plain"
+        size="large"
+        @click="navbar = false"
+        style="bottom: 0; left: 0; z-index: 1000;"
+      ></v-btn>
+      <v-btn value="KH" @click="push('/admin/hp')">
         <v-icon>mdi-headphones</v-icon>
 
         <span>KH</span>
       </v-btn>
 
-      <v-btn value="tickets" @click="router.push({ path: '/admin/tickets/ak' })">
+      <v-btn value="tickets" @click="push('/admin/tickets/ak')">
         <v-icon>mdi-ticket-confirmation</v-icon>
 
         <span>AK</span>
       </v-btn>
 
-      <v-btn value="vvk" @click="router.push({ path: '/admin/tickets/vvk' })">
+      <v-btn value="vvk" @click="push('/admin/tickets/vvk')">
         <v-icon>mdi-ticket</v-icon>
 
         <span>VVK</span>
       </v-btn>
 
-      <v-btn value="bar" @click="router.push({ path: '/admin/bar' })">
+      <v-btn value="bar" @click="push('/admin/bar')">
         <v-icon>mdi-cash-register</v-icon>
 
         <span>Bar</span>
       </v-btn>
     </v-bottom-navigation>
+    <v-btn 
+      v-if="!navbar"
+      position="fixed" 
+      fab
+      icon="mdi-menu-up" 
+      variant="plain"
+      size="large"
+      @click="navbar = true"
+      style="bottom: 0; left: 12px; z-index: 1000;"
+    ></v-btn>
   </v-app>
 </template>
 
 <script setup>
 const pb = usePocketbase()
 const router = useRouter()
+const shopStore = useShopStore()
+shopStore.loadShop()
+
+const unsubscripe = await pb.collection('shop_items').subscribe('*', function (e) {
+    console.log(e.action);
+    console.log(e.record);
+    shopStore.loadShop();
+});
+
+onBeforeMount(() => {
+  shopStore.loadShop();
+});
+
+onUnmounted(() => {
+    unsubscripe();
+});
+
+function push(path) {
+  navbar = false
+  router.push({ path })
+}
 
 let showLogin = $ref(false)
+let navbar = $ref(false)
 
 if (!pb.authStore.token) {
   pb.admins.authRefresh()

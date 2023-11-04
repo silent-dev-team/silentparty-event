@@ -4,8 +4,16 @@ const { storeId, itemId } = $defineProps<{
   itemId: string;
 }>();
 
+const pb = usePocketbase();
+
 const kasseStore = useKasseStore(storeId);
-const item = kasseStore.getShopItem(itemId);
+let item = $ref<IShopItem>(kasseStore.getShopItem(itemId)!);
+
+kasseStore.$subscribe((mutation, state) => {
+  console.log("kasseStore.$subscribe:mutation", mutation.events);
+  item = kasseStore.getShopItem(itemId)!;
+  //TODO: prevent wrong events
+})
 
 function onCardClick() {
   if (item?.pfand) {
@@ -24,6 +32,7 @@ function onCardClick() {
         elevation="0"
       >
         <h1>{{ item.title }}</h1>
+        <v-spacer></v-spacer>
         <h1>{{ parseFloat(""+item.price).toFixed(2) }}€</h1>
 
       </v-card>
@@ -32,9 +41,9 @@ function onCardClick() {
       @click="onCardClick"
     >
       <v-img
-        :src="item.image"
-        height="100px"
-        class="white--text align-center justify-center"
+        :src="pb.fileUrl((item as any).collectionId, item.id, item.img)"
+        class="align-center justify-center w-100"
+        cover
       >
         <!--<v-icon width="1000px" class="mx-auto" color="white">mdi-plus</v-icon>-->
       </v-img>
@@ -67,7 +76,9 @@ function onCardClick() {
 </template>
 
 <style scoped>
-
+h1{
+  font-size: 1rem;
+}
 .badge {
   position: absolute;
   width: 5px;
@@ -77,6 +88,25 @@ function onCardClick() {
   border-radius: 100%;
   background: #ff8e0d;
   color: white;
+}
+.v-img{
+    height: 100px;
+  }
+@media (max-width: 1028px) {
+  h1{
+    font-size: 0.8rem;
+  }
+  .v-img{
+    height: 50px;
+  }
+}
+@media (max-width: 800px) {
+  h1{
+    font-size: 0.8rem;
+  }
+  .v-img{
+    height: 40px;
+  }
 }
 
 </style>

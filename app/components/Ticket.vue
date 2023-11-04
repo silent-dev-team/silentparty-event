@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RecordModel } from 'pocketbase';
+import type { RecordModel } from 'pocketbase';
 import { useNotifyer } from '../stores/notifyStore';
 
 const props = defineProps({

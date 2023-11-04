@@ -1,14 +1,35 @@
+import type { Position } from './../composables/pocketbase';
 import makeSeparatedStore from "@/composables/separatedStore"
+import { usePocketbase } from "#imports"
+
+export const useShopStore = defineStore('shop', {
+  state: () => ({
+    _shop: [] as IShopItem[],
+    _pb: usePocketbase(),
+  }),
+  getters: {
+    shop: (state) => state._shop,
+    getShopItem: (state) => (id: string) => state._shop.find(item => item.id === id),
+    getShopTag: (state) => (tag: string) => state._shop.filter(item => item.tags?.includes(tag)),
+  },
+  actions: {
+    async loadShop() {
+      console.log('load shop')
+      const items = await this._pb.collection('shop_items').getFullList<ShopItemRecord>()
+      console.log(items)
+      this._shop = items
+    },
+  },
+})
 
 export const useKasseStore = makeSeparatedStore((id:string) => defineStore(`kasse/${id}`, {
   state: () => ({
     _count: 0,
     
-    _shop: beispiel, // as IShopItem[],
+    _shop: useShopStore().getShopTag(id),
     _cart: [] as CartItem[],
 
-    //TODO: lastPriceChangeTime
-    //prices should be updated every 10 secs or subscribe to changes
+    _pb: usePocketbase(),
   }),
   getters: {
     count: (state) => state._count,
@@ -94,7 +115,27 @@ export const useKasseStore = makeSeparatedStore((id:string) => defineStore(`kass
       if (!shopItem.pfand && shopItem.pfand_item) {
         this.removeCartItem(shopItem.pfand_item, quantity)
       }
-    }
+    },
+
+    async checkout() {
+      const positions: Position[] = this._cart.map(item => {
+        return {
+          itemId: item.id,
+          amount: item.quantity
+        }
+      })
+
+      await this._pb.checkout(positions).catch(err => {
+        console.error(err)
+        throw err
+      })
+    },
+
+    async loadShop() {
+      console.log('load item from shop to kasse')
+      const shopStore = useShopStore()
+      this._shop = shopStore.getShopTag(id)
+    },
   },
 }))
 
@@ -103,43 +144,3 @@ type CartItem = {
   id: string
   quantity: number
 }
-
-
-const beispiel:IShopItem[] = [
-  {
-    id : "1",
-    title : "Bier",
-    price : 1.50,
-    description : "Ein Bier",
-    pfand : false,
-    pfand_item : "2",
-    tags : ['bar'],
-  },
-  {
-    id : "2",
-    title : "Becher",
-    price : 1.0,
-    description : "Ein Becher",
-    pfand : true,
-    pfand_item : "",
-    tags : ['bar'],
-  },
-  {
-    id: "3",
-    title: "Cola",
-    price: 2.0,
-    description: "Cola",
-    pfand: false,
-    pfand_item: "2",
-    tags: ['bar'],
-  },
-  {
-    id: "4",
-    title: "Wasser",
-    price: 1.0,
-    description: "Wasser",
-    pfand: false,
-    pfand_item: "2",
-    tags: ['bar'],
-  }
-]

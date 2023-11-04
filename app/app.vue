@@ -15,7 +15,7 @@ const notifyer = useNotifyer();
 .full-screen {
   position: fixed;
   left: 0;
-  top: 64px;
+  top: 50px;
   height: 100vh;
   width: 100%;
   max-width: 100%;
