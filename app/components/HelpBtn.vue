@@ -3,10 +3,11 @@ import type { UnsubscribeFunc } from 'pocketbase';
 
 const pb = usePocketbase()
 
-let { from, msg } = $defineProps<{
+let { from, msg, icon, sync } = $defineProps<{
   from: string
   msg: string
   icon: string
+  sync: boolean
 }>()
 
 let alert = $ref<AlertRecord>()
@@ -28,19 +29,31 @@ let pulse = $computed(() => {
     return 'pulse'
   }
   return undefined
-
 })
+
+
+if (sync) {
+  try {
+    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`from = "${from}" && msg = "${msg}"`)
+  } catch (e) {
+    console.error(e)
+    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: false})
+  }
+}
 
 const unsubscripe = await pb.collection('alerts').subscribe<AlertRecord>('*', function (e) {
   if (e.record.id === alert?.id) {
-    console.log(e.record);
-    alert = e.record.active ? e.record as AlertRecord : undefined
+    if (!sync) {
+      alert = e.record.active ? e.record as AlertRecord : undefined
+    } else {
+      alert = e.record as AlertRecord
+    }
   }
 });
 
 async function onClick() {
   if (alert) {
-    pb.collection('alerts').update<AlertRecord>(alert.id, { active: false })
+    pb.collection('alerts').update<AlertRecord>(alert.id, { active: !alert.active })
   } else {
     alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: true})
   }
