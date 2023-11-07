@@ -1,4 +1,3 @@
-import { KassePiniaEnxample } from '../../.nuxt/components';
 <script setup lang="ts">
 definePageMeta({
   layout: 'admin',

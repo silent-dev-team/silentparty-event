@@ -18,6 +18,8 @@
       </div>
     </v-main>
 
+    <HelpBtn :from="page" msg="Glocke gedrückt" icon="mdi-bell" style="position: fixed; left: 1rem; bottom: 4rem; z-index: 5000;" />
+
     <v-bottom-navigation height="50" :active="navbar">
       <v-btn 
         position="absolute" 
@@ -70,6 +72,8 @@ const pb = usePocketbase()
 const router = useRouter()
 const shopStore = useShopStore()
 shopStore.loadShop()
+
+let page = $computed(() => router.currentRoute.value.path.split('/').at(-1))
 
 const unsubscripe = await pb.collection('shop_items').subscribe('*', function (e) {
     console.log(e.action);

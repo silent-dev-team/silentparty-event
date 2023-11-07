@@ -48,4 +48,13 @@ declare global {
   }
 
   type TicketHeadPhoneRecord = RecordModel & ITicketHeadPhoneTicket;
+  
+  interface IAlert {
+    from: string;
+    msg: string;
+    active: boolean;
+    seen: boolean;
+  }
+
+  type AlertRecord = RecordModel & IAlert;
 }
