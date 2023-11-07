@@ -11,12 +11,21 @@ let { from, msg } = $defineProps<{
 
 let alert = $ref<AlertRecord>()
 let color = $computed(() => {
-  console.log("color");
   if (alert?.seen) {
     return 'blue'
   }
   if (alert?.active) {
     return 'red'
+  }
+  return undefined
+
+})
+let pulse = $computed(() => {
+  if (alert?.seen) {
+    return 'pulse-reverse'
+  }
+  if (alert?.active) {
+    return 'pulse'
   }
   return undefined
 
@@ -45,5 +54,51 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <v-btn :color="color" :icon="icon" @click="onClick"/>
+  <v-btn :class="pulse" :color="color" :icon="icon" @click="onClick"/>
 </template>
+
+<style scoped>
+.pulse {
+  display: block;
+  cursor: pointer;
+  animation: pulse 1s infinite;
+}
+
+.pulse:hover {
+  animation: none;
+}
+
+.pulse-reverse {
+  display: block;
+  cursor: pointer;
+  animation: pulse 2s reverse infinite;
+}
+
+
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0.4);
+  }
+  70% {
+    -webkit-box-shadow: 0 0 0 20px rgba(204, 44, 44, 0);
+  }
+  100% {
+    -webkit-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0);
+  }
+}
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0.4);
+    box-shadow: 0 0 0 0 rgba(204, 44, 44, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 20px rgba(204, 44, 44, 0);
+    box-shadow: 0 0 0 20px rgba(204, 44, 44, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(204, 44, 44, 0);
+    box-shadow: 0 0 0 0 rgba(204, 44, 44, 0);
+  }
+}
+</style>

@@ -53,6 +53,12 @@
 
         <span>Bar</span>
       </v-btn>
+
+      <v-btn value="bar" @click="push('/admin/door')">
+        <v-icon>mdi-door</v-icon>
+
+        <span>Tür</span>
+      </v-btn>
     </v-bottom-navigation>
     <v-btn 
       v-if="!navbar"

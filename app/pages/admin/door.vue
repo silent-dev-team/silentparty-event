@@ -10,7 +10,7 @@ let color = $computed(() => {
   if (alert?.active) {
     return 'red'
   }
-  return undefined
+  return 'green'
 
 })
 
