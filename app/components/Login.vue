@@ -15,7 +15,7 @@ let mail = $ref('')
 let password = $ref('')
 
 function login(mail:string, password:string){
-  pb.admins.authWithPassword(mail, password)
+  pb.admins.authWithPassword(mail.trim(), password.trim())
     .then((res) => {
       notifyer.notify('Login erfolgreich', 'success')
       console.log(res)
