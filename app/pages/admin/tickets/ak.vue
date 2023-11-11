@@ -233,7 +233,7 @@ async function linkTicketToHP() {
       />
     </v-card>
     <Ticket 
-      v-if="ticket" 
+      v-if="ticket?.vvk" 
       :id="ticket?.id" 
       submitText="Bestätigen" 
       @update="checkoutDialog = true; dialog = false;"

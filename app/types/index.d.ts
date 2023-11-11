@@ -17,6 +17,7 @@ declare global {
     validated:  boolean;
     used: boolean;
     filled: boolean;
+    vvk: boolean;
   }
 
   type TicketRecord = RecordModel & ITicket;
