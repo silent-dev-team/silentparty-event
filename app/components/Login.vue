@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const pb = usePocketbase()
+const notifyer = useNotifyer()
 
 const props = defineProps({
   modelValue: {
@@ -16,10 +17,12 @@ let password = $ref('')
 function login(mail:string, password:string){
   pb.admins.authWithPassword(mail, password)
     .then((res) => {
+      notifyer.notify('Login erfolgreich', 'success')
       console.log(res)
       emit('update:modelValue', false)
     })
     .catch((err) => {
+      notifyer.notify('Login fehlgeschlagen', 'error')
       console.log(err)
     })
 }
