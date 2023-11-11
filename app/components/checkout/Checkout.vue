@@ -16,7 +16,7 @@ let show = $toRef(props, 'shown');
 </script>
 
 <template>
-  <v-dialog fullscreen transition="dialog-bottom-transition" v-model="show">
+  <v-dialog :persistent="true" fullscreen transition="dialog-bottom-transition" v-model="show">
     <transition name="fade">
       <CheckoutNumpad :requested="requested" @paied="emit('paied')" @cancled="emit('cancled')"/>
     </transition>
