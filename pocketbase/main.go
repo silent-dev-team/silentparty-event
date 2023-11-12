@@ -17,6 +17,8 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/tools/types"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 //go:embed all:public
@@ -287,7 +289,7 @@ func main() {
 		if active {
 			seen := e.Record.GetBool("seen")
 			if seen {
-				text := fmt.Sprintf("🚶‍♂️ %s 🚶‍♂️\n\n Jemand ist auf dem Weg", from)
+				text := fmt.Sprintf("💬 %s 💬\n\n hierauf wurde geantwortet", from)
 				bot.EditGroupMessage(e.Record.GetInt("tg_msg_id"), text, "default")
 			}
 			return nil
@@ -359,4 +361,31 @@ func SetToSeen(app *pocketbase.PocketBase, alertID string) error {
 	}
 	alert.Set("seen", true)
 	return app.Dao().SaveRecord(alert)
+}
+
+func AlertListener(app *pocketbase.PocketBase, updates tgbotapi.UpdatesChannel, alertID string, done chan bool) {
+	alert, _ := app.Dao().FindRecordById("alerts", alertID)
+	created := alert.GetDateTime("created")
+	for update := range updates {
+		now := types.NowDateTime()
+		if created.Time().After(now.Time()) {
+			done <- true
+		}
+
+		msg := update.Message
+		fmt.Println("Nachricht", msg)
+		if msg == nil {
+			continue
+		}
+		parentMsg := msg.ReplyToMessage
+		fmt.Println("Parent", parentMsg)
+		if parentMsg == nil {
+			continue
+		}
+		if parentMsg.MessageID != alert.GetInt("tg_msg_id") {
+			continue
+		}
+		SetToSeen(app, alertID)
+		done <- true
+	}
 }
