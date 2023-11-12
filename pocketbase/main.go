@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
+	"github.com/silent-dev-team/silentparty-event/pocketbase/tg"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/utils"
 
 	"github.com/labstack/echo/v5"
@@ -23,6 +24,16 @@ var public embed.FS
 
 func main() {
 	app := pocketbase.New()
+
+	/* BOT */
+	groups := tg.GroupMap{
+		"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
+	}
+	bot, err := tg.NewBot(utils.Getenv("BOT_TOKEN"), groups)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go bot.Run()
 
 	/* CUSTOM ENDPOINTS */
 
@@ -258,6 +269,34 @@ func main() {
 		return nil
 	})
 
+	// send message on alert
+	app.OnRecordAfterCreateRequest("alerts").Add(func(e *core.RecordCreateEvent) error {
+		m := e.Record.GetString("msg")
+		from := strings.ToUpper(e.Record.GetString("from"))
+		text := fmt.Sprintf("⚠️ %s ⚠️\n\n%s", from, m)
+		message, _ := bot.SendGroupMessage("default", text)
+		e.Record.Set("tg_msg_id", message.MessageID)
+		app.Dao().SaveRecord(e.Record)
+		return nil
+	})
+
+	// send message on active off alert
+	app.OnRecordAfterUpdateRequest("alerts").Add(func(e *core.RecordUpdateEvent) error {
+		from := strings.ToUpper(e.Record.GetString("from"))
+		active := e.Record.GetBool("active")
+		if active {
+			seen := e.Record.GetBool("seen")
+			if seen {
+				text := fmt.Sprintf("🚶‍♂️ %s 🚶‍♂️\n\n Jemand ist auf dem Weg", from)
+				bot.EditGroupMessage(e.Record.GetInt("tg_msg_id"), text, "default")
+			}
+			return nil
+		}
+		text := fmt.Sprintf("✅ %s ✅\n\n Hat sich erledigt", from)
+		bot.EditGroupMessage(e.Record.GetInt("tg_msg_id"), text, "default")
+		return nil
+	})
+
 	// send mail after ticket is sold
 	// app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
 	// 	sold := e.Record.GetBool("sold")
@@ -311,4 +350,13 @@ func calculateTotal(positions []*models.Record) float64 {
 		total += p.GetFloat("price") * float64(p.GetInt("amount"))
 	}
 	return total
+}
+
+func SetToSeen(app *pocketbase.PocketBase, alertID string) error {
+	alert, err := app.Dao().FindRecordById("alerts", alertID)
+	if err != nil {
+		return err
+	}
+	alert.Set("seen", true)
+	return app.Dao().SaveRecord(alert)
 }
