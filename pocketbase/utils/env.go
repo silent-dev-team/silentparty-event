@@ -11,7 +11,7 @@ import (
 func Getenv(key string) string {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("no .env file found - ignore on docker deployment")
+		log.Println("no .env file found - ignore on docker deployment:", key)
 	}
 	return os.Getenv(key)
 }
