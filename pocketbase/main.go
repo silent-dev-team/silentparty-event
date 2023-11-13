@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/silent-dev-team/silentparty-event/pocketbase/alerts"
 	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/tg"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/utils"
@@ -17,8 +18,6 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/tools/types"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 //go:embed all:public
@@ -35,7 +34,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go bot.Run()
+	go bot.MessageListener()
+
+	alertHandler := alerts.NewHandler(app, bot)
+	go alertHandler.StartReplyListener()
 
 	/* CUSTOM ENDPOINTS */
 
@@ -272,32 +274,10 @@ func main() {
 	})
 
 	// send message on alert
-	app.OnRecordAfterCreateRequest("alerts").Add(func(e *core.RecordCreateEvent) error {
-		m := e.Record.GetString("msg")
-		from := strings.ToUpper(e.Record.GetString("from"))
-		text := fmt.Sprintf("⚠️ %s ⚠️\n\n%s", from, m)
-		message, _ := bot.SendGroupMessage("default", text)
-		e.Record.Set("tg_msg_id", message.MessageID)
-		app.Dao().SaveRecord(e.Record)
-		return nil
-	})
+	app.OnRecordAfterCreateRequest("alerts").Add(alertHandler.GetAfterCreatedAlertHook())
 
 	// send message on active off alert
-	app.OnRecordAfterUpdateRequest("alerts").Add(func(e *core.RecordUpdateEvent) error {
-		from := strings.ToUpper(e.Record.GetString("from"))
-		active := e.Record.GetBool("active")
-		if active {
-			seen := e.Record.GetBool("seen")
-			if seen {
-				text := fmt.Sprintf("💬 %s 💬\n\n hierauf wurde geantwortet", from)
-				bot.EditGroupMessage(e.Record.GetInt("tg_msg_id"), text, "default")
-			}
-			return nil
-		}
-		text := fmt.Sprintf("✅ %s ✅\n\n Hat sich erledigt", from)
-		bot.EditGroupMessage(e.Record.GetInt("tg_msg_id"), text, "default")
-		return nil
-	})
+	app.OnRecordAfterUpdateRequest("alerts").Add(alertHandler.GetAfterUpdatedAlertHook())
 
 	// send mail after ticket is sold
 	// app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
@@ -352,40 +332,4 @@ func calculateTotal(positions []*models.Record) float64 {
 		total += p.GetFloat("price") * float64(p.GetInt("amount"))
 	}
 	return total
-}
-
-func SetToSeen(app *pocketbase.PocketBase, alertID string) error {
-	alert, err := app.Dao().FindRecordById("alerts", alertID)
-	if err != nil {
-		return err
-	}
-	alert.Set("seen", true)
-	return app.Dao().SaveRecord(alert)
-}
-
-func AlertListener(app *pocketbase.PocketBase, updates tgbotapi.UpdatesChannel, alertID string, done chan bool) {
-	alert, _ := app.Dao().FindRecordById("alerts", alertID)
-	created := alert.GetDateTime("created")
-	for update := range updates {
-		now := types.NowDateTime()
-		if created.Time().After(now.Time()) {
-			done <- true
-		}
-
-		msg := update.Message
-		fmt.Println("Nachricht", msg)
-		if msg == nil {
-			continue
-		}
-		parentMsg := msg.ReplyToMessage
-		fmt.Println("Parent", parentMsg)
-		if parentMsg == nil {
-			continue
-		}
-		if parentMsg.MessageID != alert.GetInt("tg_msg_id") {
-			continue
-		}
-		SetToSeen(app, alertID)
-		done <- true
-	}
 }

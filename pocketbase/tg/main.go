@@ -1,6 +1,7 @@
 package tg
 
 import (
+	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -9,9 +10,9 @@ import (
 type GroupMap = map[string]int64
 
 type Bot struct {
-	API     *tgbotapi.BotAPI
-	groups  GroupMap
-	Updates tgbotapi.UpdatesChannel
+	API    *tgbotapi.BotAPI
+	groups GroupMap
+	Replys chan *tgbotapi.Message
 }
 
 var commands = BotCommands{
@@ -34,20 +35,27 @@ func NewBot(tg_token string, groups GroupMap) (*Bot, error) {
 	bot := &Bot{
 		API:    botAPI,
 		groups: groups,
+		Replys: make(chan *tgbotapi.Message),
 	}
 
 	return bot, nil
 }
 
-func (bot *Bot) Run() {
+func (bot *Bot) MessageListener() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
-	bot.Updates = bot.API.GetUpdatesChan(u)
+	updates := bot.API.GetUpdatesChan(u)
 
-	for update := range bot.Updates {
+	for update := range updates {
 		message := update.Message
 		// ignore any non-Message Updates
 		if message == nil {
+			continue
+		}
+
+		if message.ReplyToMessage != nil {
+			fmt.Println("Add to chan:", message.ReplyToMessage)
+			bot.Replys <- message
 			continue
 		}
 
@@ -67,7 +75,7 @@ func (bot *Bot) SendGroupMessage(groupName, text string) (tgbotapi.Message, erro
 	return bot.API.Send(msg)
 }
 
-func (bot *Bot) EditGroupMessage(messageID int, text string, groupName string) {
+func (bot *Bot) EditGroupMessage(groupName string, messageID int, text string) {
 	group := bot.groups[groupName]
 	msg := tgbotapi.NewEditMessageText(group, messageID, text)
 	message, _ := bot.API.Send(msg)
