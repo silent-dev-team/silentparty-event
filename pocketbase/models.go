@@ -55,3 +55,14 @@ type Dj struct {
 	Instagram string `json:"instagram" db:"instagram"`
 	Color     string `json:"color" db:"color"`
 }
+
+type ShopItem struct {
+	Id          string   `json:"id" db:"id"`
+	Title       string   `json:"title" db:"title"`
+	Description string   `json:"description" db:"description"`
+	Price       int      `json:"price" db:"price"`
+	Img         string   `json:"img" db:"img"`
+	Tags        []string `json:"tags" db:"tags"`
+	Pfand       bool     `json:"pfand" db:"pfand"`
+	PfandItem   string   `json:"pfand_item" db:"pfand_item"`
+}

@@ -19,6 +19,13 @@ RUN yarn build:nuxt
 # BUILD POCKTBASE WITH SERVABLE TO BINARY
 FROM golang:1.21.2 as go-builder
 
+RUN apt-get update && apt-get install -y ca-certificates openssl
+
+ARG cert_location=/usr/local/share/ca-certificates
+ARG crt_domain
+RUN openssl s_client -showcerts -connect ${crt_domain}:443 </dev/null 2>/dev/null|openssl x509 -outform PEM > ${cert_location}/directus.crt
+RUN update-ca-certificates
+
 WORKDIR /builder
 COPY go.mod go.sum ./
 RUN go mod download
@@ -35,6 +42,9 @@ FROM debian:latest
 RUN apt update && apt upgrade -y 
 # && apt install -y ca-certificates iptables && rm -rf /var/lib/apt/lists/*
 # RUN iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+COPY --from=go-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 WORKDIR /
 COPY --from=go-builder /builder/pocketnuxt /pocketnuxt
 RUN chmod +x /pocketnuxt

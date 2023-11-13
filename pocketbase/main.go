@@ -8,7 +8,9 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/silent-dev-team/silentparty-event/pocketbase/alerts"
 	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
+	"github.com/silent-dev-team/silentparty-event/pocketbase/tg"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/utils"
 
 	"github.com/labstack/echo/v5"
@@ -27,18 +29,18 @@ var public embed.FS
 func main() {
 	app := pocketbase.New()
 
-	// /* BOT */
-	// groups := tg.GroupMap{
-	// 	"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
-	// }
-	// bot, err := tg.NewBot(utils.Getenv("BOT_TOKEN"), groups)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// go bot.MessageListener()
+	/* BOT */
+	groups := tg.GroupMap{
+		"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
+	}
+	bot, err := tg.NewBot(utils.Getenv("BOT_TOKEN"), groups)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go bot.MessageListener()
 
-	// alertHandler := alerts.NewHandler(app, bot)
-	// go alertHandler.StartReplyListener()
+	alertHandler := alerts.NewHandler(app, bot)
+	go alertHandler.StartReplyListener()
 
 	/* CUSTOM ENDPOINTS */
 
@@ -196,6 +198,16 @@ func main() {
 			}
 			e.Client.Send(m)
 		}
+		if slices.Contains(e.Subscriptions, "shop_items") {
+			var items []ShopItem
+			app.Dao().DB().NewQuery("SELECT * FROM shop_items").All(&items)
+			b, _ := json.Marshal(items)
+			m := subscriptions.Message{
+				Name: "shop_items",
+				Data: b,
+			}
+			e.Client.Send(m)
+		}
 		return nil
 	})
 
@@ -331,10 +343,10 @@ func main() {
 	})
 
 	// send message on alert
-	// app.OnRecordAfterCreateRequest("alerts").Add(alertHandler.GetAfterCreatedAlertHook())
+	app.OnRecordAfterCreateRequest("alerts").Add(alertHandler.GetAfterCreatedAlertHook())
 
 	// send message on active off alert
-	// app.OnRecordAfterUpdateRequest("alerts").Add(alertHandler.GetAfterUpdatedAlertHook())
+	app.OnRecordAfterUpdateRequest("alerts").Add(alertHandler.GetAfterUpdatedAlertHook())
 
 	// send mail after ticket is sold
 	// app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
