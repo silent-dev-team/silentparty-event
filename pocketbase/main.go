@@ -215,6 +215,18 @@ func main() {
 			b, _ := json.Marshal(marquees)
 			e.Message.Data = b
 		}
+		if e.Message.Name == "djs" {
+			var djs []Dj
+			app.Dao().DB().NewQuery("SELECT * FROM djs").All(&djs)
+			b, _ := json.Marshal(djs)
+			e.Message.Data = b
+		}
+		if e.Message.Name == "shop_items" {
+			var items []ShopItem
+			app.Dao().DB().NewQuery("SELECT * FROM shop_items").All(&items)
+			b, _ := json.Marshal(items)
+			e.Message.Data = b
+		}
 		return nil
 	})
 
