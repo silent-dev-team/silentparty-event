@@ -13,7 +13,7 @@ let { from, msg, icon, sync } = $defineProps<{
 let alert = $ref<AlertRecord>()
 let color = $computed(() => {
   if (alert?.seen) {
-    return 'blue'
+    return 'green'
   }
   if (alert?.active) {
     return 'red'
