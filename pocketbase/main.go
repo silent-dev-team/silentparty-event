@@ -2,8 +2,10 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"log"
+	"slices"
 	"strings"
 
 	"github.com/silent-dev-team/silentparty-event/pocketbase/alerts"
@@ -17,6 +19,7 @@ import (
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/tools/subscriptions"
 	"github.com/pocketbase/pocketbase/tools/types"
 )
 
@@ -149,6 +152,62 @@ func main() {
 			c.JSON(200, ticketHp)
 			return nil
 		})
+		return nil
+	})
+
+	// user stats
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		e.Router.GET("/api/v1/userstats", func(c echo.Context) error {
+			stats, _ := GetUserstats(app)
+			c.JSON(200, stats)
+			return nil
+		})
+		return nil
+	})
+
+	app.OnRealtimeAfterSubscribeRequest().Add(func(e *core.RealtimeSubscribeEvent) error {
+		log.Println(e.HttpContext)
+		log.Println(e.Client.Id())
+		log.Println(e.Subscriptions)
+		if slices.Contains(e.Subscriptions, "userstats") {
+			stats, _ := GetUserstats(app)
+			b, _ := json.Marshal(stats)
+			m := subscriptions.Message{
+				Name: "userstats",
+				Data: b,
+			}
+			e.Client.Send(m)
+		}
+		if slices.Contains(e.Subscriptions, "djs") {
+			var djs []Dj
+			app.Dao().DB().NewQuery("SELECT * FROM djs").All(&djs)
+			b, _ := json.Marshal(djs)
+			m := subscriptions.Message{
+				Name: "djs",
+				Data: b,
+			}
+			e.Client.Send(m)
+		}
+		if slices.Contains(e.Subscriptions, "marquee") {
+			var marquees []Marque
+			app.Dao().DB().NewQuery("SELECT * FROM marquee").All(&marquees)
+			b, _ := json.Marshal(marquees)
+			m := subscriptions.Message{
+				Name: "marquee",
+				Data: b,
+			}
+			e.Client.Send(m)
+		}
+		return nil
+	})
+
+	app.OnRealtimeBeforeMessageSend().Add(func(e *core.RealtimeMessageEvent) error {
+		if e.Message.Name == "marquee" {
+			var marquees []Marque
+			app.Dao().DB().NewQuery("SELECT * FROM marquee").All(&marquees)
+			b, _ := json.Marshal(marquees)
+			e.Message.Data = b
+		}
 		return nil
 	})
 
@@ -332,4 +391,33 @@ func calculateTotal(positions []*models.Record) float64 {
 		total += p.GetFloat("price") * float64(p.GetInt("amount"))
 	}
 	return total
+}
+
+func GetUserstats(app *pocketbase.PocketBase) (*Userstats, error) {
+	var usedTickets []Ticket
+	app.Dao().DB().
+		NewQuery("SELECT * FROM tickets WHERE used=true").
+		All(&usedTickets)
+
+	var usedVvkTickets int
+	for _, t := range usedTickets {
+		if t.Vvk {
+			usedVvkTickets++
+		}
+	}
+
+	var lentHps []Hp
+	app.Dao().DB().
+		NewQuery("SELECT * FROM hp WHERE lent=true").
+		All(&lentHps)
+
+	stats := &Userstats{
+		Sells:    len(usedTickets),
+		UsedVvk:  usedVvkTickets,
+		Checked:  len(usedTickets),
+		Returned: 0,
+		Current:  len(lentHps),
+	}
+
+	return stats, nil
 }
