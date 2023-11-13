@@ -166,9 +166,6 @@ func main() {
 	})
 
 	app.OnRealtimeAfterSubscribeRequest().Add(func(e *core.RealtimeSubscribeEvent) error {
-		log.Println(e.HttpContext)
-		log.Println(e.Client.Id())
-		log.Println(e.Subscriptions)
 		if slices.Contains(e.Subscriptions, "userstats") {
 			stats, _ := GetUserstats(app)
 			b, _ := json.Marshal(stats)
