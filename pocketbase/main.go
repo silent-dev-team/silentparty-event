@@ -8,7 +8,9 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/silent-dev-team/silentparty-event/pocketbase/alerts"
 	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
+	"github.com/silent-dev-team/silentparty-event/pocketbase/tg"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/utils"
 
 	"github.com/labstack/echo/v5"
@@ -28,17 +30,17 @@ func main() {
 	app := pocketbase.New()
 
 	/* BOT */
-	// groups := tg.GroupMap{
-	// 	"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
-	// }
-	// bot, err := tg.NewBot(utils.Getenv("BOT_TOKEN"), groups)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// go bot.MessageListener()
+	groups := tg.GroupMap{
+		"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
+	}
+	bot, err := tg.NewBot(utils.Getenv("BOT_TOKEN"), groups)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go bot.MessageListener()
 
-	// alertHandler := alerts.NewHandler(app, bot)
-	// go alertHandler.StartReplyListener()
+	alertHandler := alerts.NewHandler(app, bot)
+	go alertHandler.StartReplyListener()
 
 	/* CUSTOM ENDPOINTS */
 
