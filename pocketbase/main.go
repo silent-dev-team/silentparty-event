@@ -30,17 +30,20 @@ func main() {
 	app := pocketbase.New()
 
 	/* BOT */
-	groups := tg.GroupMap{
-		"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
-	}
-	bot, err := tg.NewBot(utils.Getenv("BOT_TOKEN"), groups)
-	if err != nil {
-		log.Fatal(err)
-	}
-	go bot.MessageListener()
+	token := utils.Getenv("BOT_TOKEN")
+	if token != "" {
+		groups := tg.GroupMap{
+			"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
+		}
+		bot, err := tg.NewBot(token, groups)
+		if err != nil {
+			log.Fatal(err)
+		}
+		go bot.MessageListener()
 
-	alertHandler := alerts.NewHandler(app, bot)
-	go alertHandler.StartReplyListener()
+		alertHandler := alerts.NewHandler(app, bot)
+		go alertHandler.StartReplyListener()
+	}
 
 	/* CUSTOM ENDPOINTS */
 
