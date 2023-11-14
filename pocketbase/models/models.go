@@ -1,16 +1,9 @@
-package main
+package models
 
-type Transaction struct {
-	Positions []Position `json:"positions"`
-}
+import "github.com/pocketbase/pocketbase/core"
 
-type Position struct {
-	ItemId string `json:"itemId"`
-	Amount int    `json:"amount"`
-}
-
-type Unlink struct {
-	QR string `json:"qr"`
+type Model interface {
+	Ticket | Hp | Marque | Dj | ShopItem
 }
 
 type Ticket struct {
@@ -35,14 +28,6 @@ type Hp struct {
 	Defect bool   `json:"defect" db:"defect"`
 }
 
-type Userstats struct {
-	Sells    int `json:"sells"`    // used all tickets
-	Checked  int `json:"checked"`  // used vvk tickets
-	UsedVvk  int `json:"usedVvk"`  // used tickets (link Sells)
-	Returned int `json:"returned"` // 0
-	Current  int `json:"current"`  //
-}
-
 type Marque struct {
 	Id   string `json:"id" db:"id"`
 	Text string `json:"text" db:"text"`
@@ -65,4 +50,59 @@ type ShopItem struct {
 	Tags        string  `json:"tags" db:"tags"`
 	Pfand       bool    `json:"pfand" db:"pfand"`
 	PfandItem   string  `json:"pfand_item" db:"pfand_item"`
+}
+
+func GetAllTickets(app core.App) ([]Ticket, error) {
+	var tickets []Ticket
+	err := app.Dao().DB().
+		NewQuery("SELECT * FROM tickets").
+		All(&tickets)
+	if err != nil {
+		return nil, err
+	}
+	return tickets, nil
+}
+
+func GetAllHps(app core.App) ([]Hp, error) {
+	var hps []Hp
+	err := app.Dao().DB().
+		NewQuery("SELECT * FROM hp").
+		All(&hps)
+	if err != nil {
+		return nil, err
+	}
+	return hps, nil
+}
+
+func GetAllMarques(app core.App) ([]Marque, error) {
+	var marques []Marque
+	err := app.Dao().DB().
+		NewQuery("SELECT * FROM marquee").
+		All(&marques)
+	if err != nil {
+		return nil, err
+	}
+	return marques, nil
+}
+
+func GetAllDjs(app core.App) ([]Dj, error) {
+	var djs []Dj
+	err := app.Dao().DB().
+		NewQuery("SELECT * FROM djs").
+		All(&djs)
+	if err != nil {
+		return nil, err
+	}
+	return djs, nil
+}
+
+func GetAllShopItems(app core.App) ([]ShopItem, error) {
+	var items []ShopItem
+	err := app.Dao().DB().
+		NewQuery("SELECT * FROM shop_items").
+		All(&items)
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
 }
