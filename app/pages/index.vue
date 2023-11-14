@@ -5,47 +5,58 @@ definePageMeta({
   layout: 'admin',
 });
 
-const buttons = [
-  {
-    text: 'Kasse',
-    onClick: () => router.push({path:'/kasse'})
-  },
-  {
-    text: 'Tickets',
-    onClick: () => router.push({path:'/admin/tickets'})
-  }
-]
-
 let showLogin = $ref(false)
 
 </script>
 
 <template>
-    <div class="buttons">
-      <v-btn 
-        v-for="btn in buttons" :key="btn.text"
-        class="mx-auto my-5" 
-        width="150px" height="50px" 
-        outline dark large 
-        @click="btn.onClick()"
-      >{{ btn.text }}
-      </v-btn>
+    <div class="container ma-3 text-center">
+        <h1>Silent Party App</h1>
+        <p>Hallo lieber Helfer, dies ist die Silent Party App. Hier kannst du unsere Gäste, Kassen und Kopfhörer verwalten. Mit dieser intuitiven App wird die Organisation deiner Veranstaltung zum Kinderspiel. Verfolge den Status der Kopfhörerverleih, behalte den Überblick über die Einnahmen und sorge für ein unvergessliches Erlebnis für alle Gäste.</p>
+        <p>Unsere App ist darauf ausgelegt, dir maximale Kontrolle und Übersichtlichkeit zu bieten, damit deine Party ein voller Erfolg wird. Viel Spaß bei der Nutzung unserer App!</p>
     </div>
-
 </template>
 
 <style scoped>
-.title {
-  margin: 0;
-  font-size: 24px;
-  color: white;
-}
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-.buttons {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 60px);
-}
+        .container {
+            max-width: 600px;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            p {
+                font-size: 1em;
+            }
+        }
 </style>

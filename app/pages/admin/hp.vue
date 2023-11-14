@@ -5,6 +5,7 @@ definePageMeta({
 
 const pb = usePocketbase();
 const notifyer = useNotifyer();
+const router = useRouter();
 
 let scannerReset = $ref(false);
 
@@ -95,7 +96,16 @@ function resetScanner() {
 </script>
 
 <template>
-    <Scanner class="full-screen" :overlaypath="Overlay.HP" @onScan="onScan($event)" :reset="scannerReset" @update:reset="scannerReset = $event"/>
+    <Scanner     
+      v-touch="{
+        left: () => router.push('/admin/tickets/ak'),
+      }"
+      class="full-screen" 
+      :overlaypath="Overlay.HP" 
+      @onScan="onScan($event)" 
+      :reset="scannerReset" 
+      @update:reset="scannerReset = $event"
+    />
     <v-dialog fullscreen v-model="dialog" :persistent="true">
         <v-card minWidth="250px" maxWidth="420px" class="mx-auto">
           <v-card-title>

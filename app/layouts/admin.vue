@@ -2,7 +2,7 @@
   <Login v-model="showLogin" />
   <v-app id="inspire">
     <v-app-bar height="50" scroll-behavior="elevate" class="header">
-      <v-toolbar-title>Silent App</v-toolbar-title>
+      <v-toolbar-title @click="router.push('/')">Silent App</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-if="!pb.authStore.isAdmin" @click="showLogin = true">
         login
@@ -12,9 +12,9 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main>
+    <v-main >
       <div class="bg-blue-grey-lighten-5" style="height: 100vh; width: 100%; position: fixed;">
-        <slot v-if="pb.authStore.isAdmin" />
+        <slot  v-if="pb.authStore.isAdmin"></slot>
       </div>
     </v-main>
 
@@ -31,33 +31,28 @@
         style="bottom: 0; left: 0; z-index: 1000;"
       ></v-btn>
 
-      <v-btn value="bar" @click="push('/admin/door')">
+      <v-btn class="d-none d-sm-flex" value="bar" @click="push('/admin/door')">
         <v-icon>mdi-door</v-icon>
-
         <span>Tür</span>
       </v-btn>
 
       <v-btn value="KH" @click="push('/admin/hp')">
         <v-icon>mdi-headphones</v-icon>
-
         <span>KH</span>
       </v-btn>
 
       <v-btn value="tickets" @click="push('/admin/tickets/ak')">
         <v-icon>mdi-ticket-confirmation</v-icon>
-
         <span>AK</span>
       </v-btn>
 
-      <v-btn value="vvk" @click="push('/admin/tickets/vvk')">
+      <v-btn v-if="!partyHasStarted()" value="vvk" @click="push('/admin/tickets/vvk')">
         <v-icon>mdi-ticket</v-icon>
-
         <span>VVK</span>
       </v-btn>
 
       <v-btn value="bar" @click="push('/admin/bar')">
         <v-icon>mdi-cash-register</v-icon>
-
         <span>Bar</span>
       </v-btn>
     </v-bottom-navigation>
@@ -78,6 +73,7 @@
 const pb = usePocketbase()
 const router = useRouter()
 const shopStore = useShopStore()
+const partyHasStarted = usePartytime()
 shopStore.loadShop()
 
 let page = $computed(() => router.currentRoute.value.path.split('/').at(-1))
@@ -88,8 +84,17 @@ const unsubscripe = await pb.collection('shop_items').subscribe('*', function (e
     shopStore.loadShop();
 });
 
+watch($$(page), (newPage) => {
+  if (newPage === 'admin' || !page) {
+    navbar = true
+  }
+})
+
 onBeforeMount(() => {
   shopStore.loadShop();
+  if (!page) {
+    navbar = true
+  }
 });
 
 onUnmounted(() => {

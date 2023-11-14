@@ -23,6 +23,7 @@ services:
       - S3_SECRET=${S3_SECRET}
       - BOT_TOKEN=${BOT_TOKEN}
       - BOT_DEFAULT_GROUP=${BOT_DEFAULT_GROUP}
+      - PARTYTIME=${PARTYTIME}
 
 volumes:
  db:

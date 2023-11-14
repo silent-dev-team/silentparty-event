@@ -8,6 +8,7 @@ definePageMeta({
 
 const pb = usePocketbase();
 const notifyer = useNotifyer();
+const router = useRouter();
 
 // ---- Reactive Variables ----
 let scannerReset = $ref(false);
@@ -211,11 +212,13 @@ async function linkTicketToHP() {
 }
 
 
-
 </script>
 
 <template>
   <Scanner 
+    v-touch="{
+      right: () => router.push('/admin/hp'),
+    }"
     class="full-screen" 
     :overlaypath="overlay" 
     @onScan="onScan($event)" 

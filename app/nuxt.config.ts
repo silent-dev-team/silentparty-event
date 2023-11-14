@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       pocketbase: process.env.NUXT_POCKETBASE_URL,
+      partytime: process.env.PARTYTIME,
     }
   },
   modules: [
