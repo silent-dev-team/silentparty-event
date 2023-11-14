@@ -1,4 +1,3 @@
-import { useNotifyer } from '../../stores/notifyStore';
 <script setup lang="ts">
 const { storeId } = $defineProps<{
   storeId: string;
