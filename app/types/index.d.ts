@@ -39,6 +39,7 @@ declare global {
     qr: string;
     defect: boolean;
     lent: boolean;
+    label: string;
   }
 
   type HeadPhoneRecord = RecordModel & IHeadPhone;
