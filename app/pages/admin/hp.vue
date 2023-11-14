@@ -14,7 +14,7 @@ let ticket = $ref<TicketRecord>();
 let shure = $ref(false);
 
 watch(() => dialog, (v) => {
-  if (!v) resetScanner;
+  if (!v) resetScanner();
 })
 
 function unlink() {
@@ -62,9 +62,8 @@ let status = $computed(() => {
 
 function resetScanner() {
   if (!scannerReset) return;
-  setTimeout(() => scannerReset = true, 800)
+  setTimeout(() => scannerReset = true, 800);
 }
-
 </script>
 
 <template>
