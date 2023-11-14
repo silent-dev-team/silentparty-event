@@ -43,6 +43,7 @@ function login(mail:string, password:string){
           v-model="mail"
           label="E-Mail"
           type="email"
+          autocomplete="email"
           required
         ></v-text-field>
         <v-text-field
@@ -50,6 +51,7 @@ function login(mail:string, password:string){
           v-model="password"
           label="Passwort"
           type="password"
+          autocomplete="current-password"
           required
         ></v-text-field>
       </v-card-text>
