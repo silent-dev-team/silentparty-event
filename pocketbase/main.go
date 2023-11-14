@@ -32,17 +32,25 @@ func main() {
 	/* BOT */
 	token := utils.Getenv("BOT_TOKEN")
 	if token != "" {
+		log.Println("Starting bot")
 		groups := tg.GroupMap{
 			"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
 		}
 		bot, err := tg.NewBot(token, groups)
 		if err != nil {
-			log.Fatal(err)
+			log.Panicln("ERROR:", err)
+		} else {
+			go bot.MessageListener()
+			alertHandler := alerts.NewHandler(app, bot)
+			go alertHandler.StartReplyListener()
+			// send message on alert
+			app.OnRecordAfterCreateRequest("alerts").Add(alertHandler.GetAfterCreatedAlertHook())
+			// send message on active off alert
+			app.OnRecordAfterUpdateRequest("alerts").Add(alertHandler.GetAfterUpdatedAlertHook())
 		}
-		go bot.MessageListener()
 
-		alertHandler := alerts.NewHandler(app, bot)
-		go alertHandler.StartReplyListener()
+	} else {
+		log.Println("No bot token found")
 	}
 
 	/* CUSTOM ENDPOINTS */
@@ -362,12 +370,6 @@ func main() {
 		}
 		return nil
 	})
-
-	// send message on alert
-	// app.OnRecordAfterCreateRequest("alerts").Add(alertHandler.GetAfterCreatedAlertHook())
-
-	// send message on active off alert
-	// app.OnRecordAfterUpdateRequest("alerts").Add(alertHandler.GetAfterUpdatedAlertHook())
 
 	// send mail after ticket is sold
 	// app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
