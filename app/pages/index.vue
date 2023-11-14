@@ -10,11 +10,13 @@ let showLogin = $ref(false)
 </script>
 
 <template>
-    <div class="container ma-3 text-center">
+<div class="w-100 pa-5">
+    <div class="container mx-auto text-center">
         <h1>Silent Party App</h1>
         <p>Hallo lieber Helfer, dies ist die Silent Party App. Hier kannst du unsere Gäste, Kassen und Kopfhörer verwalten. Mit dieser intuitiven App wird die Organisation deiner Veranstaltung zum Kinderspiel. Verfolge den Status der Kopfhörerverleih, behalte den Überblick über die Einnahmen und sorge für ein unvergessliches Erlebnis für alle Gäste.</p>
         <p>Unsere App ist darauf ausgelegt, dir maximale Kontrolle und Übersichtlichkeit zu bieten, damit deine Party ein voller Erfolg wird. Viel Spaß bei der Nutzung unserer App!</p>
     </div>
+</div>
 </template>
 
 <style scoped>

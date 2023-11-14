@@ -31,11 +31,6 @@
         style="bottom: 0; left: 0; z-index: 1000;"
       ></v-btn>
 
-      <v-btn class="d-none d-sm-flex" value="bar" @click="push('/admin/door')">
-        <v-icon>mdi-door</v-icon>
-        <span>Tür</span>
-      </v-btn>
-
       <v-btn value="KH" @click="push('/admin/hp')">
         <v-icon>mdi-headphones</v-icon>
         <span>KH</span>
@@ -54,6 +49,11 @@
       <v-btn value="bar" @click="push('/admin/bar')">
         <v-icon>mdi-cash-register</v-icon>
         <span>Bar</span>
+      </v-btn>
+
+      <v-btn class="d-none d-sm-flex" value="bar" @click="push('/admin/door')">
+        <v-icon>mdi-door</v-icon>
+        <span>Tür</span>
       </v-btn>
     </v-bottom-navigation>
     <v-btn 
