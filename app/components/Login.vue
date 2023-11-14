@@ -30,7 +30,7 @@ function login(mail:string, password:string){
 </script>
 
 <template>
-  <v-dialog width="400px" v-model="props.modelValue">
+  <v-dialog width="400px" v-model="props.modelValue" :persistent="true">
     <v-card class="pa-3">
       <v-card-title>
         <h1>Login</h1>
