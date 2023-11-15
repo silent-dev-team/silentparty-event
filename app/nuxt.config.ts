@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     '@vue-macros/nuxt',
     '@vite-pwa/nuxt'
   ],
+  plugins: [
+    { src: '~/plugins/pwa-update.js', mode: 'client' },
+  ],
   pinia: {
     autoImports: [
       // automatically imports `defineStore`
