@@ -177,8 +177,8 @@ async function sell() {
   if (!ticket.sold) {
     reset();
     notifyer.notify('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
-    return
   }
+  checkoutDialog = false
 }
 
 async function linkTicketToHP() {
@@ -203,13 +203,12 @@ async function linkTicketToHP() {
     })
   }
   pb.checkout(payload)
-    .then(() => {
-      checkoutDialog = false
-    }).catch(() => {
+    .catch(() => {
       reset();
       notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
     })
 }
+
 
 
 </script>
