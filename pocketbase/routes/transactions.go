@@ -4,11 +4,13 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
+	"github.com/silent-dev-team/silentparty-event/pocketbase/sse"
 )
 
-func PostNewTransaction(p Path) ServerEventFunc {
+func PostNewTransaction(p Path, b *sse.Broker) ServerEventFunc {
 	return func(e *core.ServeEvent) error {
 		e.Router.POST("/api/v1/new-transaction", func(c echo.Context) error {
+			b.Send("userstats", []byte{})
 			positionsCollection, err1 := e.App.Dao().FindCollectionByNameOrId("positions")
 			transactionsCollection, err2 := e.App.Dao().FindCollectionByNameOrId("transactions")
 

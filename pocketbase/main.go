@@ -56,7 +56,7 @@ func main() {
 	/* CUSTOM ENDPOINTS */
 
 	app.OnBeforeServe().Add(routes.GetTicketExists("/api/collections/tickets/exists/:id"))
-	app.OnBeforeServe().Add(routes.PostNewTransaction("/api/v1/new-transaction"))
+	app.OnBeforeServe().Add(routes.PostNewTransaction("/api/v1/new-transaction", broker))
 	app.OnBeforeServe().Add(routes.PostUnlink("/api/collections/ticket_hp/unlink"))
 	app.OnBeforeServe().Add(routes.GetUserStats("/api/v1/userstats"))
 
@@ -101,27 +101,6 @@ func main() {
 
 	// set hp to lent if it is linked to a ticket
 	app.OnRecordAfterCreateRequest("ticket_hp").Add(hooks.SetHpToLentAndSetTicketToUsed(app))
-
-	// trigger userstats on relevant changes -> implcitly send message to all clients that are subscribed to userstats
-	app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
-		broker.Send("userstats", []byte{})
-		return nil
-	})
-
-	app.OnRecordAfterCreateRequest("ticket_hp").Add(func(e *core.RecordCreateEvent) error {
-		broker.Send("userstats", []byte{})
-		return nil
-	})
-
-	app.OnRecordAfterUpdateRequest("ticket_hp").Add(func(e *core.RecordUpdateEvent) error {
-		broker.Send("userstats", []byte{})
-		return nil
-	})
-
-	app.OnRecordAfterUpdateRequest("hp").Add(func(e *core.RecordUpdateEvent) error {
-		broker.Send("userstats", []byte{})
-		return nil
-	})
 
 	// set hp to not lent if it is unlinked from a ticket
 	app.OnRecordAfterUpdateRequest("ticket_hp").Add(func(e *core.RecordUpdateEvent) error {
