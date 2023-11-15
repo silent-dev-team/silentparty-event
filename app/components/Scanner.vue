@@ -29,8 +29,9 @@ let flip = $ref(false);
 let results = $ref<string[]>([]);
 
 function setCamera(label: string) {
-  qrScanner!.setCamera(cams.find(el => el.label == label)!.id);
-  localStorage.setItem('cam', label);
+  let id = cams.find(el => el.label == label)?.id || localStorage.getItem('camid') || '';
+  qrScanner!.setCamera(id);
+  localStorage.setItem('camid', id);
 }
 
 onMounted(() => { 
@@ -39,8 +40,7 @@ onMounted(() => {
       cams = devices;
       console.log(devices);
     });
-
-
+    
     const vid = window.document.getElementById('qr-video');
     qrScanner = new QrScanner(vid as HTMLVideoElement, (result:any) => {
       if (result instanceof Error) return;
@@ -51,6 +51,7 @@ onMounted(() => {
       blink = true;
       setTimeout(() => blink = false, 300);
     });
+    setCamera('')
     qrScanner.start();
   }
 });
@@ -69,7 +70,7 @@ watch(() => props.reset, () => {
   emit('update:reset', false);
 });
 
-localStorage.setItem('cam', JSON.stringify(results));
+localStorage.setItem('result', JSON.stringify(results));
 </script>
 
 <template>
