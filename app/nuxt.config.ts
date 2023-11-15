@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     { src: '~/plugins/pwa-update.js', mode: 'client' },
   ],
   pinia: {
+    // @ts-ignore
     autoImports: [
       // automatically imports `defineStore`
       'defineStore', // import { defineStore } from 'pinia'
