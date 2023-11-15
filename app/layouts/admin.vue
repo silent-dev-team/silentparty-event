@@ -2,7 +2,7 @@
   <Login v-model="showLogin" />
   <v-app id="inspire">
     <v-app-bar height="50" scroll-behavior="elevate" class="header">
-      <v-toolbar-title @click="router.push('/')">Silent App</v-toolbar-title>
+      <v-toolbar-title style="cursor: pointer;" @click="router.push('/')">Silent App</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-if="!pb.authStore.isAdmin" @click="showLogin = true">
         login
