@@ -256,5 +256,5 @@ async function linkTicketToHP() {
     @paied="sell" 
     @cancled="reset()" 
   />
-  <HelpBtn from="ak" msg="hodor" icon="mdi-door" :sync="true" style="position: fixed; left: 1rem; bottom: 8rem; z-index: 5001;"/>
+  <HelpBtn from="ak" msg="hodor" channel="default" icon="mdi-door" :sync="true" style="position: fixed; left: 1rem; bottom: 12rem; z-index: 5001;"/>
 </template>

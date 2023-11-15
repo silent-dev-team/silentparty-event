@@ -3,9 +3,10 @@ import type { UnsubscribeFunc } from 'pocketbase';
 
 const pb = usePocketbase()
 
-let { from, msg, icon, sync } = $defineProps<{
+let { from, msg, icon, sync, channel } = $defineProps<{
   from: string
   msg: string
+  channel: string
   icon: string
   sync: boolean
 }>()
@@ -34,10 +35,10 @@ let pulse = $computed(() => {
 
 if (sync) {
   try {
-    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`from = "${from}" && msg = "${msg}"`)
+    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`from = "${from}" && msg = "${msg}" && channel = "${channel}"`)
   } catch (e) {
     console.error(e)
-    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: false})
+    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: false, channel: channel})
   }
 }
 
@@ -55,7 +56,7 @@ async function onClick() {
   if (alert) {
     pb.collection('alerts').update<AlertRecord>(alert.id, { active: !alert.active })
   } else {
-    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: true})
+    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: true, channel: channel})
   }
 }
 

@@ -34,7 +34,8 @@ func main() {
 	if token != "" {
 		log.Println("Starting bot")
 		groups := tg.GroupMap{
-			"default": utils.GetenvInt64("BOT_DEFAULT_GROUP"),
+			"default":   utils.GetenvInt64("BOT_DEFAULT_GROUP"),
+			"awareness": utils.GetenvInt64("BOT_AWARENESS_GROUP"),
 		}
 		bot, err := tg.NewBot(token, groups)
 		if err != nil {

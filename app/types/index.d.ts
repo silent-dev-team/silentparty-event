@@ -54,6 +54,7 @@ declare global {
   interface IAlert {
     from: string;
     msg: string;
+    channel: string;
     active: boolean;
     seen: boolean;
   }

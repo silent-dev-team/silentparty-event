@@ -9,10 +9,11 @@ import (
 
 func (h *Handler) GetAfterCreatedAlertHook() func(e *core.RecordCreateEvent) error {
 	return func(e *core.RecordCreateEvent) error {
+		channel := e.Record.GetString("channel")
 		m := e.Record.GetString("msg")
 		from := strings.ToUpper(e.Record.GetString("from"))
 		text := fmt.Sprintf("⚠️ %s ⚠️\n\n%s", from, m)
-		message, _ := h.bot.SendGroupMessage("default", text)
+		message, _ := h.bot.SendGroupMessage(channel, text)
 		e.Record.Set("tg_msg_id", message.MessageID)
 		h.pb.Dao().SaveRecord(e.Record)
 		h.AddAlert(NewAlertFromRecord(e.Record))

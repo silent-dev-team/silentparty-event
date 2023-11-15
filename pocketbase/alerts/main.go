@@ -68,6 +68,7 @@ type Alert struct {
 	ID      string `json:"id"`
 	From    string `json:"from"`
 	Msg     string `json:"msg"`
+	Channel string `json:"channel"`
 	Active  bool   `json:"active"`
 	Seen    bool   `json:"seen"`
 	TgMsgID int    `json:"tg_msg_id"`
