@@ -17,7 +17,7 @@ let label = $ref(false);
 let newLabel = $ref('');
 
 watch(() => dialog, (v) => {
-  if (!v) resetScanner();
+  if (!v) reset();
 })
 
 function unlink() {
@@ -25,7 +25,7 @@ function unlink() {
   pb.unlink(hp.qr)
     .then(() => {
       notifyer.notify('Unlinked', 'success')
-      resetScanner();
+      reset();
     })
     .catch(() => notifyer.notify('Unlink failed', 'error'))
 }
@@ -92,6 +92,16 @@ let status = $computed(() => {
   if (!hp.lent && hp.defect) return 'defekt';
   if (hp.lent && hp.defect) return 'verliehen und defekt';
 })
+
+function reset() {
+  hp = undefined;
+  ticket = undefined;
+  dialog = false;
+  shure = false;
+  label = false;
+  newLabel = '';
+  resetScanner();
+}
 
 function resetScanner() {
   if (scannerReset) return;
