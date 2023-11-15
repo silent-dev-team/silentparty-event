@@ -1,9 +1,7 @@
 package alerts
 
 import (
-	"fmt"
 	"log"
-	"strings"
 
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/models"
@@ -48,20 +46,6 @@ func (h *Handler) StartReplyListener() {
 			}
 		}
 	}
-}
-
-func (h *Handler) SetToSeen(a *Alert) error {
-	rec, err := h.pb.Dao().FindRecordById("alerts", a.ID)
-	if err != nil {
-		return err
-	}
-	rec.Set("seen", true)
-
-	from := strings.ToUpper(rec.GetString("from"))
-	text := fmt.Sprintf("💬 %s 💬\n\n hierauf wurde geantwortet", from)
-	h.bot.EditGroupMessage("default", rec.GetInt("tg_msg_id"), text)
-
-	return h.pb.Dao().SaveRecord(rec)
 }
 
 type Alert struct {

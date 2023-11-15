@@ -23,14 +23,38 @@ func (h *Handler) GetAfterCreatedAlertHook() func(e *core.RecordCreateEvent) err
 
 func (h *Handler) GetAfterUpdatedAlertHook() func(e *core.RecordUpdateEvent) error {
 	return func(e *core.RecordUpdateEvent) error {
-		from := strings.ToUpper(e.Record.GetString("from"))
+		channel := e.Record.GetString("channel")
+		msg := e.Record.GetString("msg")
 		active := e.Record.GetBool("active")
+		if msg == "hodor" {
+			if e.Record.GetBool("active") {
+				h.bot.SendGroupMessage(channel, "🚪🛑 Einlassstop")
+			} else {
+				h.bot.SendGroupMessage(channel, "🚪🟢 Tür wieder auf")
+			}
+			return nil
+		}
 		if active {
 			return nil
 		}
+		from := strings.ToUpper(e.Record.GetString("from"))
 		text := fmt.Sprintf("✅ %s ✅\n\n Hat sich erledigt", from)
-		h.bot.EditGroupMessage("default", e.Record.GetInt("tg_msg_id"), text)
+		h.bot.EditGroupMessage(channel, e.Record.GetInt("tg_msg_id"), text)
 		h.RemoveAlert(e.Record.Id)
 		return nil
 	}
+}
+
+func (h *Handler) SetToSeen(a *Alert) error {
+	rec, err := h.pb.Dao().FindRecordById("alerts", a.ID)
+	if err != nil {
+		return err
+	}
+	rec.Set("seen", true)
+	channel := rec.GetString("channel")
+	from := strings.ToUpper(rec.GetString("from"))
+	text := fmt.Sprintf("💬 %s 💬\n\n hierauf wurde geantwortet", from)
+	h.bot.EditGroupMessage(channel, rec.GetInt("tg_msg_id"), text)
+
+	return h.pb.Dao().SaveRecord(rec)
 }
