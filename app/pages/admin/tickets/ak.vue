@@ -179,6 +179,19 @@ async function sell() {
     notifyer.notify('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
     return
   }
+}
+
+async function linkTicketToHP() {
+  const link = await pb.collection('ticket_hp').create<TicketHeadPhoneRecord>({
+    ticket: ticket!.id,
+    hp: hp!.id,
+  });
+  console.log(link)
+  if (link.ticket !== ticket!.id || link.hp !== hp!.id) {
+    notifyer.notify('Kopfhörer konnte nicht mit Ticket verknüpft werden', 'error')
+    resetScanner();
+    return
+  }
   const payload = [{
     amount: 1,
     itemId: pfandItem.id,
@@ -196,19 +209,6 @@ async function sell() {
       reset();
       notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
     })
-}
-
-async function linkTicketToHP() {
-  const link = await pb.collection('ticket_hp').create<TicketHeadPhoneRecord>({
-    ticket: ticket!.id,
-    hp: hp!.id,
-  });
-  console.log(link)
-  if (link.ticket !== ticket!.id || link.hp !== hp!.id) {
-    notifyer.notify('Kopfhörer konnte nicht mit Ticket verknüpft werden', 'error')
-    resetScanner();
-    return
-  }
 }
 
 
