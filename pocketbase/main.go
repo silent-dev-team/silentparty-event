@@ -107,6 +107,12 @@ func main() {
 		broker.Send("userstats", []byte{})
 		return nil
 	})
+
+	app.OnRecordAfterCreateRequest("ticket_hp").Add(func(e *core.RecordCreateEvent) error {
+		broker.Send("userstats", []byte{})
+		return nil
+	})
+
 	app.OnRecordAfterUpdateRequest("hp").Add(func(e *core.RecordUpdateEvent) error {
 		broker.Send("userstats", []byte{})
 		return nil
