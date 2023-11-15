@@ -19,7 +19,7 @@ func SendOnSubscription(e *core.RealtimeSubscribeEvent, name string, f func() (a
 			return err
 		}
 		m := subscriptions.Message{
-			Name: "userstats",
+			Name: name,
 			Data: b,
 		}
 		e.Client.Send(m)
