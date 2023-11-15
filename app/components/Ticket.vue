@@ -10,11 +10,16 @@ const props = defineProps({
   submitText: {
     type: String,
     default: 'Speichern'
+  },
+  cancleText: {
+    type: String,
+    default: ''
   }
 });
 
 const emit = defineEmits<{
   update: [value: void]
+  cancel: [value: void]
   noticket: [value: void]
 }>()
 
@@ -118,7 +123,7 @@ if (pb.authStore.isAdmin) await refreshTicket();
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-text v-if="renderComponent">
-      <CustomerForm class="mt-5" v-model="form" @submit="updateTicket()" :submitText="submitText"/>
+      <CustomerForm class="mt-5" v-model="form" @submit="updateTicket()" @cancel="emit('cancel')" :cancel-text="cancleText" :submitText="submitText"/>
     </v-card-text>
   </v-card>
 </template>

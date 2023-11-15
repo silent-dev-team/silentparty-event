@@ -142,13 +142,13 @@ async function loadCustomerDataFromTicket(s: string) {
   const id = s.split('/').pop()!;
   ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
   if (!ticket) {
-    notifyer.notify('Ticket nicht in Datenbank gefunden', 'error')
     resetScanner();
+    notifyer.notify('Ticket nicht in Datenbank gefunden', 'error')
     return
   }
   if (ticket.used) {
+    delayedReset(1000)
     notifyer.notify('Ticket wurde bereits benutzt', 'error')
-    reset();
     return
   }
   dialog = true;
@@ -248,6 +248,7 @@ async function linkTicketToHP() {
       :id="ticket?.id" 
       submitText="Bestätigen" 
       @update="checkoutDialog = true; dialog = false;"
+      @cancel="reset()"
       @noticket="delayedReset(3000)"
     />
   </v-dialog>
