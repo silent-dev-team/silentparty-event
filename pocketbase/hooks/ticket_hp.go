@@ -26,7 +26,7 @@ func DontAllowIllegalLink(app core.App) func(e *core.RecordCreateEvent) error {
 	}
 }
 
-func SetHpToLent(app core.App) func(e *core.RecordCreateEvent) error {
+func SetHpToLentAndSetTicketToUsed(app core.App) func(e *core.RecordCreateEvent) error {
 	return func(e *core.RecordCreateEvent) error {
 		hpId := e.Record.GetString("hp")
 		ticketId := e.Record.GetString("ticket")

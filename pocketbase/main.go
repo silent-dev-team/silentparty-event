@@ -100,7 +100,7 @@ func main() {
 	app.OnRecordBeforeCreateRequest("ticket_hp").Add(hooks.DontAllowIllegalLink(app))
 
 	// set hp to lent if it is linked to a ticket
-	app.OnRecordAfterCreateRequest("ticket_hp").Add(hooks.SetHpToLent(app))
+	app.OnRecordAfterCreateRequest("ticket_hp").Add(hooks.SetHpToLentAndSetTicketToUsed(app))
 
 	// trigger userstats on relevant changes -> implcitly send message to all clients that are subscribed to userstats
 	app.OnRecordAfterUpdateRequest("tickets").Add(func(e *core.RecordUpdateEvent) error {
