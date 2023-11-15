@@ -20,4 +20,36 @@ const notifyer = useNotifyer();
   width: 100%;
   max-width: 100%;
 }
+
+.subappmarker {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  background: rgb(1, 18, 39);
+  background: linear-gradient(0deg, rgb(0, 0, 0) 0%, #010b1886 70%, #0a4fa4a1 100%);
+  backdrop-filter: blur(6px);
+  color: white;
+  text-align: center;
+  border-radius: 2rem;
+  width: 6rem;
+  height: 2rem;
+  z-index: 5000;
+  animation: open 1s ease;
+}
+
+@keyframes open {
+  0% {
+    color: transparent;
+    width: 2rem;
+    transform: translateX(-180%);
+  }
+  30% {
+    color: transparent;
+  }
+  100% {
+    color: white;
+    width: 6rem;
+    transform: translateX(0);
+  }
+}
 </style>

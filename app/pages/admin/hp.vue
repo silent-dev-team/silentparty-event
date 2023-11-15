@@ -69,12 +69,16 @@ async function changeLabel(){
   label = false;
 }
 
-async function setDefect() {
+async function toggleDefect() {
   if (!hp) return;
-  hp.defect = true;
+  hp.defect = !hp.defect;
   try {
     hp =  await pb.collection('hp').update<HeadPhoneRecord>(hp.id, hp)
-    notifyer.notify('Defekt gesetzt', 'success')
+    if (hp.defect) {
+      notifyer.notify('Defekt gesetzt', 'success')
+    } else {
+      notifyer.notify('wieder heile', 'success')
+    }
   } catch (e) {
     notifyer.notify('Defekt setzen fehlgeschlagen', 'error')
     console.log(e)
@@ -90,12 +94,16 @@ let status = $computed(() => {
 })
 
 function resetScanner() {
-  if (!scannerReset) return;
+  if (scannerReset) return;
   setTimeout(() => scannerReset = true, 800);
 }
 </script>
 
 <template>
+    <div class="subappmarker">
+      <v-icon class="mt-1">mdi-headphones</v-icon>
+      <span class="ml-2" style="position: relative; top: 4px;">HP</span>
+    </div>
     <Scanner     
       v-touch="{
         left: () => router.push('/admin/tickets/ak'),
@@ -134,7 +142,8 @@ function resetScanner() {
           <v-card-actions class="justify-space-between">
             <v-btn variant="flat" color="primary" class="mt-6" @click="dialog = false">schließen</v-btn>
             <v-btn variant="outlined" color="red" class="mt-6" v-if="hp?.lent" @click="shure = true">Zurückgeben</v-btn>
-            <v-btn variant="flat" color="red" class="mt-6" :disabled="!hp" v-if="!hp?.lent" @click="setDefect()">Defekt</v-btn>
+            <v-btn variant="flat" color="red"     class="mt-6" :disabled="!hp" v-if="!hp?.lent && !hp?.defect" @click="toggleDefect()">Defekt</v-btn>
+            <v-btn variant="flat" color="success" class="mt-6" :disabled="!hp" v-if="!hp?.lent && hp?.defect" @click="toggleDefect()">Heile</v-btn>
          </v-card-actions>
         </v-card>
     </v-dialog>

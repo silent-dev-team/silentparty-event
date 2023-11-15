@@ -203,6 +203,10 @@ async function linkTicketToHP() {
     })
   }
   pb.checkout(payload)
+    .then(() => {
+      reset();
+      notifyer.notify('Verkauf erfolgreich', 'success')
+    })
     .catch(() => {
       reset();
       notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
@@ -214,6 +218,10 @@ async function linkTicketToHP() {
 </script>
 
 <template>
+  <div class="subappmarker">
+    <v-icon class="mt-1">mdi-ticket</v-icon>
+    <span class="ml-2" style="position: relative; top: 4px;">AK</span>
+  </div>
   <Scanner 
     v-touch="{
       right: () => router.push('/admin/hp'),
@@ -230,6 +238,7 @@ async function linkTicketToHP() {
         class="pt-4" 
         v-model="customerData" 
         @submit="registerCustomer" 
+        @cancel="reset()"
         submitText="Bestätigen"
         cancelText="Abbrechen" 
       />

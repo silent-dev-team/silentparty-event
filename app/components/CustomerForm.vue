@@ -23,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'submit'])
+const emit = defineEmits(['update:modelValue', 'submit', 'cancel'])
 
 let form = $ref<ICustomerData>(props.modelValue);
 
@@ -171,7 +171,7 @@ async function submit(form: ICustomerData) {
           </v-col>
         </v-row>
         <div v-if="!readonly" class="w-100 d-flex justify-center">
-            <v-btn v-if="cancelText" class="ma-3 h-100 pa-3" color="red">{{ props.cancelText }}</v-btn>
+            <v-btn v-if="cancelText" class="ma-3 h-100 pa-3" color="red" @click="emit('cancel')">{{ props.cancelText }}</v-btn>
             <v-btn :disabled="disabled || form.firstName == '' || form.lastName == ''" class="ma-3 h-100 pa-3" type="submit" color="primary">{{ props.submitText }}</v-btn>
         </div>
         <p v-if="errors">Etwas ist schiefgelaufen.</p>
