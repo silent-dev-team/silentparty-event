@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
       args:
         - crt_domain=${CRT_DOMAIN}
+    image: pocketnuxt:${TAG}
     volumes:
      - db:/pb_data/
     ports:
