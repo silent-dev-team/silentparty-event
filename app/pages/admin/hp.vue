@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { RecordModel } from 'pocketbase';
+
 definePageMeta({
   layout: 'admin',
 });
@@ -6,6 +8,14 @@ definePageMeta({
 const pb = usePocketbase();
 const notifyer = useNotifyer();
 const router = useRouter();
+
+let pfandItem: RecordModel
+try {
+  pfandItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "Kopfhoerer"')
+} catch (e) {
+  notifyer.notify('Pfand nicht in Datenbank gefunden', 'error')
+  throw e
+}
 
 let scannerReset = $ref(false);
 
@@ -25,6 +35,7 @@ function unlink() {
   pb.unlink(hp.qr)
     .then(() => {
       notifyer.notify('Unlinked', 'success')
+      pb.checkout([{amount: -1, itemId: pfandItem.id}])
       reset();
     })
     .catch(() => notifyer.notify('Unlink failed', 'error'))
