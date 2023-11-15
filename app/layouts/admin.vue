@@ -136,7 +136,8 @@ export default {
 
 .header {
   width: 100%;
-  background-color: #0054bb;
+  background: rgb(12,84,171);
+  background: linear-gradient(0deg, rgba(12,84,171,1) 0%, rgba(0,60,131,1) 100%);
   color: aliceblue;
   display: flex;
   align-items: center;
