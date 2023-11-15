@@ -17,9 +17,11 @@ type Bot struct {
 
 var commands = BotCommands{
 	{
-		Command:     "/start",
-		Description: "Start",
-		Handler:     func() string { return "Hallo, ich bin der Silentparty-Bot" },
+		Command:     "/userstats",
+		Description: "User Stats",
+		Handler: func() string {
+			return "User Stats"
+		},
 	},
 }
 
