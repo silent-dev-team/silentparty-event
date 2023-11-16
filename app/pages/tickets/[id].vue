@@ -2,30 +2,17 @@
 const route = useRoute();
 const id = route.params.id as string;
 const pb = usePocketbase();
-const rt = useRuntimeConfig();
+const router = useRouter();
 
-function goToApp(){
-  window.location.href = rt.public.pocketbase;
+function update() {
+  setTimeout(() => {
+    router.push('/tickets/filled');
+  }, 1000);
 }
-
-function logout() {
-  pb.authStore.clear();
-  window.location.reload();
-}
-
 </script>
 
 <template>
-  <div v-if="pb.authStore.isAdmin" style="position: absolute; left: 1rem; top: 1rem;">
-    <v-btn @click="goToApp()">zur App</v-btn>
-  </div>
-  <div v-if="pb.authStore.isAdmin" style="position: absolute; right: 1rem; top: 1rem;">
-    <v-btn @click="logout()">Logout</v-btn>
-  </div>
-  <div class="bg-blue-grey-lighten-5 pa-3 pa-sm-8" style="min-height: 100vh; width: 100%;">
-    <div v-if="pb.authStore.isAdmin" class="mt-10"></div>
-    <div class="pa-5 mx-auto">
-      <Ticket :id="id" />
-    </div>
+  <div class="mx-auto">
+    <Ticket :id="id" @update="update"/>
   </div>
 </template>
