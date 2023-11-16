@@ -34,7 +34,7 @@ const notifyer = useNotifyer();
   width: 6rem;
   height: 2rem;
   z-index: 5000;
-  animation: open 1s ease;
+  animation: open 800ms ease;
 }
 
 @keyframes open {
