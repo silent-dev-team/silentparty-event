@@ -86,7 +86,7 @@ async function updateTicket() {
   const rec = await pb.collection('tickets').update<RecordModel & ITicket>(props.id, payload);
   console.log(rec);
   await refreshTicket();
-  notifyer.notify('Daten gespeichert. Wir sehen und auf der Party :)', 'success');
+  // notifyer.notify('Daten gespeichert. Wir sehen und auf der Party :)', 'success');
   emit('update');
 }
 

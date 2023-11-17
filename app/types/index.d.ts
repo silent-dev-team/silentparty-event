@@ -60,4 +60,13 @@ declare global {
   }
 
   type AlertRecord = RecordModel & IAlert;
+
+  interface IUserStats {
+    sells: number;
+    checked : number;
+    usedVvk: number;
+    unusedVvk: number;
+    returned: number;
+    current: number;
+  }
 }

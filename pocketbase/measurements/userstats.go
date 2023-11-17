@@ -1,28 +1,39 @@
 package measurements
 
 import (
+	"log"
+
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/models"
 )
 
 type UserStats struct {
-	Sells    int `json:"sells"`    // used all tickets
-	Checked  int `json:"checked"`  // used vvk tickets
-	UsedVvk  int `json:"usedVvk"`  // used tickets (link Sells)
-	Returned int `json:"returned"` // 0
-	Current  int `json:"current"`  //
+	Sells     int `json:"sells"`     // used all tickets
+	Checked   int `json:"checked"`   // used all tickets
+	UsedVvk   int `json:"usedVvk"`   // used vvk tickets
+	UnusedVvk int `json:"unusedVvk"` // open vvk tickets
+	Returned  int `json:"returned"`  // 0
+	Current   int `json:"current"`   //
 }
 
 func GetUserStats(app core.App) (*UserStats, error) {
-	var usedTickets []models.Ticket
-	app.Dao().DB().
-		NewQuery("SELECT * FROM tickets WHERE used=true").
-		All(&usedTickets)
+	tickets, err := models.GetAllTickets(app)
+	if err != nil {
+		log.Panicln(err)
+	}
 
+	var usedTickets int
 	var usedVvkTickets int
-	for _, t := range usedTickets {
-		if t.Vvk {
+	var unusedVvkTickets int
+	for _, t := range tickets {
+		if t.Used {
+			usedTickets++
+		}
+		if t.Vvk && t.Sold && t.Used {
 			usedVvkTickets++
+		}
+		if t.Vvk && t.Sold && !t.Used {
+			unusedVvkTickets++
 		}
 	}
 
@@ -32,11 +43,12 @@ func GetUserStats(app core.App) (*UserStats, error) {
 		All(&lentHps)
 
 	stats := &UserStats{
-		Sells:    len(usedTickets),
-		UsedVvk:  usedVvkTickets,
-		Checked:  len(usedTickets),
-		Returned: 0,
-		Current:  len(lentHps),
+		Sells:     usedTickets,
+		UsedVvk:   usedVvkTickets,
+		UnusedVvk: unusedVvkTickets,
+		Checked:   len(tickets),
+		Returned:  0,
+		Current:   len(lentHps),
 	}
 
 	return stats, nil

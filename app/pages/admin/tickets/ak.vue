@@ -17,6 +17,7 @@ let checkoutDialog = $ref(false);
 let showError = $ref(false);
 
 let ticket = $ref<TicketRecord>();
+let unusedVvkTickets = $ref<number>(0)
 let hp = $ref<HeadPhoneRecord>()
 let mode = $ref<'ak' | 'vvk' | undefined>();
 let price = $computed(() => {
@@ -26,10 +27,15 @@ let price = $computed(() => {
 let overlay = $computed<Overlay>(() => ticket ? Overlay.HP : Overlay.Ticket);
 let customerData = $ref<ICustomerData>(initCustomerData());
 
-
 // ---- Data Fetching ----
 let akItem: RecordModel
 let pfandItem: RecordModel
+
+const getUnusedVvkTickets = () => pb.userstats().then(stats => unusedVvkTickets = stats.unusedVvk)
+getUnusedVvkTickets()
+const unsubscribe = await pb.collection('tickets').subscribe("*",
+  (event) => getUnusedVvkTickets(),
+)
 
 try {
   akItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "AK Ticket"')
@@ -213,14 +219,16 @@ async function linkTicketToHP() {
     })
 }
 
-
+onUnmounted(() => {
+  unsubscribe()
+})
 
 </script>
 
 <template>
   <div class="subappmarker">
     <v-icon class="mt-1">mdi-ticket</v-icon>
-    <span class="ml-2" style="position: relative; top: 4px;">AK</span>
+    <span class="ml-2" style="position: relative; top: 4px;">AK {{ unusedVvkTickets }}</span>
   </div>
   <Scanner 
     v-touch="{
@@ -247,6 +255,7 @@ async function linkTicketToHP() {
       v-if="ticket?.vvk" 
       :id="ticket?.id" 
       submitText="Bestätigen" 
+      cancle-text="Abbrechen"
       @update="checkoutDialog = true; dialog = false;"
       @cancel="reset()"
       @noticket="delayedReset(3000)"

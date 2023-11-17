@@ -116,7 +116,7 @@ function reset() {
 
 function resetScanner() {
   if (scannerReset) return;
-  setTimeout(() => scannerReset = true, 800);
+  setTimeout(() => scannerReset = true, 300);
 }
 </script>
 

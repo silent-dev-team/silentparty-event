@@ -10,6 +10,7 @@ type PocketBaseExtended = PocketBase & {
     unlink: (qr:string) => Promise<RecordModel>
     fileUrl: (collectionIdOrName:string, recordId: string, filename: string|null|undefined) => string  
     fileUrlFromRecord: (record:RecordModel, filename: string) => string
+    userstats: () => Promise<IUserStats>
 }
 
 const runtimeConfig = useRuntimeConfig();
@@ -55,6 +56,15 @@ pb.unlink = async (qr:string):Promise<RecordModel> => {
         'Content-Type': 'application/json',
         },
     })
+    if (!res.ok) {
+        throw new Error('Network response was not ok')
+    }
+    const data = await res.json()
+    return data
+}
+
+pb.userstats = async ():Promise<IUserStats> => {
+    const res = await fetch(runtimeConfig.public.pocketbase+'/api/v1/userstats')
     if (!res.ok) {
         throw new Error('Network response was not ok')
     }
