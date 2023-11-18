@@ -46,7 +46,7 @@ func GetUserStats(app core.App) (*UserStats, error) {
 		Sells:     usedTickets,
 		UsedVvk:   usedVvkTickets,
 		UnusedVvk: unusedVvkTickets,
-		Checked:   len(tickets),
+		Checked:   usedTickets,
 		Returned:  0,
 		Current:   len(lentHps),
 	}
