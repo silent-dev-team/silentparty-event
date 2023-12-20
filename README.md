@@ -26,13 +26,3 @@ Falls Nutzer ihre Tickets bearbeiten können sollen, fügen wir wieder diese Zei
 
 # Deployment
 POST https://pietschcloud.de/api/endpoints/1/docker/images/load
-
-Accept: application/json, text/plain, */*
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJqYW4iLCJyb2xlIjoxLCJzY29wZSI6ImRlZmF1bHQiLCJleHAiOjE2OTg3NTIxNjV9.EQVwb6sqow1WX_7rbayVAgsUOwzRkgMqc3X2IENvs8k
-Content-Type: application/x-tar
-Dnt: 1
-Referer: https://pietschcloud.de/
-Sec-Ch-Ua: "Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"
-Sec-Ch-Ua-Mobile: ?0
-Sec-Ch-Ua-Platform: "Linux"
-User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
