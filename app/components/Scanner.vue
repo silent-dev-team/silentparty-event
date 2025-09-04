@@ -12,10 +12,14 @@ const props = defineProps({
   }
 });
 
+onKeyStroke('Escape', () => {
+  showSettings = false;
+});
+
 const emit = defineEmits<{
-  onScan: [value: string]
-  results: [value: string[]]
-  "update:reset": [value: boolean]
+  (e: 'scan', value: string): void
+  (e: 'results', value: string[]): void
+  (e: 'update:reset', value: boolean): void
 }>()
 
 let cams = $ref<QrScanner.Camera[]>([]);
@@ -34,8 +38,11 @@ function setCamera(label: string) {
   localStorage.setItem('camid', id);
 }
 
+const {startLogging, stopLogging} = useKeyLogger((logs) => emit('scan', logs), {timeout: 500});
+
 onMounted(() => { 
   if (process.client) {
+    startLogging();
     QrScanner.listCameras(true).then(devices => {
       cams = devices;
       console.log(devices);
@@ -46,7 +53,7 @@ onMounted(() => {
       if (result instanceof Error) return;
       if (results.includes(result)) return;
       results.unshift(result);
-      emit('onScan', result);
+      emit('scan', result);
       emit('results', results);
       blink = true;
       setTimeout(() => blink = false, 300);
@@ -61,6 +68,7 @@ function clearHistory() {
 }
 
 onUnmounted(() => {
+  stopLogging();
   qrScanner?.stop();
 });
 

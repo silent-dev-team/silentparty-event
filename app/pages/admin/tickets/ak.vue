@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Overlay } from '@/types/enums';
 import type { RecordModel } from 'pocketbase';
+import HandScanner from '~/components/HandScanner.vue';
 
 definePageMeta({
   layout: 'admin',
@@ -85,8 +86,8 @@ async function onScan(s: string) {
   if (dialog || checkoutDialog || showError) return;
   if (re.url.test(s) && !ticket) {
     mode = 'vvk'
-    loadCustomerDataFromTicket(s);
-    notifyer.notify('Ticket akzeptiert', 'success')
+    await loadCustomerDataFromTicket(s);
+    // notifyer.notify('Ticket akzeptiert', 'success')
   }
 
   if (s.startsWith('{') && s.endsWith('}') && !ticket) {
@@ -145,16 +146,29 @@ function loadCustomerDataFromForm(s: string) {
 
 //side effects: ticket, customerData, dialog, showError
 async function loadCustomerDataFromTicket(s: string) {
+  console.log('loading ticket from', s)
   const id = s.split('/').pop()!;
-  ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
-  if (!ticket) {
+  try {
+    if (id.includes("?c=")) {
+      const code = id.split('?c=')[1]
+      console.log('code:',code)
+      const no = code.match(re.ticket_number)?.[0]
+      console.log('ticket number:',no)
+      ticket = await pb.collection('tickets').getFirstListItem<TicketRecord>(`no = "${no}"`);
+    } else {
+      ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
+    }
+    if (!ticket) {
+      throw new Error('Ticket nicht gefunden');
+    }
+    if (ticket.used) {
+      delayedReset(1000)
+      notifyer.notify('Ticket wurde bereits benutzt', 'error')
+      return
+    }
+  } catch (e) {
     resetScanner();
     notifyer.notify('Ticket nicht in Datenbank gefunden', 'error')
-    return
-  }
-  if (ticket.used) {
-    delayedReset(1000)
-    notifyer.notify('Ticket wurde bereits benutzt', 'error')
     return
   }
   dialog = true;
@@ -236,30 +250,37 @@ onUnmounted(() => {
     }"
     class="full-screen" 
     :overlaypath="overlay" 
-    @onScan="onScan($event)" 
+    @scan="onScan($event)" 
     :reset="scannerReset"
     @update:reset="scannerReset = $event" 
   />
-    <v-dialog v-model="dialog" :persistent="true">
-    <v-card v-if="!ticket" class="pa-4">
-      <CustomerForm 
-        class="pt-4" 
-        v-model="customerData" 
-        @submit="registerCustomer" 
-        @cancel="reset()"
-        submitText="Bestätigen"
-        cancelText="Abbrechen" 
-      />
-    </v-card>
-    <Ticket 
-      v-if="ticket?.vvk" 
-      :id="ticket?.id" 
-      submitText="Bestätigen" 
-      cancle-text="Abbrechen"
-      @update="checkoutDialog = true; dialog = false;"
+  <!-- <HandScanner  -->
+  <!--   class="full-screen"  -->
+  <!--   :reset="scannerReset"  -->
+  <!--   @update:reset="scannerReset = $event"  -->
+  <!--   @onScan="onScan($event)"  -->
+  <!--   :overlaypath="overlay" -->
+  <!-- /> -->
+  <v-dialog v-model="dialog" :persistent="true">
+  <v-card v-if="!ticket" class="pa-4">
+    <CustomerForm 
+      class="pt-4" 
+      v-model="customerData" 
+      @submit="registerCustomer" 
       @cancel="reset()"
-      @noticket="delayedReset(3000)"
+      submitText="Bestätigen"
+      cancelText="Abbrechen" 
     />
+  </v-card>
+  <Ticket 
+    v-if="ticket?.vvk" 
+    :id="ticket?.id" 
+    submitText="Bestätigen" 
+    cancle-text="Abbrechen"
+    @update="checkoutDialog = true; dialog = false;"
+    @cancel="reset()"
+    @noticket="delayedReset(3000)"
+  />
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">
     <v-card 

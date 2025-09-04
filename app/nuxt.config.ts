@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     }
   },
   modules: [
+    '@vueuse/nuxt',
     '@pinia/nuxt',
     '@vue-macros/nuxt',
     '@vite-pwa/nuxt'

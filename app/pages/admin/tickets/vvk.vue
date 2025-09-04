@@ -56,7 +56,7 @@ function reset() {
 </script>
 
 <template>
-  <Scanner class="full-screen" :overlaypath="Overlay.Ticket" :reset="scannerReset" @update:reset="scannerReset = $event" @on-scan="onScan($event)"/>
+  <Scanner class="full-screen" :overlaypath="Overlay.Ticket" :reset="scannerReset" @update:reset="scannerReset = $event" @scan="onScan($event)"/>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
       <v-btn style="position: absolute;" icon="mdi-close" size="sm" @click="dialog = false; reset()" /> 

@@ -131,7 +131,7 @@ function resetScanner() {
       }"
       class="full-screen" 
       :overlaypath="Overlay.HP" 
-      @onScan="onScan($event)" 
+      @scan="onScan($event)" 
       :reset="scannerReset" 
       @update:reset="scannerReset = $event"
     />
