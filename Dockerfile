@@ -13,8 +13,6 @@ RUN yarn
 
 ADD ./app ./app
 
-ARG url="https://app.silentparty-hannover.de"
-ENV NUXT_POCKETBASE_URL=$url
 RUN yarn build:nuxt
 
 # BUILD POCKTBASE WITH SERVABLE TO BINARY

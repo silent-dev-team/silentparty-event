@@ -10,10 +10,11 @@ import (
 
 func Getenv(key string) string {
 	err := godotenv.Load()
-	if err != nil {
+	value := os.Getenv(key)
+	if err != nil && value == "" {
 		log.Println("no .env file found - ignore on docker deployment:", key)
 	}
-	return os.Getenv(key)
+	return value
 }
 
 func GetenvInt64(key string) int64 {
