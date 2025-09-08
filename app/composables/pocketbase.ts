@@ -14,6 +14,7 @@ type PocketBaseExtended = PocketBase & {
 }
 
 const runtimeConfig = useRuntimeConfig();
+console.log("PocketBase URL:", runtimeConfig.public.pocketbase);
 const pb = new PocketBase(runtimeConfig.public.pocketbase) as PocketBaseExtended
 
 pb.checkout = async (positions:Position[]):Promise<RecordModel> => {
