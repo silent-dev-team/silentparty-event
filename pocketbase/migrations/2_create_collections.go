@@ -397,6 +397,20 @@ func init() {
 									}
 							},
 							{
+                "system": false,
+                "id": "ftazxkm2",
+                "name": "no",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+							},
+							{
 								"system": false,
 								"id": "lx11merc",
 								"name": "_label",
