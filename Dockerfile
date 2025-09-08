@@ -1,6 +1,6 @@
 
 # BUILD NUXT TO SERVABLE
-FROM node:20 as nuxt-builder
+FROM node:20 AS nuxt-builder
 
 WORKDIR /builder
 
@@ -8,7 +8,7 @@ WORKDIR /builder
 COPY ./package*.json ./
 COPY ./yarn.lock yarn.lock
 
-RUN npm i
+# RUN npm i
 RUN yarn
 
 ADD ./app ./app
@@ -17,14 +17,14 @@ ENV NUXT_POCKETBASE_URL "https://app.silentparty-hannover.de"
 RUN yarn build:nuxt
 
 # BUILD POCKTBASE WITH SERVABLE TO BINARY
-FROM golang:1.21.2 as go-builder
+FROM golang:1.21.2 AS go-builder
 
 RUN apt-get update && apt-get install -y ca-certificates openssl
 
-ARG cert_location=/usr/local/share/ca-certificates
-ARG crt_domain
-RUN openssl s_client -showcerts -connect ${crt_domain}:443 </dev/null 2>/dev/null|openssl x509 -outform PEM > ${cert_location}/directus.crt
-RUN update-ca-certificates
+# ARG cert_location=/usr/local/share/ca-certificates
+# ARG crt_domain
+# RUN openssl s_client -showcerts -connect ${crt_domain}:443 </dev/null 2>/dev/null|openssl x509 -outform PEM > ${cert_location}/directus.crt
+# RUN update-ca-certificates
 
 WORKDIR /builder
 COPY go.mod go.sum ./
