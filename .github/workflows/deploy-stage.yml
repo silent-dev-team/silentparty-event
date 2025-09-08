@@ -22,7 +22,7 @@ jobs:
       run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       
     - name: Build docker image
-      run: docker build -t ${{ env.IMG }}:stage -t ${{ env.IMG }}:${{env.TAG}} .
+      run: docker build -t ${{ env.IMG }}:stage -t ${{ env.IMG }}:${{env.TAG}} --build-arg HOST_URL=https://sp-event.jan-pietsch.de .
 
     - name: Push image to GHCR
       run: docker push ${{ env.IMG }} --all-tags

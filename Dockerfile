@@ -13,6 +13,8 @@ RUN yarn
 
 ADD ./app ./app
 
+ARG HOST_URL=http://localhost:3000
+ENV NUXT_POCKETBASE_URL=${HOST_URL}
 ENV PORT=80
 RUN yarn build:nuxt
 

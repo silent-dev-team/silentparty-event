@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   ssr: false,
   runtimeConfig: {
     public: {
-      pocketbase: process.env.NUXT_POCKETBASE_URL,
+      pocketbase: process.env.NUXT_POCKETBASE_URL || '/',
       partytime: process.env.PARTYTIME,
     }
   },
@@ -62,7 +62,7 @@ export default defineNuxtConfig({
     manifest: {
       name: 'Silent App',
       lang: 'de',
-      start_url: 'https://app.silentparty-hannover.de?v=032',
+      start_url: `${process.env.NUXT_POCKETBASE_URL}?v=032`,
       theme_color: '#003c83',
       background_color: '#eceff1',
       icons: [
