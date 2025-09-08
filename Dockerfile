@@ -13,6 +13,7 @@ RUN yarn
 
 ADD ./app ./app
 
+ENV PORT=80
 RUN yarn build:nuxt
 
 # BUILD POCKTBASE WITH SERVABLE TO BINARY
@@ -47,6 +48,7 @@ COPY --from=go-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 WORKDIR /
 COPY --from=go-builder /builder/pocketnuxt /pocketnuxt
 RUN chmod +x /pocketnuxt
+ENV PORT=80
 EXPOSE 80
 # USER nonroot:nonroot
 CMD ["/pocketnuxt","serve","--http","0.0.0.0:80"]
