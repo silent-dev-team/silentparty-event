@@ -13,13 +13,15 @@ func init() {
 
 		settings, _ := dao.FindSettings()
 		settings.Meta.AppName = "Silent App"
-		settings.Meta.AppUrl = "https://app.silentparty-hannver.de"
+		settings.Meta.AppUrl = utils.Getenv("NUXT_POCKETBASE_URL")
 		settings.Logs.MaxDays = 30
 
-		settings.Meta.SenderName = utils.Getenv("SMTP_SENDER_NAME")    //"Silent Party Hannover"
-		settings.Meta.SenderAddress = utils.Getenv("SMTP_SENDER_MAIL") //"info@silentparty-hannover.de"
-		settings.Smtp.Enabled = false                                  // true
-		settings.Smtp.Host = utils.Getenv("SMTP_HOST")                 //"smtp.goneo.de"
+		settings.Meta.SenderName = utils.Getenv("SMTP_SENDER_NAME") //"Silent Party Hannover"
+		settings.Meta.SenderAddress = utils.Getenv(
+			"SMTP_SENDER_MAIL",
+		) //"info@silentparty-hannover.de"
+		settings.Smtp.Enabled = false                  // true
+		settings.Smtp.Host = utils.Getenv("SMTP_HOST") //"smtp.goneo.de"
 		settings.Smtp.Port = 587
 		settings.Smtp.Username = utils.Getenv("SMTP_USERNAME") //"info@silentparty-hannover.de"
 		settings.Smtp.Password = utils.Getenv("SMTP_PW")

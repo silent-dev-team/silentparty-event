@@ -14,6 +14,7 @@ func Getenv(key string) string {
 	if err != nil && value == "" {
 		log.Println("no .env file found - ignore on docker deployment:", key)
 	}
+	log.Println("env var", key, "set")
 	return value
 }
 

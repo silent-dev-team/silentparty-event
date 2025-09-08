@@ -1,6 +1,8 @@
 package migrations
 
 import (
+	"log"
+
 	"github.com/silent-dev-team/silentparty-event/pocketbase/utils"
 
 	"github.com/pocketbase/dbx"
@@ -16,6 +18,7 @@ func init() {
 		admin := &models.Admin{}
 		admin.Email = utils.Getenv("ADMIN_EMAIL")
 		admin.SetPassword(utils.Getenv("ADMIN_PASSWORD"))
+		log.Println("creating admin account:", admin.Email)
 
 		return dao.SaveAdmin(admin)
 	}, func(db dbx.Builder) error { // optional revert operation
