@@ -1,0 +1,58 @@
+name: Docker Image CI to Prod
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:  
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+
+      - name: Install dependencies
+        run: go get .
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run tests
+        run: go test -v ./...
+        
+  build-and-push:
+    needs: test
+    if: github.event.base_ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Set TAG
+      run: |
+        IMG=ghcr.io/${GITHUB_REPOSITORY@L}
+        echo "IMG=$IMG" >> $GITHUB_ENV
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        
+    - uses: actions/checkout@v4
+            
+    - name: Log in to ghcr.io
+      run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+    - name: Build docker image
+      run: docker build -t ${{ env.IMG }}:latest -t ${{ env.IMG }}:${{env.VERSION}} .
+
+    - name: Push image to GHCR
+      run: docker push ${{ env.IMG }} --all-tags
+    
+    - name: Publish Release to GitHub
+      uses: softprops/action-gh-release@v2
+      with:
+        draft: false
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

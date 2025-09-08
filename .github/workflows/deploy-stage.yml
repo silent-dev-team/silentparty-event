@@ -1,0 +1,48 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:  
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+
+      - name: Install dependencies
+        run: go get .
+
+      - name: Build
+        run: go build -v ./...
+
+      - name: Run tests
+        run: go test -v ./...
+        
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Set TAG
+      run: |
+        TAG=stage-$(date +%s)
+        IMG=ghcr.io/${GITHUB_REPOSITORY@L}
+        echo "TAG=$TAG" >> $GITHUB_ENV
+        echo "IMG=$IMG" >> $GITHUB_ENV
+        
+    - uses: actions/checkout@v4
+            
+    - name: Log in to ghcr.io
+      run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+    - name: Build docker image
+      run: docker build -t ${{ env.IMG }}:stage -t ${{ env.IMG }}:${{env.TAG}} .
+
+    - name: Push image to GHCR
+      run: docker push ${{ env.IMG }} --all-tags
