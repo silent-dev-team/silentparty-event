@@ -13,7 +13,8 @@ RUN yarn
 
 ADD ./app ./app
 
-ENV NUXT_POCKETBASE_URL "https://app.silentparty-hannover.de"
+ARG url="https://app.silentparty-hannover.de"
+ENV NUXT_POCKETBASE_URL=$url
 RUN yarn build:nuxt
 
 # BUILD POCKTBASE WITH SERVABLE TO BINARY
@@ -21,10 +22,10 @@ FROM golang:1.21.2 AS go-builder
 
 RUN apt-get update && apt-get install -y ca-certificates openssl
 
-# ARG cert_location=/usr/local/share/ca-certificates
-# ARG crt_domain
-# RUN openssl s_client -showcerts -connect ${crt_domain}:443 </dev/null 2>/dev/null|openssl x509 -outform PEM > ${cert_location}/directus.crt
-# RUN update-ca-certificates
+ARG cert_location=/usr/local/share/ca-certificates
+ARG crt_domain="api.telegram.org"
+RUN openssl s_client -showcerts -connect ${crt_domain}:443 </dev/null 2>/dev/null|openssl x509 -outform PEM > ${cert_location}/directus.crt
+RUN update-ca-certificates
 
 WORKDIR /builder
 COPY go.mod go.sum ./
