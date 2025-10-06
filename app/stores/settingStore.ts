@@ -13,5 +13,6 @@ export const useSettingsStore = defineStore('settings', {
     setIDCardPreview(value: boolean) {
       this.showIDCardPreview = value
     },
-  }
+  },
+  persist: true,
 })

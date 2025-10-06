@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
     '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@vue-macros/nuxt',
     '@vite-pwa/nuxt'
   ],
