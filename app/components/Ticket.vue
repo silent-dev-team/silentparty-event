@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RecordModel } from 'pocketbase';
 import { useNotifyer } from '../stores/notifyStore';
+import PersoCard from './PersoCard.vue';
 
 const props = defineProps({
   id: {
@@ -14,6 +15,10 @@ const props = defineProps({
   cancleText: {
     type: String,
     default: ''
+  },
+  preview: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -93,9 +98,14 @@ if (resp.status === 404) {
 } 
 
 if (pb.authStore.isAdmin) await refreshTicket();
+
+const preview = ref(props.preview);
 </script>
 
 <template>
+  <v-dialog v-model="preview" @click:outside="preview = false" max-width="900px">
+    <PersoCard @click="preview = false" :form="form" class="mx-auto" style="max-width: 820px;" />
+  </v-dialog>
   <v-card v-if="hideAll" color="grey" class="mx-auto text-center">
     <v-card-title >
       Kein Ticket gefunden.
@@ -118,6 +128,7 @@ if (pb.authStore.isAdmin) await refreshTicket();
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-text v-if="renderComponent">
+      <!-- <PersoCard v-show="preview" @click="preview = false" :form="form" class="mx-auto" style="max-width: 820px;" /> -->
       <CustomerForm class="mt-5" v-model="form" @submit="updateTicket()" @cancel="emit('cancel')" @focus="emit('focus')" @blur="emit('blur')" :cancel-text="cancleText" :submitText="submitText"/>
     </v-card-text>
   </v-card>

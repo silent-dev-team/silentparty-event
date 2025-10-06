@@ -1,84 +1,183 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
 const props = defineProps<{
-  surname: string
-  givenNames: string
-  dob: string // TT.MM.JJJJ
-  photoUrl?: string
-  initialZoom?: boolean
-  uppercase?: boolean
+  form: {
+    firstName: string;
+    lastName: string;
+    street: string;
+    housenumber: string;
+    zipCode: string;
+    place: string;
+  }
 }>()
-
-const isZoomed = ref(!!props.initialZoom)
-
-const surnameText = computed(() => props.uppercase === false ? (props.surname ?? '') : (props.surname ?? '').toUpperCase())
-const givenText   = computed(() => props.uppercase === false ? (props.givenNames ?? '') : (props.givenNames ?? '').toUpperCase())
-const dobText     = computed(() => props.dob ?? '')
-
-function toggleZoom(){
-  isZoomed.value = !isZoomed.value
-}
+const { firstName, lastName, street, housenumber, zipCode, place } = toRefs(props.form);
 </script>
 
 <template>
-  <div class="inline-flex flex-col items-center gap-3">
-    <!-- Card -->
-    <div
-      class="relative rounded-[18px] shadow-[0_0_0_1px_rgba(0,0,0,.08),0_10px_25px_rgba(0,0,0,.15)] overflow-hidden id-texture holo transition-transform duration-200"
-      :class="[isZoomed ? 'scale-[1.15]' : 'scale-100']"
-      style="width:520px; aspect-ratio: 85.6 / 53.98;"
-      aria-label="Beispiel eines Personalausweis-Frontlayouts"
-    >
-      <!-- Foto -->
-      <div class="absolute left-3 top-10 w-[34%] aspect-[3/4] rounded-md bg-neutral-300/50 border border-black/10 overflow-hidden flex items-center justify-center">
-        <img v-if="photoUrl" :src="photoUrl" alt="Ausweisfoto" class="w-full h-full object-cover" />
-        <span v-else class="text-[10px] text-neutral-700">Foto</span>
-      </div>
+  <div class="perso-view">
+    <section class="perso-card" aria-label="Personalausweis Vorschau">
+      <div class="perso-bg"></div>
+      <div class="perso-overlay"></div>
 
-      <!-- Felder (nur Vorderseite / Name, Vornamen, DOB) -->
-      <div class="absolute right-3 left-[40%] top-10 text-[10px] text-neutral-900/90 space-y-[7px]">
-        <div class="grid grid-cols-[90px_1fr] items-baseline gap-2">
-          <div class="text-neutral-600">Name / Surname</div>
-          <div class="font-semibold truncate" :title="surnameText">{{ surnameText || '—' }}</div>
-        </div>
-        <div class="grid grid-cols-[90px_1fr] items-baseline gap-2">
-          <div class="text-neutral-600">Vornamen / Given Names</div>
-          <div class="font-semibold truncate" :title="givenText">{{ givenText || '—' }}</div>
-        </div>
-        <div class="grid grid-cols-[90px_1fr] items-baseline gap-2">
-          <div class="text-neutral-600">Geburtsdatum / Date of Birth</div>
-          <div class="font-semibold">{{ dobText || '—' }}</div>
+      <header class="perso-header">
+        <h1>PERSONALAUSWEIS</h1>
+      </header>
+
+      <div class="perso-body">
+        <div class="photo" aria-hidden="true"></div>
+
+        <div class="fields">
+          <div class="row">
+            <span class="lbl">Name / Surname</span>
+            <span class="val">{{ lastName }}</span>
+          </div>
+          <div class="row">
+            <span class="lbl">Vorname / Given name</span>
+            <span class="val">{{ firstName }}</span>
+          </div>
+
         </div>
       </div>
+    </section>
+    <section class="perso-card" aria-label="Personalausweis Vorschau">
+      <div class="perso-bg"></div>
+      <div class="perso-overlay"></div>
 
-      <!-- Hinweis unten -->
-      <div class="absolute inset-x-0 bottom-0 text-[8.5px] text-neutral-600/90 px-3 py-1 flex items-center justify-between">
-        <span>Beispiel-UI · kein amtliches Dokument</span>
-        <span class="font-mono">85.6×53.98 mm</span>
+      <header class="perso-header">
+        <h1>Rückseite</h1>
+      </header>
+
+      <div class="perso-body">
+        <div class="photo" style="opacity: 0;" aria-hidden="true"></div>
+        <div class="fields">
+          <div class="row muted">
+            <span class="lbl">Anschrift / Address / Adresse</span>
+            <span class="val">
+              {{ zipCode }} {{ place }} <br>
+              {{ street }} {{ housenumber }}
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Zoom-Button (gewünscht) -->
-    <button
-      type="button"
-      class="px-3 py-1 rounded-lg bg-neutral-800 text-neutral-100 hover:bg-neutral-700"
-      @click="toggleZoom"
-    >Zoom</button>
+      <footer class="mrz" aria-hidden="true">
+        <div class="mrz-line">
+          &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+        </div>
+        <div class="mrz-line">
+          &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+        </div>
+        <div class="mrz-line">
+          {{ (lastName) }}&lt;&lt;{{ (firstName) }}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+        </div>
+      </footer>
+    </section>
   </div>
 </template>
 
+
 <style scoped>
-.id-texture {
-  background: repeating-linear-gradient(135deg, rgba(255,255,255,.35) 0 6px, rgba(0,0,0,.03) 6px 12px),
-              radial-gradient(1000px 600px at 10% 20%, #e7f5ea, transparent),
-              radial-gradient(800px 400px at 100% 0%, #f7f6e9, transparent),
-              linear-gradient(160deg, #f3f7f2 0%, #ecf5ef 45%, #f6f5ea 100%);
+.perso-view {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+  scale: 1.5;
 }
-.holo::after {
-  content: "";
+
+.perso-card {
+  position: relative;
+  /* aspect-ratio: 86 / 54;  */
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.15),
+    inset 0 0 0 1px rgba(0,0,0,0.08);
+  background: #f6ecdf;
+  isolation: isolate;
+}
+
+/* background look */
+.perso-bg {
   position: absolute; inset: 0;
-  background: conic-gradient(from 180deg at 70% 30%, rgba(255,255,255,.0), rgba(255,255,255,.25), rgba(255,255,255,.0));
-  mix-blend-mode: overlay; pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 10% 10%, rgba(255,255,255,0.9), rgba(255,255,255,0) 60%),
+    radial-gradient(120% 80% at 90% 20%, rgba(255,255,255,0.7), rgba(255,255,255,0) 65%),
+    linear-gradient(135deg, #f6ecdf 0%,  #d3e0d9 100%);
+  mix-blend-mode: screen;
+  z-index: 1;
+}
+.perso-overlay {
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient( 0deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.02) 0 1px, transparent 1px 3px);
+  opacity: .5;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* header */
+.perso-header {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: .5rem;
+  padding: .75rem .9rem .25rem;
+}
+.perso-header h1 {
+  margin: 0; font-size: .92rem; letter-spacing: .12em; font-weight: 800;
+  color: #1a2f27; text-transform: uppercase;
+}
+
+/* body */
+.perso-body {
+  height: calc(100% - 2.1rem);
+  position: relative; z-index: 2;
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: .9rem;
+  padding: .4rem .9rem .9rem;
+  align-items: start;
+}
+.photo {
+  width: 100%; aspect-ratio: 3/4;
+  background:
+    linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02)),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 6px);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
+}
+
+.fields { display: grid; gap: .35rem; }
+.row { display: grid; gap: .1rem; }
+.lbl {
+  font-size: .62rem; letter-spacing: .06em; text-transform: uppercase;
+  color: #2b4a3d; opacity: .85;
+}
+.val {
+  font-feature-settings: "ss01" 1, "tnum" 1, "lnum" 1;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #10251d;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+.row.muted .val { font-weight: 600; font-size: .9rem; opacity: .8; }
+
+/* fake MRZ */
+.mrz {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  padding: .35rem .9rem .55rem;
+  background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.03));
+  border-top: 1px dashed rgba(0,0,0,0.08);
+}
+.mrz-line {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: .75rem;
+  letter-spacing: .08em;
+  color: #0a1c16;
+  opacity: .8;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

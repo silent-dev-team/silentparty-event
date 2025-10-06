@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Overlay } from '@/types/enums';
 import type { RecordModel } from 'pocketbase';
-import HandScanner from '~/components/HandScanner.vue';
+import { useSettingsStore } from '~/stores/settingStore';
 
 definePageMeta({
   layout: 'admin',
 });
+
+const settingsStore = useSettingsStore();
 
 const pb = usePocketbase();
 const notifyer = useNotifyer();
@@ -106,7 +108,20 @@ async function onScan(s: string) {
       return
     }
 
-    hp = await getHeadPhoneFromQRString(s);
+    try {
+      hp = await getHeadPhoneFromQRString(s);
+    } catch (e) {
+      if (e instanceof Error) {
+        if (e.message.includes('404')) {
+          notifyer.notify('Kopfhörer nicht in Datenbank gefunden', 'error')
+          resetScanner();
+          return
+        }
+      }
+      notifyer.notify('Fehler beim Laden des Kopfhörers', 'error')
+      resetScanner();
+      return
+    }
     if (!hp) {
       notifyer.notify('Kopfhörer nicht in Datenbank gefunden', 'error')
       resetScanner();
@@ -205,10 +220,17 @@ async function sell() {
 }
 
 async function linkTicketToHP() {
-  const link = await pb.collection('ticket_hp').create<TicketHeadPhoneRecord>({
-    ticket: ticket!.id,
-    hp: hp!.id,
-  });
+  let link: TicketHeadPhoneRecord
+  try {
+    link = await pb.collection('ticket_hp').create<TicketHeadPhoneRecord>({
+      ticket: ticket!.id,
+      hp: hp!.id,
+    })
+  } catch (e) {
+    notifyer.notify('Kopfhörer konnte nicht mit Ticket verknüpft werden', 'error')
+    resetScanner();
+    return
+  }
   console.log(link)
   if (link.ticket !== ticket!.id || link.hp !== hp!.id) {
     notifyer.notify('Kopfhörer konnte nicht mit Ticket verknüpft werden', 'error')
@@ -267,6 +289,14 @@ onUnmounted(() => {
     <v-icon class="mt-1">mdi-ticket</v-icon>
     <span class="ml-2" style="position: relative; top: 4px;">AK {{ unusedVvkTickets }}</span>
   </div>
+  <v-btn 
+    style="position: absolute; right: 1rem; top: 5rem;z-index: 100;"
+    :color="settingsStore.idCardPreview ? 'green lighten-2' : 'transparent-white'"
+    icon="mdi-card-account-details"
+    size="large"
+    @click="settingsStore.toggleIDCardPreview()"
+    >
+  </v-btn>
   <Scanner 
     v-touch="{
       right: () => router.push('/admin/hp'),
@@ -277,26 +307,28 @@ onUnmounted(() => {
     :reset="scannerReset"
     @update:reset="scannerReset = $event" 
   />
-  <v-dialog v-model="dialog" :persistent="true">
-  <v-card v-if="!ticket" class="pa-4">
-    <CustomerForm 
-      class="pt-4" 
-      v-model="customerData" 
-      @submit="registerCustomer" 
+  <v-dialog v-model="dialog" :persistent="true"  max-width="800">
+    <v-card v-if="!ticket" class="pa-4">
+      <CustomerForm 
+        class="pt-4" 
+        v-model="customerData" 
+        @submit="registerCustomer" 
+        @cancel="reset()"
+        submitText="Bestätigen"
+        cancelText="Abbrechen" 
+      />
+    </v-card>
+    <Ticket 
+      v-if="ticket?.vvk" 
+      :id="ticket?.id" 
+      class="w-100"
+      submitText="Bestätigen" 
+      cancle-text="Abbrechen"
+      @update="submitTicket"
       @cancel="reset()"
-      submitText="Bestätigen"
-      cancelText="Abbrechen" 
+      @noticket="delayedReset(3000)"
+      :preview="settingsStore.idCardPreview"
     />
-  </v-card>
-  <Ticket 
-    v-if="ticket?.vvk" 
-    :id="ticket?.id" 
-    submitText="Bestätigen" 
-    cancle-text="Abbrechen"
-    @update="submitTicket"
-    @cancel="reset()"
-    @noticket="delayedReset(3000)"
-  />
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">
     <v-card 
