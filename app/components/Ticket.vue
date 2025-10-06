@@ -17,11 +17,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits<{
-  update: [value: void]
-  cancel: [value: void]
-  noticket: [value: void]
-}>()
+const emit = defineEmits(['update', 'cancel', 'noticket', 'focus', 'blur']);
 
 const runtimeConfig = useRuntimeConfig();
 const pb_url = runtimeConfig.public.pocketbase;
@@ -97,7 +93,6 @@ if (resp.status === 404) {
 } 
 
 if (pb.authStore.isAdmin) await refreshTicket();
-
 </script>
 
 <template>
@@ -123,7 +118,7 @@ if (pb.authStore.isAdmin) await refreshTicket();
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-text v-if="renderComponent">
-      <CustomerForm class="mt-5" v-model="form" @submit="updateTicket()" @cancel="emit('cancel')" :cancel-text="cancleText" :submitText="submitText"/>
+      <CustomerForm class="mt-5" v-model="form" @submit="updateTicket()" @cancel="emit('cancel')" @focus="emit('focus')" @blur="emit('blur')" :cancel-text="cancleText" :submitText="submitText"/>
     </v-card-text>
   </v-card>
 </template>

@@ -1,15 +1,12 @@
 <script setup lang="ts">
 
-const props = defineProps({
-  requested: {
-    type: Number,
-    required: true
-  },
-  shown: {
-    type: Boolean,
-    default: true
-  }
-});
+const props = withDefaults(defineProps<{
+  requested: number
+  preset?: number
+  shown: boolean
+}>(), {
+  shown: true
+})
 const emit = defineEmits(['paied', 'cancled', 'update:shown']);
 let show = $toRef(props, 'shown');
 
@@ -18,7 +15,7 @@ let show = $toRef(props, 'shown');
 <template>
   <v-dialog :persistent="true" fullscreen transition="dialog-bottom-transition" v-model="show">
     <transition name="fade">
-      <CheckoutNumpad :requested="requested" @paied="emit('paied')" @cancled="emit('cancled')"/>
+      <CheckoutNumpad :requested="requested" :preset="preset" @paied="emit('paied')" @cancled="emit('cancled')"/>
     </transition>
   </v-dialog>
 </template>

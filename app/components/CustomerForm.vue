@@ -23,9 +23,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'submit', 'cancel'])
+const emit = defineEmits(['update:modelValue', 'submit', 'cancel', 'focus', 'blur'])
 
-let form = $ref<ICustomerData>(props.modelValue);
+const form = ref<ICustomerData>(props.modelValue);
 
 // watch(() => form, (value) => {
 //   form = value;
@@ -37,15 +37,15 @@ const zipCodePattern = /^\d{5}$/;
 const namePattern = /^[A-Za-zäöüÄÖÜß\-~'_ !?]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //passt noch nicht
 
-let errors = $ref(false);
-let success = $ref(false);
+let errors = ref(false);
+let success = ref(false);
 
 async function submit(form: ICustomerData) {
-  errors = false;
-  success = false;
+  errors.value = false;
+  success.value = false;
 
   // trimmen
-  form.email = form.email.toLowerCase().trim();
+  form.email = (form.email || '').toLowerCase().trim();
   form.firstName = form.firstName.trim();
   form.lastName = form.lastName.trim();
   form.place = form.place.trim();
@@ -54,38 +54,62 @@ async function submit(form: ICustomerData) {
 
   // Validierung der Postleitzahl
   if (!zipCodePattern.test(form.zipCode)) {
-    errors = true;
+    errors.value = true;
     return;
   }
 
   // Validierung des Vornamens
   if (!namePattern.test(form.firstName)) {
-    errors = true;
+    errors.value = true;
     return;
   }
 
   // Validierung des Nachnamens
   if (!namePattern.test(form.lastName)) {
-    errors = true;
+    errors.value = true;
     return;
   }
 
   // Validierung des Ortes
   if (!namePattern.test(form.place)) {
-    errors = true;
+    errors.value = true;
     return;
   }
 
   try {
-    await emit('submit')
+    emit('submit')
   } catch (e) {
-    errors = true;
+    errors.value = true;
   }
 }
+
+const formRef = ref();
+
+const {pause, resume} = useKeyLogger((logs) => {
+  if (logs === enter) {
+    formRef.value?.validate().then((isValid: boolean) => {
+      if (isValid && !props.readonly) {
+        submit(form.value);
+      }
+    });
+  }
+}, {timeout: 500, immediate: true});
+
+const focus = ref(false);
+watch(focus, (newVal) => {
+  console.log('focus changed:', newVal);
+  if (newVal) {
+    pause();
+    emit('focus');
+  } else {
+    resume();
+    emit('blur');
+  }
+});
 </script>
 
 <template>
-  <v-form @submit.prevent="submit(form)" autocomplete="on">
+  <v-form @submit.prevent="submit(form)" ref="formRef" autocomplete="on">
     <v-container class="ma-0 pa-0">
         <v-row no-gutters >
           <v-col cols="12" sm="6" class="my-0 py-0">
@@ -96,6 +120,8 @@ async function submit(form: ICustomerData) {
               autocomplete="given-name"
               :readonly="readonly"
               :rules="[namePattern.test(form.firstName) || 'Bitte gib einen gültigen Vornamen ein.']"
+              @focus="focus = true"
+              @blur="focus = false"
             ></v-text-field>
           </v-col>
 
@@ -107,6 +133,8 @@ async function submit(form: ICustomerData) {
               autocomplete="family-name"
               :readonly="readonly"
               :rules="[namePattern.test(form.lastName) || 'Bitte gib einen gültigen Nachnamen ein.']"
+              @focus="focus = true"
+              @blur="focus = false"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -120,6 +148,8 @@ async function submit(form: ICustomerData) {
             id="street"
             autocomplete="street-address"
             :readonly="readonly"
+            @focus="focus = true"
+            @blur="focus = false"
           ></v-text-field>
           </v-col>
 
@@ -130,6 +160,8 @@ async function submit(form: ICustomerData) {
             required
             id="housenumber"
             :readonly="readonly"
+            @focus="focus = true"
+            @blur="focus = false"
           ></v-text-field>
           </v-col>
         </v-row>
@@ -143,6 +175,8 @@ async function submit(form: ICustomerData) {
               autocomplete="postal-code"
               :readonly="readonly"
               :rules="[zipCodePattern.test(form.zipCode) || 'Bitte gib eine gültige Postleitzahl ein.']"
+              @focus="focus = true"
+              @blur="focus = false"
             ></v-text-field>
           </v-col>
 
@@ -154,6 +188,8 @@ async function submit(form: ICustomerData) {
               autocomplete="address-level2"
               :readonly="readonly"
               :rules="[namePattern.test(form.place) || 'Bitte gib einen gültigen Ort ein.']"
+              @focus="focus = true"
+              @blur="focus = false"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -167,6 +203,8 @@ async function submit(form: ICustomerData) {
               autocomplete="email"
               :readonly="readonly"
               :rules="[emailPattern.test(form.email) || 'Bitte gib eine gültige E-Mail ein.']"
+              @focus="focus = true"
+              @blur="focus = false"
             ></v-text-field>
           </v-col>
         </v-row>

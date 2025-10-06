@@ -5,14 +5,17 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  preset: {
+    type: Number,
+    default: 0
+  },
 });
 
 const emit = defineEmits(['paied', 'cancled']);
 
 let requested = $computed(() => `${ props.requested }`)
 
-let sum = $ref("0");
-let page = $ref(0);
+let sum = $ref( props.preset ? (props.preset * 100).toFixed(0) : "0" );
 
 function add(val: string) {
   sum += val+"";

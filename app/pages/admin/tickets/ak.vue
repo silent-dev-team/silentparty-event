@@ -18,6 +18,7 @@ let checkoutDialog = $ref(false);
 let showError = $ref(false);
 
 let ticket = $ref<TicketRecord>();
+const ticketChecked = ref(false);
 let unusedVvkTickets = $ref<number>(0)
 let hp = $ref<HeadPhoneRecord>()
 let mode = $ref<'ak' | 'vvk' | undefined>();
@@ -86,12 +87,14 @@ async function onScan(s: string) {
   if (dialog || checkoutDialog || showError) return;
   if (re.url.test(s) && !ticket) {
     mode = 'vvk'
+    ticketChecked.value = false;
     await loadCustomerDataFromTicket(s);
     // notifyer.notify('Ticket akzeptiert', 'success')
   }
 
   if (s.startsWith('{') && s.endsWith('}') && !ticket) {
     mode = 'ak'
+    ticketChecked.value = false;
     loadCustomerDataFromForm(s);
     notifyer.notify('Gast registriert', 'success')
   }
@@ -233,7 +236,27 @@ async function linkTicketToHP() {
     })
 }
 
+function submitTicket() {
+  ticketChecked.value = true;
+  dialog = false;
+  // checkoutDialog = true;
+}
+
+const {startLogging, stopLogging} = useKeyLogger((logs) => {
+  if (logs === enter) {
+    if (!ticket?.vvk) return
+    if (ticketChecked.value) {
+      sell()
+    }
+  }
+}, {timeout: 500});
+
+onMounted(() => {
+  startLogging();
+})
+
 onUnmounted(() => {
+  stopLogging();
   unsubscribe()
 })
 
@@ -254,13 +277,6 @@ onUnmounted(() => {
     :reset="scannerReset"
     @update:reset="scannerReset = $event" 
   />
-  <!-- <HandScanner  -->
-  <!--   class="full-screen"  -->
-  <!--   :reset="scannerReset"  -->
-  <!--   @update:reset="scannerReset = $event"  -->
-  <!--   @onScan="onScan($event)"  -->
-  <!--   :overlaypath="overlay" -->
-  <!-- /> -->
   <v-dialog v-model="dialog" :persistent="true">
   <v-card v-if="!ticket" class="pa-4">
     <CustomerForm 
@@ -277,7 +293,7 @@ onUnmounted(() => {
     :id="ticket?.id" 
     submitText="Bestätigen" 
     cancle-text="Abbrechen"
-    @update="checkoutDialog = true; dialog = false;"
+    @update="submitTicket"
     @cancel="reset()"
     @noticket="delayedReset(3000)"
   />
@@ -291,6 +307,7 @@ onUnmounted(() => {
   </v-dialog>
   <Checkout
     :requested="price" 
+    :preset="price"
     :shown="checkoutDialog" 
     @paied="sell" 
     @cancled="reset()" 

@@ -137,7 +137,10 @@ func main() {
 	})
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		e.Router.GET("/assets/*", apis.StaticDirectoryHandler(echo.MustSubFS(public, "public/assets"), true))
+		e.Router.GET(
+			"/assets/*",
+			apis.StaticDirectoryHandler(echo.MustSubFS(public, "public/assets"), true),
+		)
 		return nil
 	})
 

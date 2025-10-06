@@ -1,14 +1,25 @@
 
 type Options = {
+  immediate?: boolean;
   timeout?: number;
 };
 
 import { onUnmounted, readonly, ref } from 'vue';
 
+const paused = ref(false);
+
+const commandsPrefix = ['%']
+export const enter = '%enter;'
+
 export const useKeyLogger = (callback?: (logs:string) => void, opts?: Options) => {
   const keys = ref<string>();
   let timeoutId: ReturnType<typeof setTimeout>;
+
   const logKey = (event: KeyboardEvent) => {
+    if (commandsPrefix.includes(event.key)) {
+      resume();
+    }
+    if (paused.value) return;
     event.preventDefault();
     console.log(`Key pressed: ${event.key} - Code: ${keys.value}`);
     if (event.key === 'Backspace') {
@@ -38,16 +49,27 @@ export const useKeyLogger = (callback?: (logs:string) => void, opts?: Options) =
   };
 
   const startLogging = () => {
+    console.log('Key logging started');
     window.addEventListener('keydown', logKey);
   };
 
   const stopLogging = () => {
+    console.log('Key logging stopped');
     window.removeEventListener('keydown', logKey);
   };
+
+  const pause = () => paused.value = true;
+  const resume = () => paused.value = false;
 
   const reset = () => {
     keys.value = '';
   };
+
+  onMounted(() => {
+    if (opts?.immediate) {
+      startLogging();
+    }
+  });
 
   onUnmounted(() => {
     stopLogging();
@@ -58,5 +80,8 @@ export const useKeyLogger = (callback?: (logs:string) => void, opts?: Options) =
     stopLogging,
     logs: readonly(keys),
     reset,
+    pause,
+    resume,
+    paused,
   };
 };
