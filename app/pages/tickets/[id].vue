@@ -12,7 +12,7 @@ function update() {
 </script>
 
 <template>
-  <div class="mx-auto">
+  <div class="mx-auto" style="max-width: 800px;">
     <Ticket :id="id" @update="update"/>
   </div>
 </template>
