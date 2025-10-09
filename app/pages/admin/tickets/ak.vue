@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Overlay } from '@/types/enums';
 import type { RecordModel } from 'pocketbase';
+import { useUtils } from '~/composables/utils';
 import { useSettingsStore } from '~/stores/settingStore';
 
 definePageMeta({
@@ -40,6 +41,7 @@ getUnusedVvkTickets()
 const unsubscribe = await pb.collection('tickets').subscribe("*",
   (event) => getUnusedVvkTickets(),
 )
+const {senetizeTicketCode} = useUtils();
 
 try {
   akItem = await pb.collection('shop_items').getFirstListItem<ShopItemRecord>('title = "AK Ticket"')
@@ -168,10 +170,11 @@ async function loadCustomerDataFromTicket(s: string) {
   const id = s.split('/').pop()!;
   try {
     if (id.includes("?c=")) {
-      const code = id.split('?c=')[1]
+      const code = id.split('?c=')[1];
       console.log('code:',code)
-      const no = code.match(re.ticket_number)?.[0]
+      const no = senetizeTicketCode(code);
       console.log('ticket number:',no)
+      if (!no) throw new Error('Ticketnummer nicht gefunden');
       ticket = await pb.collection('tickets').getFirstListItem<TicketRecord>(`no = "${no}"`);
     } else {
       ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
