@@ -118,6 +118,17 @@ function resetScanner() {
   if (scannerReset) return;
   setTimeout(() => scannerReset = true, 300);
 }
+
+const {stopLogging} = useKeyLogger((logs) => {
+  if (logs == enter) {
+    dialog = false;
+    unlink();
+  }}, 
+  { immediate: true }
+)
+onBeforeUnmount(() => {
+  stopLogging();
+})
 </script>
 
 <template>
@@ -162,7 +173,7 @@ function resetScanner() {
           </v-card-text>
           <v-card-actions class="justify-space-between">
             <v-btn variant="flat" color="primary" class="mt-6" @click="dialog = false">schließen</v-btn>
-            <v-btn variant="outlined" color="red" class="mt-6" v-if="hp?.lent" @click="shure = true">Zurückgeben</v-btn>
+            <v-btn variant="outlined" color="red" class="mt-6" v-if="hp?.lent" @click="shure = true">Ausleihe beenden</v-btn>
             <v-btn variant="flat" color="red"     class="mt-6" :disabled="!hp" v-if="!hp?.lent && !hp?.defect" @click="toggleDefect()">Defekt</v-btn>
             <v-btn variant="flat" color="success" class="mt-6" :disabled="!hp" v-if="!hp?.lent && hp?.defect" @click="toggleDefect()">Heile</v-btn>
          </v-card-actions>
