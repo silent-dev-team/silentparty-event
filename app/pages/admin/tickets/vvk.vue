@@ -8,6 +8,7 @@ definePageMeta({
 const pb = usePocketbase();
 // const checkout = useCheckout();
 const notifyer = useNotifyer();
+const settingsStore = useSettingsStore();
 
 let vvkItem: RecordModel
 try {
@@ -22,13 +23,32 @@ let id = $ref('')
 let ticket:TicketRecord
 let scannerReset = $ref(false)
 
-async function onScan(url: string) {
-  console.log(url)
-  const ticketId = url.split('/').pop()
+async function onScan(scan: string) {
+  console.log(scan)
+  if (scan == enter) {
+    if (ticket && id) sell();
+    return
+  }
+  const ticketId = scan.split('/').pop()
   if (!ticketId) return;
-  id = ticketId
-  ticket = await pb.collection('tickets').getOne<TicketRecord>(id);
-  dialog = true
+  try {
+    ticket = await pb.collection('tickets').getOne<TicketRecord>(ticketId);
+  } catch (e) {
+    notifyer.notify('Ticket nicht gefunden', 'error')
+    reset()
+    return
+  }
+  if (!ticket) {
+    notifyer.notify('Ticket nicht gefunden', 'error')
+    reset()
+    return
+  }
+  id = ticket.id
+  if (settingsStore.noInteraction) {
+    sell();
+  } else {
+    dialog = true
+  }
 }
 
 async function sell() {
@@ -52,10 +72,18 @@ function reset() {
   if (!scannerReset) return;
   setTimeout(() => scannerReset = true, 800)
 }
-
 </script>
 
 <template>
+
+  <v-btn 
+    style="position: absolute; right: 1rem; top: 5rem;z-index: 100;"
+    :color="settingsStore.noInteraction ? 'red lighten-2' : 'transparent-white'"
+    icon="mdi-forum-remove"
+    size="large"
+    @click="settingsStore.toggleNoInteraction()"
+    >
+  </v-btn>
   <Scanner class="full-screen" :overlaypath="Overlay.Ticket" :reset="scannerReset" @update:reset="scannerReset = $event" @scan="onScan($event)"/>
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
