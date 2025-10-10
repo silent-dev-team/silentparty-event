@@ -12,6 +12,7 @@ const commandsPrefix = ['%']
 export const enter = '%enter;'
 
 export const useKeyLogger = (callback?: (logs:string) => void, opts?: Options) => {
+  const pb = usePocketbase();
   const keys = ref<string>();
   let timeoutId: ReturnType<typeof setTimeout>;
 
@@ -66,7 +67,7 @@ export const useKeyLogger = (callback?: (logs:string) => void, opts?: Options) =
   };
 
   onMounted(() => {
-    if (opts?.immediate) {
+    if (opts?.immediate && pb.authStore.isValid) {
       startLogging();
     }
   });
