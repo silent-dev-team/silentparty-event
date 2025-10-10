@@ -10,6 +10,7 @@ declare global {
     zipCode: string;
     place: string;
     email: string;
+    birthdate: string;
   }
 
   interface ITicket extends ICustomerData {

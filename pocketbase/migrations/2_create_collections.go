@@ -743,6 +743,19 @@ func init() {
                     "onlyDomains": null
                 }
             },
+						{
+                "system": false,
+                "id": "1fostma7",
+                "name": "birthdate",
+                "type": "date",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": "",
+                    "max": ""
+                }
+            },
             {
                 "system": false,
                 "id": "snxpb2px",

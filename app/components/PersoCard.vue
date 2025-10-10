@@ -7,9 +7,10 @@ const props = defineProps<{
     housenumber: string;
     zipCode: string;
     place: string;
+    birthdate: string;
   }
 }>()
-const { firstName, lastName, street, housenumber, zipCode, place } = toRefs(props.form);
+const { firstName, lastName, street, housenumber, zipCode, place, birthdate } = toRefs(props.form);
 </script>
 
 <template>
@@ -28,11 +29,18 @@ const { firstName, lastName, street, housenumber, zipCode, place } = toRefs(prop
         <div class="fields">
           <div class="row">
             <span class="lbl">Name / Surname</span>
-            <span class="val">{{ lastName }}</span>
+            <span class="val" v-if="lastName">{{ lastName }}</span>
+            <span class="val text-red" v-else>Nicht vorhanden</span>
           </div>
           <div class="row">
             <span class="lbl">Vorname / Given name</span>
-            <span class="val">{{ firstName }}</span>
+            <span class="val" v-if="firstName">{{ firstName }}</span>
+            <span class="val text-red" v-else>Nicht vorhanden</span>
+          </div>
+          <div class="row">
+            <span class="lbl">Geburtsdatum / Date of Birth</span>
+            <span class="val" v-if="birthdate">{{new Date(birthdate).toLocaleDateString('de-DE',{ day: '2-digit', month: '2-digit', year: 'numeric' })}}</span>
+            <span class="val text-red" v-else>Nicht vorhanden</span>
           </div>
 
         </div>
@@ -83,6 +91,28 @@ const { firstName, lastName, street, housenumber, zipCode, place } = toRefs(prop
   margin: 0 auto;
   padding: 1rem;
   scale: 1.5;
+}
+@media (max-width: 1230px) {
+  .perso-view {
+    scale: 1.2;
+  }
+}
+@media (max-width: 1080px) {
+  .perso-view {
+    scale: 1;
+  }
+}
+@media (max-width: 860px) {
+  .perso-view {
+    flex-direction: column;
+    width: 400px;
+    scale: 1;
+  }
+}
+@media (max-width: 464px) {
+  .perso-view {
+    scale: 0.8;
+  }
 }
 
 .perso-card {

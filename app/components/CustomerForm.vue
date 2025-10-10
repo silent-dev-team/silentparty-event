@@ -36,13 +36,23 @@ const form = ref<ICustomerData>(props.modelValue);
 const zipCodePattern = /^\d{5}$/; 
 const namePattern = /^[A-Za-zäöüÄÖÜß\-~'_ !?]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //passt noch nicht
+const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d\d$/; //TT.MM.JJJJ
 
 let errors = ref(false);
 let success = ref(false);
 
+const birthdate = ref<string>( new Date(form.value.birthdate)?.toLocaleDateString('de-DE',{ day: '2-digit', month: '2-digit', year: 'numeric' }) || '');
+
 async function submit(form: ICustomerData) {
   errors.value = false;
   success.value = false;
+
+
+  // Validierung des Geburtsdatums
+  if (!datePattern.test(birthdate.value)) {
+    errors.value = true;
+    return;
+  }
 
   // trimmen
   form.email = (form.email || '').toLowerCase().trim();
@@ -51,6 +61,8 @@ async function submit(form: ICustomerData) {
   form.place = form.place.trim();
   form.street = form.street.trim();
   form.housenumber = form.housenumber.trim();
+  form.zipCode = form.zipCode.trim();
+  form.birthdate = birthdate.value.trim();
 
   // Validierung der Postleitzahl
   if (!zipCodePattern.test(form.zipCode)) {
@@ -75,6 +87,21 @@ async function submit(form: ICustomerData) {
     errors.value = true;
     return;
   }
+
+  // Validierung der E-Mail
+  if (!emailPattern.test(form.email)) {
+    errors.value = true;
+    return;
+  }
+
+  // Umwandlung des Geburtsdatums in ISO-Format
+  const [day, month, year] = form.birthdate.split('.');
+  const isoDate = new Date(`${year}-${month}-${day}`);
+  if (isNaN(isoDate.getTime())) {
+    errors.value = true;
+    return;
+  }
+
 
   try {
     emit('submit')
@@ -203,6 +230,20 @@ watch(focus, (newVal) => {
               autocomplete="email"
               :readonly="readonly"
               :rules="[emailPattern.test(form.email) || 'Bitte gib eine gültige E-Mail ein.']"
+              @focus="focus = true"
+              @blur="focus = false"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row no-gutters >
+          <v-col cols="12" sm="12" class="my-0 py-0">
+            <v-text-field
+              v-model="birthdate"
+              label="Geburtsdatum (TT.MM.JJJJ)"
+              required
+              autocomplete="birthdate"
+              :readonly="readonly"
+              :rules="[datePattern.test(birthdate) || 'Bitte gib ein gültiges Geburtsdatum ein.']"
               @focus="focus = true"
               @blur="focus = false"
             ></v-text-field>

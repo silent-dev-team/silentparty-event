@@ -84,6 +84,9 @@ async function refreshTicket() {
 async function updateTicket() {
   let payload = form as Partial<ITicket>;
   payload.filled = true;
+  if (payload.birthdate) {
+    payload.birthdate = (new Date(payload.birthdate.split('.').reverse().join('-'))).toISOString();
+  }
   const rec = await pb.collection('tickets').update<RecordModel & ITicket>(props.id, payload);
   console.log(rec);
   await refreshTicket();

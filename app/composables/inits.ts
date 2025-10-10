@@ -6,6 +6,7 @@ export const initCustomerData = (): ICustomerData => ({
   zipCode: '',
   place: '',
   email: '',
+  birthdate: '',
 });
 
 export const transformTicketToCustomerData = (ticket:ITicket|TicketRecord):ICustomerData  => {
@@ -17,5 +18,6 @@ export const transformTicketToCustomerData = (ticket:ITicket|TicketRecord):ICust
     zipCode: ticket.zipCode,
     place: ticket.place,
     email: ticket.email,
+    birthdate: ticket.birthdate,
   };
 };
