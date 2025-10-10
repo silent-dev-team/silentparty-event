@@ -21,6 +21,14 @@ const unsubscripe = await pb.collection('alerts').subscribe<AlertRecord>('*', fu
   }
 });
 
+onMounted(async () => {
+  try {
+    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>('msg = "hodor" && active = true', {sort: '-created'});
+  } catch (e) {
+    alert = undefined
+  }
+});
+
 onUnmounted(() => {
     unsubscripe();
 });

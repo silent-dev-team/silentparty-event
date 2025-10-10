@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { UnsubscribeFunc } from 'pocketbase';
 
 const pb = usePocketbase()
 
-let { from, msg, icon, sync, channel } = $defineProps<{
+const { from, msg, icon, sync, channel, global } = defineProps<{
   from: string
   msg: string
   channel: string
   icon: string
-  sync: boolean
+  sync?: boolean
+  global?: boolean
 }>()
 
 let alert = $ref<AlertRecord>()
@@ -33,14 +33,14 @@ let pulse = $computed(() => {
 })
 
 
-if (sync) {
+onMounted(async () => {
+  console.log('mounted', {from, msg, channel, sync, global})
   try {
-    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`from = "${from}" && msg = "${msg}" && channel = "${channel}"`)
+    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`msg = "${msg}" && channel = "${channel}"` + (sync ? '' : ' && active = true') + (global ? '' : ` && from = "${from}"`), {sort: '-created'})
   } catch (e) {
-    console.error(e)
-    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: false, channel: channel})
+    alert = undefined
   }
-}
+});
 
 const unsubscripe = await pb.collection('alerts').subscribe<AlertRecord>('*', function (e) {
   if (e.record.id === alert?.id) {

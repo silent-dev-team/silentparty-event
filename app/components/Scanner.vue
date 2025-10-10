@@ -95,7 +95,7 @@ localStorage.setItem('result', JSON.stringify(results));
       <v-btn 
           style="position: absolute; right: 1rem; top: 1rem;z-index: 100;"
           color="transparent-white"
-          icon="mdi-cog"
+          icon="mdi-camera-party-mode"
           size="large"
           @click="showSettings = true"
           >

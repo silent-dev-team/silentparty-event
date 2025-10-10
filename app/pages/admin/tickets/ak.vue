@@ -347,5 +347,5 @@ onUnmounted(() => {
     @paied="sell" 
     @cancled="reset()" 
   />
-  <HelpBtn from="ak" msg="hodor" channel="default" icon="mdi-door" :sync="true" style="position: fixed; left: 1rem; bottom: 12rem; z-index: 5001;"/>
+  <SSEBtnSection />
 </template>

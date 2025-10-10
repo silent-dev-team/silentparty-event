@@ -4,6 +4,7 @@
     <v-app-bar height="50" scroll-behavior="elevate" class="header">
       <v-toolbar-title style="cursor: pointer;" @click="router.push('/')">Silent App</v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn icon="mdi-cog" variant="text" @click="router.push('/admin/settings').then(() => navbar = true)"></v-btn>
       <v-btn v-if="!pb.authStore.isAdmin" @click="showLogin = true">
         login
       </v-btn>
@@ -18,9 +19,6 @@
       </div>
     </v-main>
 
-    <HelpBtn :from="page" msg="👁️Awareness👁️" channel="awareness" icon="mdi-account-eye" :sync="false" style="position: fixed; left: 1rem; bottom: 8rem; z-index: 5000;" />
-    <HelpBtn :from="page" msg="🔔Glocke🔔" channel="default" icon="mdi-bell" :sync="false" style="position: fixed; left: 1rem; bottom: 4rem; z-index: 5000;" />
-
     <v-bottom-navigation height="50" :active="navbar">
       <v-btn 
         position="absolute" 
@@ -33,24 +31,24 @@
       ></v-btn>
 
       <v-btn value="KH" @click="push('/admin/hp')">
-        <v-icon>mdi-headphones</v-icon>
-        <span>KH</span>
+        <v-icon>mdi-headphones-settings</v-icon>
+        <span>KH-Scan</span>
       </v-btn>
 
       <v-btn value="tickets" @click="push('/admin/tickets/ak')">
-        <v-icon>mdi-ticket-confirmation</v-icon>
-        <span>AK</span>
+        <v-icon>mdi-headphones-box</v-icon>
+        <span>Ausgabe</span>
       </v-btn>
 
       <v-btn v-if="!partyHasStarted()" value="vvk" @click="push('/admin/tickets/vvk')">
         <v-icon>mdi-ticket</v-icon>
-        <span>VVK</span>
+        <span>Eingang</span>
       </v-btn>
 
-      <v-btn value="bar" @click="push('/admin/bar')">
-        <v-icon>mdi-cash-register</v-icon>
-        <span>Bar</span>
-      </v-btn>
+      <!-- <v-btn value="bar" @click="push('/admin/bar')"> -->
+      <!--   <v-icon>mdi-cash-register</v-icon> -->
+      <!--   <span>Bar</span> -->
+      <!-- </v-btn> -->
 
       <v-btn class="d-none d-sm-flex" value="bar" @click="push('/admin/door')">
         <v-icon>mdi-door</v-icon>

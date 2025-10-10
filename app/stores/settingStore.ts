@@ -3,11 +3,8 @@ export const useSettingsStore = defineStore('settings', {
   state: () => ({
     showIDCardPreview: false as boolean,
     noInteraction: false as boolean,
+    stationName: '' as string,
   }),
-  getters: {
-    idCardPreview: (state) => state.showIDCardPreview,
-    interactionDisabled: (state) => state.noInteraction,
-  },
   actions: {
     toggleIDCardPreview() {
       this.showIDCardPreview = !this.showIDCardPreview
@@ -20,6 +17,9 @@ export const useSettingsStore = defineStore('settings', {
     },
     setNoInteraction(value: boolean) {
       this.noInteraction = value
+    },
+    setStationName(name: string) {
+      this.stationName = name
     },
   },
   persist: true,

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RecordModel } from 'pocketbase';
+import SSEBtnSection from '~/components/SSEBtnSection.vue';
 
 definePageMeta({
   layout: 'admin',
@@ -95,4 +96,5 @@ function reset() {
       <v-btn class="mx-auto" width="128px" color="success" :disabled="ticket.sold" @click="sell()">Verkaufen</v-btn>
     </v-card>
   </v-dialog>
+  <SSEBtnSection />
 </template>

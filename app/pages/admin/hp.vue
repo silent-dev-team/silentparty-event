@@ -203,7 +203,7 @@ onBeforeUnmount(() => {
             </v-card-actions>
         </v-card>
     </v-dialog>
-
+  <SSEBtnSection />
 </template>
 
 <style scoped>
