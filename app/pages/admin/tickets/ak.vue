@@ -211,13 +211,13 @@ async function createTicket() {
 async function sell() {
   if (!ticket) {
     reset();
-    notifyer.notify('Verkauf fehlgeschlagen: Kein Ticket ausgewählt', 'error')
+    notifyer.notify('Ausleihe fehlgeschlagen: Kein Ticket ausgewählt', 'error')
     return
   };
   ticket = await pb.collection('tickets').update<TicketRecord>(ticket!.id, { sold: true });
   if (!ticket.sold) {
     reset();
-    notifyer.notify('Verkauf fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
+    notifyer.notify('Ausleihe fehlgeschlagen: Ticket konnte nicht als verkauft markiert werden', 'error')
   }
   checkoutDialog = false
 }
@@ -253,7 +253,7 @@ async function linkTicketToHP() {
   pb.checkout(payload)
     .then(() => {
       reset();
-      notifyer.notify('Verkauf erfolgreich', 'success')
+      notifyer.notify('Ausleihe erfolgreich', 'success')
     })
     .catch(() => {
       reset();
