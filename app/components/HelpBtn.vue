@@ -2,12 +2,11 @@
 
 const pb = usePocketbase()
 
-const { from, msg, icon, sync, channel, global } = defineProps<{
+const { from, msg, icon, channel, global } = defineProps<{
   from: string
   msg: string
   channel: string
   icon: string
-  sync?: boolean
   global?: boolean
 }>()
 
@@ -34,21 +33,19 @@ let pulse = $computed(() => {
 
 
 onMounted(async () => {
-  console.log('mounted', {from, msg, channel, sync, global})
-  try {
-    alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`msg = "${msg}" && channel = "${channel}"` + (sync ? '' : ' && active = true') + (global ? '' : ` && from = "${from}"`), {sort: '-created'})
-  } catch (e) {
-    alert = undefined
-  }
+  console.log('mounted', {from, msg, channel, global})
+  if (global) {
+    try {
+      alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`msg = "${msg}" && channel = "${channel}" && active = true` + (global ? '' : ` && from = "${from}"`), {sort: '-created'})
+    } catch (e) {
+      alert = undefined
+    }
+  } 
 });
 
 const unsubscripe = await pb.collection('alerts').subscribe<AlertRecord>('*', function (e) {
-  if (e.record.id === alert?.id) {
-    if (!sync) {
-      alert = e.record.active ? e.record as AlertRecord : undefined
-    } else {
-      alert = e.record as AlertRecord
-    }
+  if (e.record.msg === msg && e.record.channel === channel && (global || e.record.from === from)) {
+    alert = e.record.active ? e.record as AlertRecord : undefined
   }
 });
 

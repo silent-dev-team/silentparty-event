@@ -2,6 +2,7 @@ package alerts
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
@@ -9,10 +10,14 @@ import (
 
 func (h *Handler) GetAfterCreatedAlertHook() func(e *core.RecordCreateEvent) error {
 	return func(e *core.RecordCreateEvent) error {
+		log.Println("New alert:", e.Record)
 		channel := e.Record.GetString("channel")
 		m := e.Record.GetString("msg")
 		from := strings.ToUpper(e.Record.GetString("from"))
 		text := fmt.Sprintf("⚠️ %s ⚠️\n\n%s", from, m)
+		if m == "hodor" {
+			text = fmt.Sprintf("🚪🛑 Einlassstop\n\n%s", from)
+		}
 		message, _ := h.bot.SendGroupMessage(channel, text)
 		e.Record.Set("tg_msg_id", message.MessageID)
 		h.pb.Dao().SaveRecord(e.Record)
@@ -23,6 +28,7 @@ func (h *Handler) GetAfterCreatedAlertHook() func(e *core.RecordCreateEvent) err
 
 func (h *Handler) GetAfterUpdatedAlertHook() func(e *core.RecordUpdateEvent) error {
 	return func(e *core.RecordUpdateEvent) error {
+		log.Println("Updated alert:", e.Record)
 		channel := e.Record.GetString("channel")
 		msg := e.Record.GetString("msg")
 		active := e.Record.GetBool("active")

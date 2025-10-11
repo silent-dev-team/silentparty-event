@@ -3,6 +3,8 @@ package alerts
 import (
 	"log"
 
+	"slices"
+
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/tg"
@@ -29,7 +31,7 @@ func (h *Handler) AddAlert(a *Alert) {
 func (h *Handler) RemoveAlert(id string) {
 	for i, a := range h.Alerts {
 		if a.ID == id {
-			h.Alerts = append(h.Alerts[:i], h.Alerts[i+1:]...)
+			h.Alerts = slices.Delete(h.Alerts, i, i+1)
 			break
 		}
 	}
