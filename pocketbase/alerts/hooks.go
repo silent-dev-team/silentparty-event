@@ -16,7 +16,7 @@ func (h *Handler) GetAfterCreatedAlertHook() func(e *core.RecordCreateEvent) err
 		from := strings.ToUpper(e.Record.GetString("from"))
 		text := fmt.Sprintf("⚠️ %s ⚠️\n\n%s", from, m)
 		if m == "hodor" {
-			text = fmt.Sprintf("🚪🛑 Einlassstop\n\n%s", from)
+			text = fmt.Sprintf("🚪🛑 %s: Einlassstop", from)
 		}
 		message, _ := h.bot.SendGroupMessage(channel, text)
 		e.Record.Set("tg_msg_id", message.MessageID)
@@ -33,11 +33,13 @@ func (h *Handler) GetAfterUpdatedAlertHook() func(e *core.RecordUpdateEvent) err
 		msg := e.Record.GetString("msg")
 		active := e.Record.GetBool("active")
 		if msg == "hodor" {
-			if e.Record.GetBool("active") {
-				h.bot.SendGroupMessage(channel, "🚪🛑 Einlassstop")
-			} else {
-				h.bot.SendGroupMessage(channel, "🚪🟢 Tür wieder auf")
-			}
+			h.bot.SendGroupMessage(
+				channel,
+				fmt.Sprintf(
+					"🚪🟢 %s: Einlass wieder erlaubt",
+					strings.ToUpper(e.Record.GetString("from")),
+				),
+			)
 			return nil
 		}
 		if active {

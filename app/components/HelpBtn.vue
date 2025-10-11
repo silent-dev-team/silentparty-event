@@ -10,22 +10,22 @@ const { from, msg, icon, channel, global } = defineProps<{
   global?: boolean
 }>()
 
-let alert = $ref<AlertRecord>()
-let color = $computed(() => {
-  if (alert?.seen) {
+const alert = ref<AlertRecord>()
+const color = computed(() => {
+  if (alert.value?.seen) {
     return 'green'
   }
-  if (alert?.active) {
+  if (alert.value?.active) {
     return 'red'
   }
   return undefined
 
 })
-let pulse = $computed(() => {
-  if (alert?.seen) {
+const pulse = computed(() => {
+  if (alert.value?.seen) {
     return 'pulse-reverse'
   }
-  if (alert?.active) {
+  if (alert.value?.active) {
     return 'pulse'
   }
   return undefined
@@ -34,26 +34,24 @@ let pulse = $computed(() => {
 
 onMounted(async () => {
   console.log('mounted', {from, msg, channel, global})
-  if (global) {
-    try {
-      alert = await pb.collection('alerts').getFirstListItem<AlertRecord>(`msg = "${msg}" && channel = "${channel}" && active = true` + (global ? '' : ` && from = "${from}"`), {sort: '-created'})
-    } catch (e) {
-      alert = undefined
-    }
-  } 
+  try {
+    alert.value = await pb.collection('alerts').getFirstListItem<AlertRecord>(`msg = "${msg}" && channel = "${channel}" && active = true` + (global ? '' : ` && from = "${from}"`), {sort: '-created'})
+  } catch (e) {
+    alert.value = undefined
+  }
 });
 
 const unsubscripe = await pb.collection('alerts').subscribe<AlertRecord>('*', function (e) {
   if (e.record.msg === msg && e.record.channel === channel && (global || e.record.from === from)) {
-    alert = e.record.active ? e.record as AlertRecord : undefined
+    alert.value = e.record.active ? e.record as AlertRecord : undefined
   }
 });
 
 async function onClick() {
-  if (alert) {
-    pb.collection('alerts').update<AlertRecord>(alert.id, { active: !alert.active })
+  if (alert.value) {
+    pb.collection('alerts').update<AlertRecord>(alert.value.id, { active: !alert.value.active })
   } else {
-    alert = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: true, channel: channel})
+    alert.value = await pb.collection('alerts').create<AlertRecord>({ msg: msg, from: from, active: true, channel: channel})
   }
 }
 
