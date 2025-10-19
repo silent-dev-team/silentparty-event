@@ -8,12 +8,21 @@ import (
 )
 
 type UserStats struct {
-	Sells     int `json:"sells"`     // used all tickets
-	Checked   int `json:"checked"`   // used all tickets
-	UsedVvk   int `json:"usedVvk"`   // used vvk tickets
-	UnusedVvk int `json:"unusedVvk"` // open vvk tickets
-	Returned  int `json:"returned"`  // 0
-	Current   int `json:"current"`   //
+	UsedTickets int `json:"used_tickets"` // used all tickets
+	UsedVVK     int `json:"used_vvk"`     // used vvk tickets
+	UnusedVVK   int `json:"unused_vvk"`   // open vvk tickets
+	UsedAK      int `json:"used_ak"`      // used ak tickets
+	ActiveAK    int `json:"active_ak"`    // actived ak tickets
+	ReservedAK  int `json:"reserved_ak"`  // ak tickets on hold
+	OpenAK      int `json:"open_ak"`      // ak tickets open for sale
+	LentHPs     int `json:"lent_hp"`      //
+	UnusedHPs   int `json:"unused_hp"`    //
+	Overbooks   int `json:"overbooks"`    //
+}
+
+type Number struct {
+	Key   string `db:"key"`
+	Value int    `db:"value"`
 }
 
 func GetUserStats(app core.App) (*UserStats, error) {
@@ -21,10 +30,17 @@ func GetUserStats(app core.App) (*UserStats, error) {
 	if err != nil {
 		log.Panicln(err)
 	}
+	hps, err := models.GetAllHps(app)
+	if err != nil {
+		log.Panicln(err)
+	}
 
 	var usedTickets int
 	var usedVvkTickets int
 	var unusedVvkTickets int
+	var usedAkTickets int
+	var activeAkTickets int
+	var reservedAkTickets int
 	for _, t := range tickets {
 		if t.Used {
 			usedTickets++
@@ -35,20 +51,52 @@ func GetUserStats(app core.App) (*UserStats, error) {
 		if t.Vvk && t.Sold && !t.Used {
 			unusedVvkTickets++
 		}
+		if !t.Vvk && t.Sold && t.Used {
+			usedAkTickets++
+		}
+		if !t.Vvk && t.Sold && !t.Used {
+			activeAkTickets++
+		}
+		if !t.Vvk && !t.Sold && !t.Used && !t.Filled {
+			reservedAkTickets++
+		}
 	}
 
-	var lentHps []models.Hp
-	app.Dao().DB().
-		NewQuery("SELECT * FROM hp WHERE lent=true").
-		All(&lentHps)
+	var lentHps []*models.Hp
+	for _, hp := range hps {
+		if hp.Lent {
+			lentHps = append(lentHps, &hp)
+		}
+	}
+	unusedHps := len(hps) - len(lentHps)
+
+	var overbooks Number
+	err = app.DB().
+		NewQuery("SELECT value FROM numbers n WHERE n.key = \"overbooks\" LIMIT 1").
+		One(&overbooks)
+	if err != nil {
+		log.Println(err)
+	}
+
+	clacOpenAKTickets := func() int {
+		v := (unusedHps - unusedVvkTickets - activeAkTickets) + min(
+			overbooks.Value,
+			unusedVvkTickets,
+		)
+		return min(v, 0)
+	}
 
 	stats := &UserStats{
-		Sells:     usedTickets,
-		UsedVvk:   usedVvkTickets,
-		UnusedVvk: unusedVvkTickets,
-		Checked:   usedTickets,
-		Returned:  0,
-		Current:   len(lentHps),
+		UsedTickets: usedTickets,
+		UsedVVK:     usedVvkTickets,
+		UnusedVVK:   unusedVvkTickets,
+		UsedAK:      usedAkTickets,
+		ActiveAK:    activeAkTickets,
+		OpenAK:      clacOpenAKTickets(),
+		ReservedAK:  reservedAkTickets,
+		LentHPs:     len(lentHps),
+		UnusedHPs:   unusedHps,
+		Overbooks:   overbooks.Value,
 	}
 
 	return stats, nil

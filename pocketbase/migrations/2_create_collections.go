@@ -834,6 +834,51 @@ func init() {
         "updateRule": "used = false",
         "deleteRule": null,
         "options": {}
+    },
+		{
+        "id": "pcxdr8gmyul71ra",
+        "name": "numbers",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "ejbtcgy9",
+                "name": "key",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "5xi1y3mo",
+                "name": "value",
+                "type": "number",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "noDecimal": false
+                }
+            }
+        ],
+        "indexes": [
+            "CREATE INDEX 'idx_2dM26rR' ON 'numbers' ('key')"
+        ],
+        "listRule": null,
+        "viewRule": null,
+        "createRule": null,
+        "updateRule": null,
+        "deleteRule": null,
+        "options": {}
     }
 ]`
 

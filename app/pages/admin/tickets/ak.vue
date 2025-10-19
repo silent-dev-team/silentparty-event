@@ -22,7 +22,6 @@ let showError = $ref(false);
 
 let ticket = $ref<TicketRecord>();
 const ticketChecked = ref(false);
-let unusedVvkTickets = $ref<number>(0)
 let hp = $ref<HeadPhoneRecord>()
 let mode = $ref<'ak' | 'vvk' | undefined>();
 let price = $computed(() => {
@@ -36,11 +35,6 @@ let customerData = $ref<ICustomerData>(initCustomerData());
 let akItem: RecordModel
 let pfandItem: RecordModel
 
-const getUnusedVvkTickets = () => pb.userstats().then(stats => unusedVvkTickets = stats.unusedVvk)
-getUnusedVvkTickets()
-const unsubscribe = await pb.collection('tickets').subscribe("*",
-  (event) => getUnusedVvkTickets(),
-)
 const {senetizeTicketCode} = useUtils();
 
 try {
@@ -282,7 +276,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   stopLogging();
-  unsubscribe()
+  // unsubscribe()
 })
 
 </script>
@@ -290,11 +284,11 @@ onUnmounted(() => {
 <template>
   <div class="subappmarker">
     <v-icon class="mt-1">mdi-ticket</v-icon>
-    <span class="ml-2" style="position: relative; top: 4px;">AK {{ unusedVvkTickets }}</span>
+    <!-- <span class="ml-2" style="position: relative; top: 4px;">AK {{ unusedVvkTickets }}</span> -->
   </div>
   <v-btn 
     style="position: absolute; right: 1rem; top: 5rem;z-index: 100;"
-    :color="settingsStore.idCardPreview ? 'green lighten-2' : 'transparent-white'"
+    :color="settingsStore.showIDCardPreview ? 'green lighten-2' : 'transparent-white'"
     icon="mdi-card-account-details"
     size="large"
     @click="settingsStore.toggleIDCardPreview()"
@@ -322,7 +316,7 @@ onUnmounted(() => {
       />
     </v-card>
     <Ticket 
-      v-if="ticket?.vvk" 
+      v-if="ticket" 
       :id="ticket?.id" 
       class="w-100"
       submitText="Bestätigen" 
@@ -330,7 +324,7 @@ onUnmounted(() => {
       @update="submitTicket"
       @cancel="reset()"
       @noticket="delayedReset(3000)"
-      :preview="settingsStore.idCardPreview"
+      :preview="settingsStore.showIDCardPreview"
     />
   </v-dialog>
   <v-dialog v-model="showError" :persistent="true">

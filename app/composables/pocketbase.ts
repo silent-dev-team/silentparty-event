@@ -69,7 +69,7 @@ pb.userstats = async ():Promise<IUserStats> => {
     if (!res.ok) {
         throw new Error('Network response was not ok')
     }
-    const data = await res.json()
+    const data = await res.json() as IUserStats
     return data
 }
 

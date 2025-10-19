@@ -40,7 +40,7 @@
         <span>Ausgabe</span>
       </v-btn>
 
-      <v-btn v-if="!partyHasStarted()" value="vvk" @click="push('/admin/tickets/vvk')">
+      <v-btn value="vvk" @click="push('/admin/tickets/vvk')">
         <v-icon>mdi-ticket</v-icon>
         <span>Eingang</span>
       </v-btn>
@@ -49,6 +49,11 @@
       <!--   <v-icon>mdi-cash-register</v-icon> -->
       <!--   <span>Bar</span> -->
       <!-- </v-btn> -->
+
+      <v-btn value="dashboard" @click="push('/admin/team-dashboard')">
+        <v-icon>mdi-view-dashboard</v-icon>
+        <span>Dashboard</span>
+      </v-btn>
 
       <v-btn class="d-none d-sm-flex" value="bar" @click="push('/admin/door')">
         <v-icon>mdi-door</v-icon>
