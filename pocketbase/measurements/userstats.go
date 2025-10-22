@@ -83,7 +83,7 @@ func GetUserStats(app core.App) (*UserStats, error) {
 			overbooks.Value,
 			unusedVvkTickets,
 		)
-		return min(v, 0)
+		return max(v, 0)
 	}
 
 	stats := &UserStats{
