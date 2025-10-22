@@ -64,6 +64,7 @@ async function sell() {
   }]).then(() => {
     dialog = false
     reset()
+    notifyer.notify('Ticket erfolgreich verkauft', 'success')
   }).catch(() => {
     notifyer.notify('Verkauf fehlgeschlagen: Transaktion konnte nicht erstellt werden', 'error')
   })
@@ -73,6 +74,12 @@ function reset() {
   if (!scannerReset) return;
   setTimeout(() => scannerReset = true, 800)
 }
+
+watch(() => dialog, (newVal) => {
+  if (!newVal) {
+    reset()
+  }
+})
 </script>
 
 <template>
