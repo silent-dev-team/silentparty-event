@@ -111,9 +111,9 @@ const internalDiff = computed<number | null>(() => {
   const refVal = valueAt(referenceTs)
   const curVal = props.value as number
   if (refVal === null || refVal === 0) return null
-  const pct = ((curVal - refVal) / refVal) * 100
+  const v = curVal - refVal
   // Begrenze auf sinnvolle Nachkommastellen
-  return Number.isFinite(pct) ? pct : null
+  return Number.isFinite(v) ? v : null
 })
 
 onMounted(() => {
@@ -156,7 +156,7 @@ const diffText = computed(() => {
   if (effectiveDiff.value === null || effectiveDiff.value === undefined) return ''
   const val = Number(effectiveDiff.value)
   const sign = val > 0 ? '+' : ''
-  return `${sign}${val.toFixed(1)}%`
+  return `${sign}${val.toFixed(0)}`
 })
 const trendAria = computed(() => trendUp.value ? 'Trend steigend' : trendDown.value ? 'Trend fallend' : 'Kein Trend')
 </script>
@@ -173,8 +173,23 @@ const trendAria = computed(() => trendUp.value ? 'Trend steigend' : trendDown.va
     <div class="leading" aria-hidden="true">
       <slot name="icon">
         <!-- Default icon (sparkline) -->
-        <svg class="icon" viewBox="0 0 24 24" focusable="false">
-          <path d="M3 17l6-8 3 4 4-6 5 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg v-if="showTrend && !loading" class="icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline
+            :points="
+              history
+                .map((point) => {
+                  const x = ((point.t - (nowTs - (props.trendOffsetMs || 60000))) / (props.trendOffsetMs || 60000)) * 64
+                  const y = 64 - Math.min(Math.max((point.v / (Math.max(...history.map(p => p.v)) || 1)) * 64, 0), 64)
+                  return `${x},${y}`
+                })
+                .join(' ')
+            "
+            stroke="currentColor"
+            stroke-width="4"
+            fill="none"
+            stroke-linejoin="round"
+            stroke-linecap="round"
+          />
         </svg>
       </slot>
     </div>

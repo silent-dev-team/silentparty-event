@@ -62,13 +62,18 @@ func GetUserStats(app core.App) (*UserStats, error) {
 		}
 	}
 
+	var defectHps []*models.Hp
 	var lentHps []*models.Hp
 	for _, hp := range hps {
+		if hp.Defect {
+			defectHps = append(defectHps, &hp)
+			continue
+		}
 		if hp.Lent {
 			lentHps = append(lentHps, &hp)
 		}
 	}
-	unusedHps := len(hps) - len(lentHps)
+	unusedHps := len(hps) - len(lentHps) - len(defectHps)
 
 	var overbooks Number
 	err = app.DB().
@@ -78,8 +83,16 @@ func GetUserStats(app core.App) (*UserStats, error) {
 		log.Println(err)
 	}
 
+	var teamReserve Number
+	err = app.DB().
+		NewQuery("SELECT value FROM numbers n WHERE n.key = \"team-reserve\" LIMIT 1").
+		One(&teamReserve)
+	if err != nil {
+		log.Println(err)
+	}
+
 	clacOpenAKTickets := func() int {
-		v := (unusedHps - unusedVvkTickets - activeAkTickets) + min(
+		v := (unusedHps - unusedVvkTickets - activeAkTickets - teamReserve.Value) + min(
 			overbooks.Value,
 			unusedVvkTickets,
 		)

@@ -7,7 +7,7 @@ const settingsStore = useSettingsStore();
   <div v-if="settingsStore.admin" class="py-3 px-2" style="max-width: 80%; width: 1500px; margin: auto; z-index: 50;">
     <div class="stat-row">
       <Stat label="Kopfhörer im Umlauf" :value="data?.lent_hp ?? NaN" size="xl" />
-      <Stat label="Kopfhörer verfügbar" :value="data?.unused_hps ?? NaN" size="xl" />
+      <Stat label="Kopfhörer verfügbar" :value="data?.unused_hp ?? NaN" size="xl" />
     </div>
     <div class="stat-row">
       <Stat label="Nicht benutzte VVK" :value="data?.unused_vvk ?? NaN" size="xl" />

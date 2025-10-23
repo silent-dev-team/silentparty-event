@@ -30,14 +30,24 @@ export function useEventData() {
     }
   })
 
-  function setAKContingent(value: number) {
-    pb.collection('numbers').getFirstListItem('key="overbooks"').then((record) => {
-      record.value = value
-      pb.collection('numbers').update(record.id, record)
-    })
+  async function setOverbooks(value: number) {
+    const {notify} = useNotifyer()
+    try {
+      const overbooksRecord = await pb.collection('numbers').getFirstListItem('key = "overbooks"');
+      await pb.collection('numbers').update(overbooksRecord.id, { value });
+      notify('Overbooks Eintrag aktualisiert', 'success');
+    } catch (e) {
+      notify('Erstelle Overbooks Eintrag', 'info');
+      try {
+        await pb.collection('numbers').create({ key: 'overbooks', value });
+      } catch (e) {
+        notify('Fehler beim Erstellen des Overbooks Eintrags', 'error');
+        throw e;
+      }
+    }
   }
 
   return {
-    data: readonly(userStats), refresh, setAKContingent
+    data: readonly(userStats), refresh, setOverbooks
   }
 }

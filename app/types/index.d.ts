@@ -71,7 +71,7 @@ declare global {
     active_ak: number;
     reserved_ak: nember;
     lent_hp: number;
-    unused_hps: number;
+    unused_hp: number;
     overbooks: number;
   }
 }
