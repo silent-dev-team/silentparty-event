@@ -13,12 +13,12 @@ const stationen = [
 ]
 
 const settings = useSettingsStore()
-const selectedStation = ref(stationen.includes(settings.stationName) ? settings.stationName : sonstiges)
+const selectedStation = ref(!settings.stationName ? undefined : stationen.includes(settings.stationName) ? settings.stationName : sonstiges)
 watch(selectedStation, (newVal) => {
   if (newVal === sonstiges) {
     settings.stationName = ''
   } else {
-    settings.stationName = newVal
+    settings.stationName = newVal || ''
   }
 })
 
