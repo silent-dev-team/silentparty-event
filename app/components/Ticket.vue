@@ -107,9 +107,14 @@ const preview = ref(props.preview);
 
 <template>
   <v-dialog v-model="preview" @click:outside="preview = false" max-width="900px">
-    <PersoCard @click="preview = false" :form="form" class="mx-auto" style="max-width: 820px;" />
+    <PersoCard @click="preview = false" :form="form" class="mx-auto" style="max-width: 820px; z-index: 1;" />
   </v-dialog>
-  <v-card v-if="hideAll" color="grey" class="mx-auto text-center">
+  <v-dialog v-if="!hideAll" v-model="showPinDialog" :persistent="true">
+    <v-card class="mx-auto pa-10" max-width="380px">
+      <PinField @update="handlePin($event)" :reset="ticketPin === ''"/>
+    </v-card>
+  </v-dialog>
+  <v-card v-if="hideAll" color="grey" class="mx-auto text-center" style="z-index: 5; max-width: 600px;">
     <v-card-title >
       Kein Ticket gefunden.
     </v-card-title>
@@ -117,11 +122,6 @@ const preview = ref(props.preview);
       Versuche deine Ticket erneut zu scannen oder wende dich an das Team unter <br> info@silentparty-hannover.de
     </v-card-text>
   </v-card>
-  <v-dialog v-if="!hideAll" v-model="showPinDialog" :persistent="true">
-    <v-card class="mx-auto pa-10" max-width="380px">
-      <PinField @update="handlePin($event)" :reset="ticketPin === ''"/>
-    </v-card>
-  </v-dialog>
   <v-card class="pa-2" v-if="!hideAll" maxWidth="800px">
     <v-card-title class="pb-0">
       <h1 class="text-h4 pb-0">Dein Ticket </h1>

@@ -40,8 +40,9 @@ const props = withDefaults(defineProps<{
   loading: false,
   clickable: false,
   compact: true,
-  trendOffsetMs: 60_000, // 1 Minute
+  trendOffsetMs: 10*60_000, // 10 Minuten
   pollMs: 1_000,         // jede Sekunde neu bewerten
+  compat: true,
 })
 
 const emit = defineEmits<{ (e:'click'): void }>()

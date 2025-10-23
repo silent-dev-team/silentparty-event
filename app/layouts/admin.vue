@@ -4,7 +4,7 @@
     <v-app-bar height="50" scroll-behavior="elevate" class="header">
       <v-toolbar-title style="cursor: pointer;" @click="router.push('/')">Silent App</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon="mdi-cog" variant="text" @click="router.push('/admin/settings').then(() => navbar = true)"></v-btn>
+      <v-btn icon="mdi-cog" variant="text" @click="router.push('/admin/settings').then(() => settingsStore.setNavBar(false))"></v-btn>
       <v-btn v-if="!pb.authStore.isAdmin" @click="showLogin = true">
         login
       </v-btn>
@@ -19,14 +19,14 @@
       </div>
     </v-main>
 
-    <v-bottom-navigation height="50" :active="navbar">
+    <v-bottom-navigation height="50" :active="settingsStore.showNavBar">
       <v-btn 
         position="absolute" 
         fab
         icon="mdi-menu-down" 
         variant="plain"
         size="large"
-        @click="navbar = false"
+        @click="settingsStore.setNavBar(false)"
         style="bottom: 0; left: 0; z-index: 1000;"
       ></v-btn>
 
@@ -50,7 +50,7 @@
       <!--   <span>Bar</span> -->
       <!-- </v-btn> -->
 
-      <v-btn value="dashboard" @click="push('/admin/team-dashboard')">
+      <v-btn value="dashboard" @click="push('/admin/dashboard')">
         <v-icon>mdi-view-dashboard</v-icon>
         <span>Dashboard</span>
       </v-btn>
@@ -67,7 +67,7 @@
       icon="mdi-menu-up" 
       variant="plain"
       size="large"
-      @click="navbar = true"
+      @click="settingsStore.setNavBar(true)"
       style="bottom: 0; left: 12px; z-index: 1000;"
     ></v-btn>
   </v-app>
@@ -79,6 +79,8 @@ const router = useRouter()
 const shopStore = useShopStore()
 const partyHasStarted = usePartytime()
 shopStore.loadShop()
+const settingsStore = useSettingsStore()
+
 
 let page = $computed(() => router.currentRoute.value.path.split('/').at(-1))
 
@@ -90,14 +92,14 @@ const unsubscripe = await pb.collection('shop_items').subscribe('*', function (e
 
 watch($$(page), (newPage) => {
   if (newPage === 'admin' || !page) {
-    navbar = true
+    settingsStore.setNavBar(true)
   }
 })
 
 onBeforeMount(() => {
   shopStore.loadShop();
   if (!page) {
-    navbar = true
+    settingsStore.setNavBar(true)
   }
 });
 
@@ -106,12 +108,11 @@ onUnmounted(() => {
 });
 
 function push(path) {
-  navbar = false
+  // settingsStore.setNavBar(false)
   router.push({ path })
 }
 
 let showLogin = $ref(false)
-let navbar = $ref(false)
 
 if (!pb.authStore.token) {
   pb.admins.authRefresh()

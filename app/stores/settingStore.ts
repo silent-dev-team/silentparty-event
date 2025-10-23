@@ -4,6 +4,9 @@ export const useSettingsStore = defineStore('settings', {
     showIDCardPreview: false as boolean,
     noInteraction: false as boolean,
     stationName: '' as string,
+    showDashboard: false as boolean,
+    showNavBar: true as boolean,
+    admin: false as boolean,
   }),
   actions: {
     toggleIDCardPreview() {
@@ -20,6 +23,18 @@ export const useSettingsStore = defineStore('settings', {
     },
     setStationName(name: string) {
       this.stationName = name
+    },
+    toggleDashboard() {
+      this.showDashboard = !this.showDashboard
+    },
+    setDashboard(value: boolean) {
+      this.showDashboard = value
+    },
+    toggleNavBar() {
+      this.showNavBar = !this.showNavBar
+    },
+    setNavBar(value: boolean) {
+      this.showNavBar = value
     },
   },
   persist: true,

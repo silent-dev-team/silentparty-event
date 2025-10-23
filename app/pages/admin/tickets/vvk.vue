@@ -92,7 +92,16 @@ watch(() => dialog, (newVal) => {
     @click="settingsStore.toggleNoInteraction()"
     >
   </v-btn>
+  <v-btn 
+    style="position: absolute; right: 1rem; top: 9rem;z-index: 100;"
+    :color="settingsStore.showDashboard ? 'green lighten-2' : 'transparent-white'"
+    icon="mdi-view-dashboard"
+    size="large"
+    @click="settingsStore.toggleDashboard()"
+    >
+  </v-btn>
   <Scanner class="full-screen" :overlaypath="Overlay.Ticket" :reset="scannerReset" @update:reset="scannerReset = $event" @scan="onScan($event)"/>
+  <Dashboard v-if="settingsStore.showDashboard" />
   <v-dialog v-model="dialog" :close-on-back="true" :persistent="true">
     <v-card class="pa-3 mx-auto" width="300px">
       <v-btn style="position: absolute;" icon="mdi-close" size="sm" @click="dialog = false; reset()" /> 

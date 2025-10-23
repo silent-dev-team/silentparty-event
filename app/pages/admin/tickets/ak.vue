@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Overlay } from '@/types/enums';
 import type { RecordModel } from 'pocketbase';
+import Dashboard from '~/components/Dashboard.vue';
 import { useUtils } from '~/composables/utils';
 import { useSettingsStore } from '~/stores/settingStore';
 
@@ -294,6 +295,14 @@ onUnmounted(() => {
     @click="settingsStore.toggleIDCardPreview()"
     >
   </v-btn>
+  <v-btn 
+    style="position: absolute; right: 1rem; top: 9rem;z-index: 100;"
+    :color="settingsStore.showDashboard ? 'green lighten-2' : 'transparent-white'"
+    icon="mdi-view-dashboard"
+    size="large"
+    @click="settingsStore.toggleDashboard()"
+    >
+  </v-btn>
   <Scanner 
     v-touch="{
       right: () => router.push('/admin/hp'),
@@ -304,6 +313,7 @@ onUnmounted(() => {
     :reset="scannerReset"
     @update:reset="scannerReset = $event" 
   />
+  <Dashboard v-if="settingsStore.showDashboard" />
   <v-dialog v-model="dialog" :persistent="true"  max-width="800">
     <v-card v-if="!ticket" class="pa-4">
       <CustomerForm 

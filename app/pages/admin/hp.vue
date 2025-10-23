@@ -119,6 +119,8 @@ function resetScanner() {
   setTimeout(() => scannerReset = true, 300);
 }
 
+const settingsStore = useSettingsStore();
+
 const {stopLogging} = useKeyLogger((logs) => {
   if (logs == enter) {
     dialog = false;
@@ -136,6 +138,14 @@ onBeforeUnmount(() => {
       <v-icon class="mt-1">mdi-headphones</v-icon>
       <span class="ml-2" style="position: relative; top: 4px;">HP</span>
     </div>
+    <v-btn 
+      style="position: absolute; right: 1rem; top: 5rem;z-index: 100;"
+      :color="settingsStore.showDashboard ? 'green lighten-2' : 'transparent-white'"
+      icon="mdi-view-dashboard"
+      size="large"
+      @click="settingsStore.toggleDashboard()"
+      >
+    </v-btn>
     <Scanner     
       v-touch="{
         left: () => router.push('/admin/tickets/ak'),
@@ -146,6 +156,7 @@ onBeforeUnmount(() => {
       :reset="scannerReset" 
       @update:reset="scannerReset = $event"
     />
+    <Dashboard v-if="settingsStore.showDashboard" />
     <v-dialog fullscreen v-model="dialog" :persistent="true">
         <v-card minWidth="250px" maxWidth="420px" class="mx-auto">
           <v-card-title>
