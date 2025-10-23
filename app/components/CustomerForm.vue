@@ -36,12 +36,12 @@ const form = ref<ICustomerData>(props.modelValue);
 const zipCodePattern = /^\d{5}$/; 
 const namePattern = /^[A-Za-zäöüÄÖÜß\-~'_ !?]+$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; //passt noch nicht
-const datePattern = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d\d$/; //TT.MM.JJJJ
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 let errors = ref(false);
 let success = ref(false);
 
-const birthdate = ref<string>( new Date(form.value.birthdate)?.toLocaleDateString('de-DE',{ day: '2-digit', month: '2-digit', year: 'numeric' }) || '');
+const birthdate = ref<string|undefined>( form.value.birthdate ? new Date(form.value.birthdate).toISOString().substring(0,10) : undefined );
 
 async function submit(form: ICustomerData) {
   errors.value = false;
@@ -242,6 +242,7 @@ watch(focus, (newVal) => {
               label="Geburtsdatum (TT.MM.JJJJ)"
               required
               autocomplete="birthdate"
+              type="date"
               :readonly="readonly"
               :rules="[datePattern.test(birthdate) || 'Bitte gib ein gültiges Geburtsdatum ein.']"
               @focus="focus = true"
