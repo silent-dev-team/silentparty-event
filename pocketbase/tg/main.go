@@ -10,22 +10,13 @@ import (
 type GroupMap = map[string]int64
 
 type Bot struct {
-	API    *tgbotapi.BotAPI
-	groups GroupMap
-	Replys chan *tgbotapi.Message
+	API      *tgbotapi.BotAPI
+	groups   GroupMap
+	Replys   chan *tgbotapi.Message
+	Commands BotCommands
 }
 
-var commands = BotCommands{
-	{
-		Command:     "/userstats",
-		Description: "User Stats",
-		Handler: func() string {
-			return "User Stats"
-		},
-	},
-}
-
-func NewBot(tg_token string, groups GroupMap) (*Bot, error) {
+func NewBot(tg_token string, groups GroupMap, commands BotCommands) (*Bot, error) {
 	botAPI, err := tgbotapi.NewBotAPI(tg_token)
 	if err != nil {
 		return nil, err
@@ -62,7 +53,7 @@ func (bot *Bot) MessageListener() {
 		}
 
 		msg := tgbotapi.NewMessage(message.Chat.ID, "")
-		text, err := commands.Run(message.Command())
+		text, err := bot.Commands.Run(message.Command())
 		if err != nil {
 			continue
 		}

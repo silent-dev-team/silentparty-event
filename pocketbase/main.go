@@ -8,6 +8,7 @@ import (
 
 	"github.com/silent-dev-team/silentparty-event/pocketbase/alerts"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/hooks"
+	"github.com/silent-dev-team/silentparty-event/pocketbase/measurements"
 	_ "github.com/silent-dev-team/silentparty-event/pocketbase/migrations"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/routes"
 	"github.com/silent-dev-team/silentparty-event/pocketbase/sse"
@@ -37,7 +38,19 @@ func main() {
 			"default":   utils.GetenvInt64("BOT_DEFAULT_GROUP"),
 			"awareness": utils.GetenvInt64("BOT_AWARENESS_GROUP"),
 		}
-		bot, err := tg.NewBot(token, groups)
+		bot, err := tg.NewBot(token, groups, tg.BotCommands{
+			{
+				Command:     "/userstats",
+				Description: "User Stats",
+				Handler: func() string {
+					us, err := measurements.GetUserStats(app)
+					if err != nil {
+						return "Error getting user stats"
+					}
+					return us.String()
+				},
+			},
+		})
 		if err != nil {
 			log.Panicln("ERROR:", err)
 		} else {

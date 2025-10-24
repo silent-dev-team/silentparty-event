@@ -1,6 +1,7 @@
 package measurements
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/pocketbase/pocketbase/core"
@@ -18,6 +19,20 @@ type UserStats struct {
 	LentHPs     int `json:"lent_hp"`      //
 	UnusedHPs   int `json:"unused_hp"`    //
 	Overbooks   int `json:"overbooks"`    //
+}
+
+func (us *UserStats) String() string {
+	return "User Stats:\n" +
+		fmt.Sprintf("- Used Tickets: %d\n", us.UsedTickets) +
+		fmt.Sprintf("- Used VVK Tickets: %d\n", us.UsedVVK) +
+		fmt.Sprintf("- Unused VVK Tickets: %d\n", us.UnusedVVK) +
+		fmt.Sprintf("- Used AK Tickets: %d\n", us.UsedAK) +
+		fmt.Sprintf("- Active AK Tickets: %d\n", us.ActiveAK) +
+		fmt.Sprintf("- Open AK Tickets: %d\n", us.OpenAK) +
+		fmt.Sprintf("- Reserved AK Tickets: %d\n", us.ReservedAK) +
+		fmt.Sprintf("- Lent HPs: %d\n", us.LentHPs) +
+		fmt.Sprintf("- Unused HPs: %d\n", us.UnusedHPs) +
+		fmt.Sprintf("- Overbooks: %d\n", us.Overbooks)
 }
 
 type Number struct {
