@@ -26,9 +26,10 @@ func NewBot(tg_token string, groups GroupMap, commands BotCommands) (*Bot, error
 	log.Printf("Authorized on account %s", botAPI.Self.UserName)
 
 	bot := &Bot{
-		API:    botAPI,
-		groups: groups,
-		Replys: make(chan *tgbotapi.Message),
+		API:      botAPI,
+		groups:   groups,
+		Replys:   make(chan *tgbotapi.Message),
+		Commands: commands,
 	}
 
 	return bot, nil
