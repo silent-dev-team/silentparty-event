@@ -48,12 +48,6 @@ async function submit(form: ICustomerData) {
   success.value = false;
 
 
-  // Validierung des Geburtsdatums
-  if (!datePattern.test(birthdate.value)) {
-    errors.value = true;
-    return;
-  }
-
   // trimmen
   form.email = (form.email || '').toLowerCase().trim();
   form.firstName = form.firstName.trim();
@@ -62,46 +56,42 @@ async function submit(form: ICustomerData) {
   form.street = form.street.trim();
   form.housenumber = form.housenumber.trim();
   form.zipCode = form.zipCode.trim();
-  form.birthdate = birthdate.value.trim();
+  form.birthdate = birthdate.value?.trim() || new Date("1800-01-01").toISOString();
 
   // Validierung der Postleitzahl
   if (!zipCodePattern.test(form.zipCode)) {
     errors.value = true;
+    console.log('Ungültige Postleitzahl:', form.zipCode);
     return;
   }
 
   // Validierung des Vornamens
   if (!namePattern.test(form.firstName)) {
     errors.value = true;
+    console.log('Ungültiger Vorname:', form.firstName);
     return;
   }
 
   // Validierung des Nachnamens
   if (!namePattern.test(form.lastName)) {
     errors.value = true;
+    console.log('Ungültiger Nachname:', form.lastName);
     return;
   }
 
   // Validierung des Ortes
   if (!namePattern.test(form.place)) {
     errors.value = true;
+    console.log('Ungültiger Ort:', form.place);
     return;
   }
 
   // Validierung der E-Mail
   if (!emailPattern.test(form.email)) {
     errors.value = true;
+    console.log('Ungültige E-Mail:', form.email);
     return;
   }
-
-  // Umwandlung des Geburtsdatums in ISO-Format
-  const [day, month, year] = form.birthdate.split('.');
-  const isoDate = new Date(`${year}-${month}-${day}`);
-  if (isNaN(isoDate.getTime())) {
-    errors.value = true;
-    return;
-  }
-
 
   try {
     emit('submit')
