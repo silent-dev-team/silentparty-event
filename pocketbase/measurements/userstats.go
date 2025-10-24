@@ -122,7 +122,7 @@ func GetUserStats(app core.App) (*UserStats, error) {
 		ActiveAK:    activeAkTickets,
 		OpenAK:      clacOpenAKTickets(),
 		ReservedAK:  reservedAkTickets,
-		LentHPs:     len(lentHps),
+		LentHPs:     len(lentHps) - teamReserve.Value,
 		UnusedHPs:   unusedHps,
 		Overbooks:   overbooks.Value,
 	}
